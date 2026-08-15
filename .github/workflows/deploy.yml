@@ -37,14 +37,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      # `enablement: true` accende GitHub Pages via API alla prima esecuzione,
-      # così non serve passare da Settings -> Pages a mano. Se il token non ha
-      # i permessi (tipico nei repo di organizzazione con policy restrittive)
-      # questo step fallisce: in quel caso vale il passo manuale documentato
-      # nel README.
+      # Richiede che Pages sia già attivo su Settings -> Pages -> Source:
+      # GitHub Actions. Non è automatizzabile da qui: `enablement: true`
+      # è stato provato e il GITHUB_TOKEN del workflow non ha il permesso di
+      # *creare* il sito Pages ("Resource not accessible by integration"),
+      # può solo pubblicarci sopra una volta che esiste.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
