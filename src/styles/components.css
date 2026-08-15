@@ -505,8 +505,14 @@
     display: grid;
     gap: 8px;
   }
+  /**
+   * Ogni alternativa è una <label> con dentro un <input type="radio">
+   * nascosto: si naviga da tastiera con le frecce e gli screen reader
+   * annunciano «pulsante di opzione, 1 di 4». Nel prototipo erano <div
+   * onclick>, irraggiungibili senza mouse. L'aspetto è identico.
+   */
   .choice {
-    appearance: none;
+    position: relative;
     font: inherit;
     text-align: left;
     width: 100%;
@@ -523,11 +529,24 @@
     font-size: 14px;
     background: transparent;
   }
-  .choice:hover:not(:disabled) {
+  .choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+  .choice:hover:not(.locked) {
     border-color: var(--color-cyan);
   }
-  .choice:disabled {
+  .choice.locked {
     cursor: default;
+  }
+  /* il focus va mostrato sulla label, non sull'input nascosto */
+  .choice:has(input:focus-visible) {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 2px;
   }
   .choice.sel {
     border-color: var(--color-copper);
@@ -589,13 +608,18 @@
     color: var(--color-cyan);
     font-weight: 600;
   }
+  /**
+   * La didascalia serve agli screen reader ma non deve comparire: essendo
+   * larga quanto la tabella si incolonnerebbe su due righe, cambiando
+   * l'aspetto rispetto al prototipo.
+   */
   .ttable caption {
-    caption-side: top;
-    text-align: left;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--color-faint);
-    padding-bottom: 5px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
   .table-scroll {
     overflow-x: auto;

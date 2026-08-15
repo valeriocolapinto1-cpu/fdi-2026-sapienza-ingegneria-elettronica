@@ -194,7 +194,8 @@ describe('genKarnaugh', () => {
       const cost = coverCost(cover, vars.length);
 
       // Il modello dichiara il numero di termini: deve essere quello minimo.
-      const declared = question.kind === 'self' ? question.model.match(/\((\d+) termini\)/) : null;
+      const declared =
+        question.kind === 'self' ? question.model.match(/\((\d+) termin[ei]\)/) : null;
       expect(declared?.[1], `modello senza conteggio: ${question.q}`).toBeDefined();
       expect(Number(declared?.[1])).toBe(cost.terms);
     }

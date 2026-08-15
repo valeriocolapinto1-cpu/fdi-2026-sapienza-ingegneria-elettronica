@@ -1,8 +1,35 @@
 import type { JSX } from 'preact';
-import { DatapathHero } from '~/ui/components/DatapathHero';
+import { topics } from '~/content';
 import { hrefFor } from '~/lib/router';
+import { computeStats, useProgress } from '~/store/progress';
+import { storage } from '~/store/storage';
+import { DatapathHero } from '~/ui/components/DatapathHero';
+import { TopicCard } from './Study';
+
+function Stat({
+  value,
+  unit,
+  label,
+}: {
+  value: string;
+  unit?: string;
+  label: string;
+}): JSX.Element {
+  return (
+    <div class="stat">
+      <div class="n">
+        {value}
+        {unit && <span class="u">{unit}</span>}
+      </div>
+      <div class="l">{label}</div>
+    </div>
+  );
+}
 
 export function Dashboard(): JSX.Element {
+  const progress = useProgress();
+  const stats = computeStats(progress);
+
   return (
     <section class="view">
       <div class="hero">
@@ -33,6 +60,33 @@ export function Dashboard(): JSX.Element {
         </div>
       </div>
 
+      <div class="stats">
+        <Stat value={String(stats.examsTaken)} label="Esami svolti" />
+        <Stat
+          value={stats.best === null ? '—' : String(stats.best)}
+          unit={stats.best === null ? undefined : '/30'}
+          label="Miglior voto"
+        />
+        <Stat
+          value={stats.average === null ? '—' : String(stats.average)}
+          unit={stats.average === null ? undefined : '/30'}
+          label="Media"
+        />
+        <Stat
+          value={String(stats.studiedCount)}
+          unit={`/${topics.length}`}
+          label="Moduli letti"
+        />
+      </div>
+
+      {!storage.persistent && (
+        <div class="disclaim">
+          ⚠︎ Lo spazio di archiviazione del browser non è disponibile (navigazione privata o
+          cookie bloccati): l'app funziona, ma statistiche e progressi non sopravvivono alla
+          chiusura della scheda.
+        </div>
+      )}
+
       <h2 class="sec">Come è fatto l'esame reale</h2>
       <div class="panel">
         <p class="lead" style="max-width:none">
@@ -43,6 +97,13 @@ export function Dashboard(): JSX.Element {
           <b>1 esercizio assembly</b>, <b>1 domanda aperta</b>. Si supera con <b>≥18/30</b>; lode
           ai brillanti. Le figure da completare provengono dalle tavole di Hamacher.
         </p>
+      </div>
+
+      <h2 class="sec">Riprendi da dove eri</h2>
+      <div class="cards">
+        {topics.slice(0, 4).map((topic, index) => (
+          <TopicCard key={topic.id} topic={topic} index={index} />
+        ))}
       </div>
 
       <div class="disclaim">
