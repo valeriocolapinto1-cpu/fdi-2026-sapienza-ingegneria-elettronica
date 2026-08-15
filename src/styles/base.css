@@ -1,0 +1,111 @@
+/**
+ * Livello base: sfondo, tipografia, focus.
+ * Fedele al prototipo, con in più un focus da tastiera visibile (§9).
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* substrato a griglia da datapath */
+    background-image:
+      linear-gradient(var(--color-line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-line-soft) 1px, transparent 1px);
+    background-size: var(--grid-step) var(--grid-step);
+    background-position: center top;
+  }
+
+  /* aloni cyan/rame sopra la griglia */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(55, 194, 214, 0.06), transparent 55%),
+      radial-gradient(90% 60% at 90% 0%, rgba(200, 138, 78, 0.05), transparent 50%);
+  }
+
+  a {
+    color: var(--color-cyan);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  ::selection {
+    background: rgba(55, 194, 214, 0.28);
+  }
+
+  /* Focus da tastiera sempre visibile — non c'era nel prototipo. */
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  code,
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--color-panel-3);
+    padding: 1px 6px;
+    border-radius: 5px;
+    color: var(--color-code);
+  }
+
+  pre {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    background: var(--color-well);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    color: var(--color-pre);
+  }
+  pre .kw {
+    color: var(--color-copper);
+  }
+  pre .rg {
+    color: var(--color-cyan);
+  }
+  pre .cm {
+    color: var(--color-faint);
+  }
+  pre .lb {
+    color: var(--color-violet);
+  }
+
+  /* soprallineatura per la negazione booleana: Ā */
+  .ovl {
+    text-decoration: overline;
+  }
+
+  @media (max-width: 640px) {
+    body {
+      background-size: 32px 32px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
