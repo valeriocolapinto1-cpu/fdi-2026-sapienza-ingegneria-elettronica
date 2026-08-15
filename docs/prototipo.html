@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AE·FIN — Palestra d'esame · Architettura degli Elaboratori</title>
+<meta name="description" content="Sito di studio e simulatore d'esame per il modulo Architettura degli Elaboratori (Fondamenti di Informatica, Napoli — Sapienza). Generatore di prove in stile docente con riferimenti Hamacher." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1116; --panel:#151B23; --panel-2:#1B232D; --panel-3:#212C38;
+    --line:#2A3542; --line-soft:#222C37;
+    --ink:#E7EDF4; --muted:#95A3B3; --faint:#5E6B7A;
+    --copper:#C88A4E; --copper-dim:#8f6335;
+    --cyan:#37C2D6; --cyan-dim:#1c6470;
+    --green:#4FC26E; --red:#E5574E; --amber:#E0A458; --violet:#9B8BD6;
+    --font-d:'Space Grotesk',sans-serif;
+    --font-b:'IBM Plex Sans',system-ui,sans-serif;
+    --font-m:'IBM Plex Mono',ui-monospace,monospace;
+    --r:14px; --r-sm:9px;
+    --shadow:0 12px 34px -14px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-b); font-size:15px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:46px 46px; background-position:center top;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:radial-gradient(120% 80% at 50% -10%, rgba(55,194,214,.06), transparent 55%),
+               radial-gradient(90% 60% at 90% 0%, rgba(200,138,78,.05), transparent 50%);
+  }
+  a{color:var(--cyan); text-decoration:none}
+  a:hover{text-decoration:underline}
+  ::selection{background:rgba(55,194,214,.28)}
+
+  /* ---------- header / nav ---------- */
+  header.top{
+    position:sticky; top:0; z-index:40;
+    backdrop-filter:blur(10px);
+    background:rgba(14,17,22,.82);
+    border-bottom:1px solid var(--line);
+  }
+  .top-inner{
+    max-width:1180px; margin:0 auto; padding:0 20px;
+    height:60px; display:flex; align-items:center; gap:18px;
+  }
+  .brand{display:flex; align-items:center; gap:11px; font-family:var(--font-d); font-weight:700; letter-spacing:.02em; white-space:nowrap}
+  .brand .glyph{
+    width:30px;height:30px;border:1.5px solid var(--copper);border-radius:7px;
+    display:grid;place-items:center;color:var(--copper);font-size:12px;font-family:var(--font-m);
+    box-shadow:inset 0 0 12px rgba(200,138,78,.15);
+  }
+  .brand small{display:block;font-family:var(--font-m);font-weight:400;font-size:10px;color:var(--faint);letter-spacing:.16em;text-transform:uppercase;margin-top:-3px}
+  nav.tabs{display:flex; gap:2px; margin-left:auto; overflow-x:auto; scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  .tab{
+    appearance:none;border:0;background:transparent;color:var(--muted);
+    font-family:var(--font-b);font-size:13.5px;font-weight:500;cursor:pointer;
+    padding:8px 13px;border-radius:8px;white-space:nowrap;transition:.14s;
+  }
+  .tab:hover{color:var(--ink);background:var(--panel)}
+  .tab.active{color:var(--bg);background:var(--copper);font-weight:600}
+
+  /* ---------- layout ---------- */
+  main{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:26px 20px 90px}
+  .view{display:none; animation:fade .3s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .eyebrow{font-family:var(--font-m);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin:0 0 6px}
+  h1.h{font-family:var(--font-d);font-weight:700;font-size:clamp(26px,4.4vw,40px);line-height:1.08;margin:0 0 8px;letter-spacing:-.01em}
+  h2.sec{font-family:var(--font-d);font-weight:600;font-size:20px;margin:34px 0 14px;display:flex;align-items:center;gap:11px}
+  h2.sec::before{content:"";width:9px;height:9px;background:var(--cyan);border-radius:2px;box-shadow:0 0 10px var(--cyan);transform:rotate(45deg)}
+  .lead{color:var(--muted);max-width:60ch;margin:0 0 4px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+  .grid{display:grid;gap:14px}
+
+  /* ---------- hero / dashboard ---------- */
+  .hero{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,var(--panel-2),var(--panel));padding:30px 26px 26px}
+  .hero svg.trace{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+  .hero .hero-body{position:relative;z-index:2;max-width:640px}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-m);font-size:11px;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(55,194,214,.08);padding:4px 10px;border-radius:999px}
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:blink 1.8s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+  .btn{
+    appearance:none;cursor:pointer;font-family:var(--font-b);font-weight:600;font-size:14.5px;
+    border-radius:10px;padding:11px 18px;border:1px solid transparent;transition:.15s;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .btn.primary{background:var(--copper);color:#1a120a;border-color:var(--copper)}
+  .btn.primary:hover{background:#d69a63;box-shadow:0 8px 22px -8px rgba(200,138,78,.6)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+  .btn.mini{padding:7px 12px;font-size:13px;border-radius:8px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 16px}
+  .stat .n{font-family:var(--font-d);font-weight:700;font-size:27px;line-height:1;color:var(--ink)}
+  .stat .n .u{font-size:14px;color:var(--faint);font-weight:500}
+  .stat .l{font-family:var(--font-m);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:7px}
+
+  /* ---------- topic cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;cursor:pointer;transition:.16s;position:relative;overflow:hidden}
+  .card:hover{border-color:var(--copper);transform:translateY(-3px);box-shadow:var(--shadow)}
+  .card .idx{font-family:var(--font-m);font-size:11px;color:var(--faint)}
+  .card h3{font-family:var(--font-d);font-weight:600;font-size:17px;margin:6px 0 6px}
+  .card p{color:var(--muted);font-size:13.5px;margin:0}
+  .card .ref{margin-top:12px;font-family:var(--font-m);font-size:11px;color:var(--copper);border-top:1px dashed var(--line);padding-top:9px}
+  .card .bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--copper);opacity:.55}
+
+  /* ---------- topic detail ---------- */
+  .detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .prose h4{font-family:var(--font-d);font-weight:600;font-size:16px;margin:22px 0 8px;color:var(--ink)}
+  .prose p{color:#C9D4DF;margin:0 0 12px}
+  .prose ul{margin:0 0 12px;padding-left:20px;color:#C9D4DF}
+  .prose li{margin:5px 0}
+  .cite{font-family:var(--font-m);font-size:11.5px;color:var(--copper);background:rgba(200,138,78,.09);border:1px solid var(--copper-dim);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block}
+  .trap{border-left:3px solid var(--amber);background:rgba(224,164,88,.07);border-radius:0 8px 8px 0;padding:12px 15px;margin:14px 0}
+  .trap .tt{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
+  code,.mono{font-family:var(--font-m);font-size:.92em;background:var(--panel-3);padding:1px 6px;border-radius:5px;color:#DCE6F0}
+  pre{font-family:var(--font-m);font-size:12.5px;line-height:1.55;background:#0B0E13;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;color:#CBD6E2}
+  pre .kw{color:var(--copper)} pre .rg{color:var(--cyan)} pre .cm{color:var(--faint)} pre .lb{color:var(--violet)}
+  .ovl{text-decoration:overline}
+
+  /* ---------- exam ---------- */
+  .exam-config{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .opt{border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;transition:.14s;background:var(--panel)}
+  .opt:hover{border-color:var(--cyan)}
+  .opt.sel{border-color:var(--copper);background:rgba(200,138,78,.06)}
+  .opt .ol{font-family:var(--font-d);font-weight:600;font-size:15px}
+  .opt .od{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;margin-bottom:14px}
+  .q-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+  .q-num{font-family:var(--font-m);font-size:12px;color:var(--bg);background:var(--cyan);border-radius:6px;padding:3px 8px;font-weight:600}
+  .q-cat{font-family:var(--font-m);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .q-pts{margin-left:auto;font-family:var(--font-m);font-size:11.5px;color:var(--copper)}
+  .q-body{font-size:14.5px;margin-bottom:12px}
+  .q-body b{color:#fff}
+  .choices{display:grid;gap:8px}
+  .choice{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:9px 12px;cursor:pointer;transition:.12s;font-size:14px}
+  .choice:hover{border-color:var(--cyan)}
+  .choice.sel{border-color:var(--copper);background:rgba(200,138,78,.08)}
+  .choice.correct{border-color:var(--green);background:rgba(79,194,110,.1)}
+  .choice.wrong{border-color:var(--red);background:rgba(229,87,78,.1)}
+  .choice .k{font-family:var(--font-m);font-size:12px;color:var(--faint);min-width:16px}
+  input.fill{font-family:var(--font-m);font-size:15px;background:#0B0E13;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 12px;width:100%;max-width:280px;letter-spacing:.05em}
+  input.fill:focus{outline:none;border-color:var(--cyan)}
+  .ttable{border-collapse:collapse;font-family:var(--font-m);font-size:13px;margin:6px 0}
+  .ttable th,.ttable td{border:1px solid var(--line);padding:5px 12px;text-align:center}
+  .ttable th{background:var(--panel-3);color:var(--copper);font-weight:600}
+  .ttable td.out{color:var(--cyan);font-weight:600}
+  .reveal{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;display:none}
+  .reveal.show{display:block;animation:fade .25s}
+  .reveal .rl{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+  .selfgrade{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  .selfgrade .sl{font-size:13px;color:var(--muted)}
+  .verdict{font-family:var(--font-m);font-size:12px;padding:2px 9px;border-radius:6px;margin-top:10px;display:inline-block}
+  .verdict.ok{color:var(--green);background:rgba(79,194,110,.12)}
+  .verdict.no{color:var(--red);background:rgba(229,87,78,.12)}
+
+  .scorecard{text-align:center;padding:30px 20px;border:1px solid var(--copper);border-radius:18px;background:linear-gradient(180deg,rgba(200,138,78,.08),var(--panel));margin-bottom:20px}
+  .scorecard .big{font-family:var(--font-d);font-weight:700;font-size:58px;line-height:1;color:var(--ink)}
+  .scorecard .big .den{font-size:26px;color:var(--faint)}
+  .scorecard .msg{color:var(--muted);margin-top:8px}
+  .lode{color:var(--copper);font-family:var(--font-d);font-weight:700;letter-spacing:.15em;margin-top:6px}
+
+  /* ---------- tools ---------- */
+  .tool{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+  .tool h3{font-family:var(--font-d);font-weight:600;font-size:16px;margin:0 0 4px}
+  .tool .th-ref{font-family:var(--font-m);font-size:11px;color:var(--copper)}
+  .field{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .field label{font-size:13px;color:var(--muted);min-width:70px}
+  select,input[type=number],input[type=text]{font-family:var(--font-m);background:#0B0E13;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 11px;font-size:14px}
+  select:focus,input:focus{outline:none;border-color:var(--cyan)}
+  .out-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+  .out-box{background:#0B0E13;border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  .out-box .ol{font-family:var(--font-m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .out-box .ov{font-family:var(--font-m);font-size:17px;color:var(--cyan);margin-top:4px;word-break:break-all}
+  .out-box.warn .ov{color:var(--red)}
+
+  /* ---------- reference ---------- */
+  .figlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .fig{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .fig .fn{font-family:var(--font-m);font-size:12px;color:var(--copper);font-weight:600}
+  .fig .fd{font-size:13px;color:var(--muted);margin-top:3px}
+  .linklist{list-style:none;padding:0;margin:8px 0 0}
+  .linklist li{padding:10px 0;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .linklist li .d{color:var(--muted);font-size:13px}
+
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0;color:var(--faint);font-size:12.5px;text-align:center;font-family:var(--font-m)}
+  .disclaim{background:rgba(224,164,88,.06);border:1px solid var(--copper-dim);border-radius:10px;padding:12px 15px;font-size:12.5px;color:var(--muted);margin-top:18px}
+
+  @media (max-width:640px){
+    .exam-config{grid-template-columns:1fr}
+    .top-inner{gap:10px}
+    .brand small{display:none}
+    body{background-size:32px 32px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="glyph">AE</span>
+      <span>Palestra d'esame<small>Architettura degli Elaboratori</small></span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-v="dash">Dashboard</button>
+      <button class="tab" data-v="study">Studia</button>
+      <button class="tab" data-v="exam">Simulatore</button>
+      <button class="tab" data-v="tools">Strumenti</button>
+      <button class="tab" data-v="ref">Riferimenti</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== DASHBOARD ===================== -->
+  <section class="view active" id="dash">
+    <div class="hero">
+      <svg class="trace" viewBox="0 0 1200 380" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#37C2D6" stop-opacity="0"/><stop offset=".5" stop-color="#37C2D6" stop-opacity=".8"/><stop offset="1" stop-color="#37C2D6" stop-opacity="0"/></linearGradient>
+        </defs>
+        <g stroke="#2A3542" stroke-width="1.4" fill="none">
+          <path d="M0,80 H360 V150 H720 V90 H1200"/>
+          <path d="M0,180 H220 V240 H560 V180 H900 V250 H1200"/>
+          <path d="M0,300 H480 V240 H820 V300 H1200"/>
+          <path d="M300,0 V150 M720,90 V0 M560,180 V380 M900,250 V380"/>
+        </g>
+        <g fill="#C88A4E">
+          <rect x="352" y="142" width="16" height="16" rx="2"/><rect x="712" y="82" width="16" height="16" rx="2"/>
+          <rect x="212" y="232" width="16" height="16" rx="2"/><rect x="552" y="172" width="16" height="16" rx="2"/>
+          <rect x="472" y="232" width="16" height="16" rx="2"/><rect x="812" y="292" width="16" height="16" rx="2"/>
+        </g>
+        <circle r="4" fill="url(#g1)"><animateMotion dur="6s" repeatCount="indefinite" path="M0,80 H360 V150 H720 V90 H1200"/></circle>
+        <circle r="4" fill="#C88A4E"><animateMotion dur="8s" repeatCount="indefinite" path="M0,180 H220 V240 H560 V180 H900 V250 H1200"/></circle>
+        <circle r="3.5" fill="#37C2D6"><animateMotion dur="7s" repeatCount="indefinite" path="M0,300 H480 V240 H820 V300 H1200"/></circle>
+      </svg>
+      <div class="hero-body">
+        <span class="chip"><span class="dot"></span>modulo AE · 6 CFU · prova scritta 1h</span>
+        <h1 class="h" style="margin-top:14px">Allena l'esame,<br>non solo la teoria.</h1>
+        <p class="lead">Genera prove nel formato del prof. Napoli — 12 quesiti, voto su 30 con lode — con complemento a 2, sintesi di reti combinatorie via Karnaugh e assembly, ogni item ancorato a un capitolo di Hamacher.</p>
+        <div class="btn-row">
+          <button class="btn primary" onclick="go('exam'); startExam('full')">▶ Genera esame completo</button>
+          <button class="btn ghost" onclick="go('study')">Apri i moduli di studio</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" id="stats">
+      <div class="stat"><div class="n" id="s-exams">0</div><div class="l">Esami svolti</div></div>
+      <div class="stat"><div class="n" id="s-best">—</div><div class="l">Miglior voto</div></div>
+      <div class="stat"><div class="n" id="s-avg">—</div><div class="l">Media</div></div>
+      <div class="stat"><div class="n">12<span class="u">/prova</span></div><div class="l">Quesiti · formato reale</div></div>
+    </div>
+
+    <h2 class="sec">Come è fatto l'esame reale</h2>
+    <div class="panel">
+      <p class="lead" style="max-width:none">Dal regolamento del docente e dagli appelli 2024–2025: prova scritta in aula, <b>1 ora</b>, solo documento e penna — nessun appunto. Struttura tipica: <b>~9 crocette</b> (teoria, complemento a 2, riconoscimento porte, snippet assembly), <b>1 sintesi di rete combinatoria</b> con Karnaugh + disegno del circuito, <b>1 esercizio assembly</b>, <b>1 domanda aperta</b>. Si supera con <b>≥18/30</b>; lode ai brillanti. Le figure da completare provengono dalle tavole di Hamacher.</p>
+    </div>
+
+    <h2 class="sec">Riprendi da dove eri</h2>
+    <div class="cards" id="quickTopics"></div>
+
+    <div class="disclaim">⚠︎ Strumento di studio non ufficiale, costruito su appunti studenteschi e sul regolamento pubblico del docente. Le domande sono nello <em>stile</em> dell'esame ma non sono prove reali. Verifica sempre programma e regole aggiornate sul sito del prof. e sul catalogo Sapienza. I riferimenti «Hamacher» rimandano ai capitoli/figure del testo — consultalo per i contenuti integrali.</div>
+  </section>
+
+  <!-- ===================== STUDY ===================== -->
+  <section class="view" id="study">
+    <p class="eyebrow">Moduli di studio</p>
+    <h1 class="h">La teoria, per come la chiede all'esame</h1>
+    <p class="lead">Sintesi operative con i riferimenti a Hamacher e le «trappole» segnalate dagli studenti. Tocca una scheda per approfondire.</p>
+    <div id="topicGrid" class="cards" style="margin-top:20px"></div>
+    <div id="topicDetail"></div>
+  </section>
+
+  <!-- ===================== EXAM ===================== -->
+  <section class="view" id="exam">
+    <div id="examSetup">
+      <p class="eyebrow">Simulatore</p>
+      <h1 class="h">Genera una prova</h1>
+      <p class="lead">Ogni esame è generato al volo: numeri, tabelle di verità e snippet cambiano ogni volta. Scegli il formato.</p>
+      <div class="exam-config" style="margin-top:20px">
+        <div class="opt sel" data-mode="full" onclick="selMode(this,'full')">
+          <div class="ol">Esame completo · 12 quesiti</div>
+          <div class="od">Formato integrale su 30. Crocette + Karnaugh + assembly + domanda aperta.</div>
+        </div>
+        <div class="opt" data-mode="quick" onclick="selMode(this,'quick')">
+          <div class="ol">Quiz lampo · 8 crocette</div>
+          <div class="od">Solo domande auto-correggibili. Voto rapido, per ripasso mirato.</div>
+        </div>
+        <div class="opt" data-mode="binary" onclick="selMode(this,'binary')">
+          <div class="ol">Drill · Complemento a 2 &amp; overflow</div>
+          <div class="od">10 esercizi generati sul binario con segno. La parte che «non deve avere dubbi».</div>
+        </div>
+        <div class="opt" data-mode="logic" onclick="selMode(this,'logic')">
+          <div class="ol">Drill · Reti combinatorie</div>
+          <div class="od">Riconoscimento porte + sintesi con Karnaugh dalla tabella di verità.</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="startExam()">Genera la prova ▶</button>
+      </div>
+    </div>
+    <div id="examRun" style="display:none"></div>
+  </section>
+
+  <!-- ===================== TOOLS ===================== -->
+  <section class="view" id="tools">
+    <p class="eyebrow">Strumenti interattivi</p>
+    <h1 class="h">Calcolatori da banco</h1>
+    <p class="lead">Verifica al volo conversioni e overflow mentre ti eserciti.</p>
+
+    <div class="tool" style="margin-top:20px">
+      <h3>Convertitore &amp; complemento a 2</h3>
+      <div class="th-ref">Hamacher · cap. 1, §1.4 — Rappresentazione dei numeri</div>
+      <div class="field">
+        <label>Decimale</label>
+        <input type="number" id="cvDec" value="-10" oninput="convFromDec()" style="width:120px">
+        <label>Bit</label>
+        <select id="cvBits" onchange="convFromDec()">
+          <option>4</option><option selected>8</option><option>16</option><option>32</option>
+        </select>
+      </div>
+      <div class="out-grid" id="cvOut"></div>
+    </div>
+
+    <div class="tool">
+      <h3>Sommatore binario con flag di overflow</h3>
+      <div class="th-ref">Hamacher · cap. 1 — Aritmetica in complemento a 2 · overflow ⇔ XOR dei riporti sul bit di segno</div>
+      <div class="field">
+        <label>A (CP2)</label><input type="text" id="adA" value="0110" style="width:130px" oninput="doAdd()">
+        <label>B (CP2)</label><input type="text" id="adB" value="0101" style="width:130px" oninput="doAdd()">
+      </div>
+      <div class="out-grid" id="adOut"></div>
+    </div>
+
+    <div class="tool">
+      <h3>Range rappresentabile</h3>
+      <div class="th-ref">Hamacher · cap. 1 — Interi con e senza segno</div>
+      <div class="field">
+        <label>Bit</label>
+        <input type="number" id="rgBits" value="8" min="1" max="64" style="width:90px" oninput="doRange()">
+      </div>
+      <div class="out-grid" id="rgOut"></div>
+    </div>
+  </section>
+
+  <!-- ===================== REFERENCE ===================== -->
+  <section class="view" id="ref">
+    <p class="eyebrow">Cassetta degli attrezzi</p>
+    <h1 class="h">Riferimenti &amp; trappole</h1>
+
+    <h2 class="sec">Figure Hamacher da saper completare</h2>
+    <p class="lead">Uscite negli appelli recenti come «completa lo schema». Studiale finché le disegni a memoria.</p>
+    <div class="figlist" id="figList" style="margin-top:14px"></div>
+
+    <h2 class="sec">Le «trappole» del docente</h2>
+    <p class="lead">Percezioni raccolte dagli studenti — da verificare a lezione, ma utili in fase di preparazione.</p>
+    <div id="trapList"></div>
+
+    <h2 class="sec">Testi &amp; risorse</h2>
+    <div class="panel">
+      <ul class="linklist">
+        <li><span><b>C. Hamacher — Introduzione all'Architettura dei Calcolatori</b> (McGraw Hill, 2013)</span><span class="d">Testo principale del modulo</span></li>
+        <li><span><b>A. Tanenbaum — Architettura dei Calcolatori</b> (Pearson, 2013)</span><span class="d">Testo integrativo</span></li>
+        <li><a href="https://cnapoli.diag.uniroma1.it" target="_blank" rel="noopener">Sito del prof. Napoli</a><span class="d">Teaching · Exams · Calendar</span></li>
+        <li><a href="https://sites.google.com/diag.uniroma1.it/napoli/teaching/exams/em-fin" target="_blank" rel="noopener">Regolamento della prova scritta</a><span class="d">Struttura e punteggi ufficiali</span></li>
+        <li><a href="https://www.dmi.unict.it/tramonta/ae/" target="_blank" rel="noopener">Slide riassuntive (Hamacher)</a><span class="d">Prof. Tramontana — UniCT</span></li>
+        <li><a href="https://github.com/sapienzastudentsnetwork/architettura-degli-elaboratori" target="_blank" rel="noopener">Repo prove d'esame</a><span class="d">Sapienza Students Network</span></li>
+      </ul>
+    </div>
+    <div class="disclaim">Fonti: catalogo Sapienza, sito del docente, dispensa studentesca «AE-[FIN]». Contenuti di studio riscritti in forma originale; per i testi integrali consulta Hamacher.</div>
+  </section>
+</main>
+
+<footer>AE·FIN — palestra d'esame · costruito per lo studio personale · non affiliato alla Sapienza</footer>
+
+<script>
+/* =========================================================
+   STATO & STORAGE (degrada in memoria se localStorage è bloccato)
+   ========================================================= */
+const store = {
+  data:{exams:[], studied:[]},
+  load(){ try{const r=localStorage.getItem('aefin'); if(r) this.data=JSON.parse(r);}catch(e){} },
+  save(){ try{localStorage.setItem('aefin', JSON.stringify(this.data));}catch(e){} }
+};
+store.load();
+
+/* =========================================================
+   NAVIGAZIONE
+   ========================================================= */
+function go(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('active', s.id===v));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.v===v));
+  window.scrollTo({top:0, behavior:'instant'});
+}
+document.getElementById('tabs').addEventListener('click', e=>{
+  const b=e.target.closest('.tab'); if(b) go(b.dataset.v);
+});
+
+/* =========================================================
+   HELPERS BINARIO
+   ========================================================= */
+const clean = s => (s||'').replace(/[^01]/g,'');
+function toBin(n, bits){
+  n = Math.trunc(n);
+  const mod = Math.pow(2, bits);
+  let v = ((n % mod) + mod) % mod;      // wrap in [0, 2^bits)
+  return v.toString(2).padStart(bits,'0');
+}
+function fromBinCP2(s, bits){
+  s = clean(s).padStart(bits,'0').slice(-bits);
+  let v = parseInt(s,2);
+  if (s[0]==='1') v -= Math.pow(2,bits);
+  return v;
+}
+function cp2Valid(n,bits){ const h=Math.pow(2,bits-1); return n>=-h && n<=h-1; }
+const rint = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const OVL = x => `<span class="ovl">${x}</span>`;
+
+/* =========================================================
+   CONTENUTI DI STUDIO  (riscritti in forma originale)
+   ========================================================= */
+const TOPICS = [
+  {id:'bin', t:'Numeri binari & complemento a 2', ref:'Hamacher cap. 1',
+   d:'Rappresentazione con segno, range, overflow. La parte più «spremuta» all\'esame.',
+   body:`
+    <h4>Complemento a 2 in N bit</h4>
+    <p>Un positivo si scrive in binario e si riempie di zeri a sinistra fino a N bit. Per un negativo <code>-x</code>: si scrive <code>x</code> in binario, si invertono tutti i bit (CP1) e si somma <code>1</code>. Il bit più significativo è il segno: <code>0</code> positivo, <code>1</code> negativo. Lo zero ha <b>una sola</b> codifica.</p>
+    <h4>Range</h4>
+    <ul>
+      <li>Senza segno: da <code>0</code> a <code>2ᴺ−1</code> (con 8 bit → 255).</li>
+      <li>CP2: da <code>−2ᴺ⁻¹</code> a <code>+2ᴺ⁻¹−1</code> (con 8 bit → da −128 a +127).</li>
+      <li>CP1 e modulo-e-segno: intervallo simmetrico e <b>due</b> codifiche dello zero.</li>
+    </ul>
+    <h4>Overflow</h4>
+    <p>Nella somma in CP2 l'overflow si verifica sommando due operandi <b>concordi</b> e ottenendo un risultato di segno opposto. Nella sottrazione tra due numeri <b>discordi</b>. Si rileva con lo <b>XOR</b> tra riporto entrante e riporto uscente dal bit di segno.</p>
+    <h4>Shift</h4>
+    <p>Shift a sinistra ≈ moltiplicazione per 2; shift a destra ≈ divisione intera per 2. Eliminare il bit meno significativo di un intero senza segno equivale a dividere per 2.</p>
+    <div class="trap"><div class="tt">Trappola</div>Non definire la RAM come «memoria ad accesso casuale»: va detto che <b>il tempo di accesso al dato non dipende dalla sua posizione</b> in memoria.</div>`},
+
+  {id:'bool', t:'Algebra di Boole & porte logiche', ref:'Hamacher — Appendice A',
+   d:'Insiemi funzionalmente completi, De Morgan, universalità di NAND/NOR.',
+   body:`
+    <h4>Insiemi funzionalmente completi</h4>
+    <p>Con soli <code>AND</code> e <code>OR</code> (∧, ∨) non si sintetizza qualsiasi funzione: manca la negazione, che non si ottiene combinandoli. Sono invece <b>universali</b> sia <code>NAND</code> sia <code>NOR</code>: con uno solo di essi si costruisce qualunque rete combinatoria.</p>
+    <h4>De Morgan</h4>
+    <p>${OVL('A·B')} = ${OVL('A')} + ${OVL('B')}  &nbsp;e&nbsp;  ${OVL('A+B')} = ${OVL('A')} · ${OVL('B')}. Valgono anche per più di due fattori: ${OVL('A·B·C')} = ${OVL('A')}+${OVL('B')}+${OVL('C')}.</p>
+    <div class="trap"><div class="tt">Trappola</div>Secondo gli appunti il docente non gradisce porte <code>AND</code> a 3+ ingressi (tratta l'AND come non associativo) e usa i simboli {∧, ∨} senza scrivere «AND/OR». Nei disegni scomponi in porte a 2 ingressi.</div>`},
+
+  {id:'karnaugh', t:'Sintesi & mappe di Karnaugh', ref:'Hamacher — Appendice A',
+   d:'Dalla tabella di verità al circuito minimo. Esce quasi sempre.',
+   body:`
+    <h4>Idea</h4>
+    <p>La mappa di Karnaugh dispone i mintermini in celle adiacenti secondo il <b>codice Gray</b> (una sola variabile cambia tra celle vicine). Raggruppando gli <code>1</code> in blocchi di potenze di 2 (1, 2, 4, 8…) si eliminano le variabili che cambiano dentro il gruppo, ottenendo una somma di prodotti (SOP) minima.</p>
+    <ul>
+      <li>Gruppi il più grande possibile → prodotti più corti → meno porte.</li>
+      <li>Le celle sono adiacenti anche «a bordo tavola» (wrap-around).</li>
+      <li>Le condizioni di indifferenza si usano per allargare i gruppi, valutandole singolarmente (tutte 0 o tutte 1).</li>
+    </ul>
+    <p>All'esame: dalla tabella ricavi la SOP minima, poi <b>disegni il circuito</b>. Allenati nel Simulatore → drill «Reti combinatorie».</p>`},
+
+  {id:'ff', t:'Circuiti sequenziali & flip-flop', ref:'Hamacher — Appendice A',
+   d:'Bistabilità, sincroni vs asincroni, master-slave.',
+   body:`
+    <h4>Flip-flop</h4>
+    <p>Elemento bistabile che memorizza <b>1 bit</b>: mantiene uno dei due stati stabili finché un ingresso non lo commuta. Costituito da porte logiche retroazionate; è il mattone di registri e contatori.</p>
+    <h4>Sincroni vs asincroni</h4>
+    <p>I <b>sincroni</b> (edge-triggered) cambiano stato solo sul fronte del clock; gli <b>asincroni</b> reagiscono immediatamente agli ingressi, senza clock.</p>
+    <h4>Master-slave</h4>
+    <p>Due latch D in serie: il <b>master</b> campiona l'ingresso quando il clock è alto, lo <b>slave</b> trasferisce il valore quando il clock commuta. Il trasferimento in due fasi evita instabilità e garantisce un'uscita prevedibile sul fronte.</p>`},
+
+  {id:'isa', t:'RISC vs CISC & assembly', ref:'Hamacher cap. 2–3',
+   d:'ISA, modi di indirizzamento, RTN, sottoprogrammi e pile.',
+   body:`
+    <h4>RISC</h4>
+    <ul>
+      <li>Istruzioni semplici, lunghezza fissa (una parola).</li>
+      <li>Modello load/store: i dati vanno caricati in registro prima di essere elaborati; niente operazioni direttamente memoria-memoria.</li>
+      <li>Modi di indirizzamento pochi e semplici → circuito veloce, adatto alla pipeline.</li>
+      <li>Esempi: ARM, Nios II.</li>
+    </ul>
+    <h4>CISC</h4>
+    <ul>
+      <li>Istruzioni complesse, di lunghezza variabile; operazioni anche direttamente su operandi in memoria.</li>
+      <li>Programmi più corti ma decodifica più onerosa. Esempi: Intel IA-32, ColdFire.</li>
+    </ul>
+    <h4>RTN (Register Transfer Notation)</h4>
+    <p><code>Add R1,R2,R3</code> → <code>R1 ← [R2]+[R3]</code>. «Aumenta di LOC il valore in R1» → <code>R1 ← [LOC]+[R1]</code>. Le parentesi quadre indicano «contenuto di».</p>
+    <pre><span class="cm">; moltiplicazione tramite somme (stile RISC)</span>
+      Load  LOC1, NUM1
+      Load  LOC2, NUM2
+      Clear LOC3
+<span class="lb">CICLO:</span> Sub   LOC2, LOC2, 1
+      Add   LOC3, LOC3, LOC1
+      Branch_if_[LOC2]&gt;0  CICLO
+      Store LOC3, RES</pre>`},
+
+  {id:'irq', t:'Interruzioni & eccezioni', ref:'Hamacher cap. 4',
+   d:'ISR, differenza IRQ/eccezioni, debugger (trace & breakpoint).',
+   body:`
+    <h4>Interruzioni</h4>
+    <p>Segnali <b>hardware asincroni</b> che viaggiano sulle linee di controllo del bus, generati da dispositivi esterni. Il processore sospende il programma, <b>salva lo stato</b> (PC, registri) e passa alla <b>ISR</b> (routine di servizio); al termine ripristina lo stato e riprende.</p>
+    <h4>Eccezioni</h4>
+    <p>Eventi <b>sincroni</b>, generati dal processore durante l'esecuzione (divisione per 0, overflow, codice illegale, chiamate di sistema). Più versatili: possono richiamare routine diverse. Usate anche per il debugging.</p>
+    <h4>Debugger</h4>
+    <ul>
+      <li><b>Trace mode</b>: un'interruzione dopo ogni istruzione → esecuzione passo-passo.</li>
+      <li><b>Breakpoint</b>: interruzione solo a punti scelti → procede a piena velocità fino al successivo.</li>
+    </ul>`},
+
+  {id:'pipe', t:'Pipeline & prestazioni', ref:'Hamacher cap. 5–6',
+   d:'Sovrapposizione fetch-decode-execute, dipendenza dai dati, forwarding.',
+   body:`
+    <h4>Pipelining</h4>
+    <p>Si divide l'esecuzione in stadi (fetch, decode, execute, memory, write) affidati a unità hardware dedicate. Mentre un'istruzione è in un certo stadio, la successiva occupa lo stadio precedente: le esecuzioni si <b>sovrappongono</b> come in una catena di montaggio, aumentando il throughput.</p>
+    <h4>Dipendenza dai dati</h4>
+    <p>Se un'istruzione ha bisogno del risultato di quella precedente si crea uno <b>stallo</b>. Si mitiga con l'<b>operand forwarding</b>: il risultato è inoltrato direttamente all'unità che lo richiede senza attendere la scrittura in registro.</p>`},
+
+  {id:'mem', t:'Gerarchia di memoria & cache', ref:'Hamacher cap. 8',
+   d:'Hit/miss, località, mappature, RAM/ROM, LRU.',
+   body:`
+    <h4>Cache</h4>
+    <p>Memoria piccola, veloce e costosa (SRAM) tra CPU e memoria principale (DRAM). Conserva copie dei dati usati di recente sfruttando la <b>località temporale</b> (ciò a cui si è acceduto di recente servirà di nuovo a breve) e <b>spaziale</b> (indirizzi vicini tendono a essere referenziati a breve).</p>
+    <ul>
+      <li><b>Cache hit</b>: il dato è in cache → accesso rapido.</li>
+      <li><b>Cache miss</b>: si scende nella gerarchia (L2, RAM, disco) → ritardo detto <b>miss penalty</b>.</li>
+      <li>Mappature: diretta (semplice, soggetta a conflitti), associativa (flessibile, costosa), set-associativa (compromesso).</li>
+      <li>Sostituzione: <b>LRU</b> (meno usato di recente), alternativa <b>LFU</b>.</li>
+    </ul>
+    <h4>Perché non una cache enorme?</h4>
+    <p>Costo, spazio fisico e — soprattutto — <b>velocità</b>: indirizzi più grandi rallentano l'accesso. Meglio più livelli (L1 piccola/veloce, L2 più grande/lenta).</p>
+    <h4>Tipi di ROM</h4>
+    <p>EPROM cancellata con raggi ultravioletti, EEPROM cancellata elettricamente.</p>`},
+
+  {id:'ieee', t:'Virgola mobile IEEE 754', ref:'Hamacher cap. 1',
+   d:'Segno, esponente polarizzato, mantissa.',
+   body:`
+    <h4>Singola precisione (32 bit)</h4>
+    <p>1 bit di <b>segno</b>, 8 bit di <b>esponente</b> con polarizzazione (bias 127), 23 bit di <b>mantissa</b> (con bit implicito «1.» nei numeri normalizzati). Valore ≈ <code>(−1)ˢ · 1.M · 2^(E−127)</code>.</p>
+    <p>È lo standard richiesto quando si parla di rappresentazione dei reali: la sigla da ricordare è <b>IEEE 754</b>.</p>`},
+];
+
+/* =========================================================
+   RENDER SCHEDE STUDIO
+   ========================================================= */
+function renderTopicCards(container, list){
+  container.innerHTML = list.map((t,i)=>`
+    <div class="card" onclick="openTopic('${t.id}')">
+      <span class="bar"></span>
+      <div class="idx">MOD ${String(i+1).padStart(2,'0')}</div>
+      <h3>${t.t}</h3>
+      <p>${t.d}</p>
+      <div class="ref">${t.ref}</div>
+    </div>`).join('');
+}
+function openTopic(id){
+  const t = TOPICS.find(x=>x.id===id);
+  if(!store.data.studied.includes(id)){ store.data.studied.push(id); store.save(); refreshStats(); }
+  const box = document.getElementById('topicDetail');
+  document.getElementById('topicGrid').style.display='none';
+  box.innerHTML = `
+    <div class="detail-head" style="margin-top:6px">
+      <div><p class="eyebrow">${t.ref}</p><h1 class="h" style="font-size:28px">${t.t}</h1></div>
+      <button class="btn ghost mini" onclick="closeTopic()">← Tutti i moduli</button>
+    </div>
+    <div class="panel prose" style="margin-top:14px">${t.body}</div>
+    <div class="btn-row"><button class="btn primary" onclick="go('exam');startExam('quick')">Mettiti alla prova ▶</button></div>`;
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeTopic(){
+  document.getElementById('topicDetail').innerHTML='';
+  document.getElementById('topicGrid').style.display='';
+}
+
+/* =========================================================
+   BANCA DOMANDE — statiche (crocette teoria)
+   ========================================================= */
+const MCQ = [
+  {q:'Quali operatori rendono l\'algebra di Boole funzionalmente completa da soli?', c:['AND e OR','NAND e NOR','NOT e AND','XOR e OR'], a:1, ref:'Hamacher App. A'},
+  {q:'Con soli AND e OR, perché non si sintetizza ogni funzione?', c:['Manca la negazione','Sono troppo lenti','Non sono associativi','Consumano troppo'], a:0, ref:'Hamacher App. A'},
+  {q:'Che cos\'è un cache <b>miss</b>?', c:['Il dato è in cache','Il dato non è in cache e si scende nella gerarchia','La cache è piena','Un errore di parità'], a:1, ref:'Hamacher cap. 8'},
+  {q:'Il ritardo introdotto dopo un cache miss si chiama:', c:['hit ratio','miss penalty','write-back','latch delay'], a:1, ref:'Hamacher cap. 8'},
+  {q:'Quali proprietà sfrutta la cache?', c:['Solo temporale','Solo spaziale','Località spaziale e temporale','Nessuna delle due'], a:2, ref:'Hamacher cap. 8'},
+  {q:'Algoritmo di sostituzione più comune in cache:', c:['FIFO','LRU','Random','MRU'], a:1, ref:'Hamacher cap. 8'},
+  {q:'La EPROM si cancella:', c:['Elettricamente','Con raggi ultravioletti','Meccanicamente','Non si cancella'], a:1, ref:'Hamacher cap. 8'},
+  {q:'La EEPROM si cancella:', c:['Con raggi UV','Elettricamente','Termicamente','Con luce visibile'], a:1, ref:'Hamacher cap. 8'},
+  {q:'RISC sta per:', c:['Reduced Instruction Set Computing','Rapid Internal Signal Control','Random Instruction Sequence Computing','Reduced Internal Storage Cache'], a:0, ref:'Hamacher cap. 2'},
+  {q:'Caratteristica tipica di un\'architettura RISC:', c:['Istruzioni di lunghezza variabile','Operazioni memoria-memoria','Modello load/store con istruzioni a lunghezza fissa','Nessuna pipeline'], a:2, ref:'Hamacher cap. 2'},
+  {q:'Le interruzioni hardware sono eventi:', c:['Sincroni','Asincroni','Deterministici sul clock','Generati dalla ALU'], a:1, ref:'Hamacher cap. 4'},
+  {q:'Le eccezioni sono generate:', c:['Da dispositivi esterni','Dal processore durante l\'esecuzione','Solo dalla tastiera','Dal bus dati'], a:1, ref:'Hamacher cap. 4'},
+  {q:'Le richieste di interruzione viaggiano su quali linee del bus?', c:['Linee dati','Linee indirizzi','Linee di controllo','Linee di alimentazione'], a:2, ref:'Hamacher cap. 4'},
+  {q:'La <b>trace mode</b> del debugger genera un\'interruzione:', c:['A ogni breakpoint','Dopo ogni istruzione','A fine programma','Mai'], a:1, ref:'Hamacher cap. 4'},
+  {q:'Che cos\'è un flip-flop?', c:['Un registro a 8 bit','Un elemento bistabile che memorizza 1 bit','Una porta logica universale','Un tipo di bus'], a:1, ref:'Hamacher App. A'},
+  {q:'Un flip-flop master-slave è di tipo:', c:['Asincrono','Sincrono (edge-triggered)','Combinatorio','Analogico'], a:1, ref:'Hamacher App. A'},
+  {q:'Il miglioramento del pipelining deriva da:', c:['Clock più veloce','Sovrapposizione (parallelismo) delle fasi delle istruzioni','Meno registri','Cache più grande'], a:1, ref:'Hamacher cap. 6'},
+  {q:'La dipendenza dai dati in pipeline si mitiga con:', c:['Operand forwarding','Aumento del clock','Riduzione dei registri','Disattivare la cache'], a:0, ref:'Hamacher cap. 6'},
+  {q:'Lo standard per la rappresentazione in virgola mobile è:', c:['ASCII','IEEE 754','Unicode','ISO 8859'], a:1, ref:'Hamacher cap. 1'},
+  {q:'La memoria cache è tipicamente realizzata con:', c:['DRAM','SRAM','EEPROM','Disco'], a:1, ref:'Hamacher cap. 8'},
+  {q:'In <code>Add R1,R2,R3</code>, dove finisce il risultato?', c:['In R2','In R3','In R1','In memoria LOC'], a:2, ref:'Hamacher cap. 2'},
+  {q:'La base del sistema numerico Maya è:', c:['10 (decimale)','20 (vigesimale)','16 (esadecimale)','8 (ottale)'], a:1, ref:'Hamacher cap. 1'},
+  {q:'Il loader si occupa principalmente di:', c:['Compilare il codice','Caricare programmi in memoria (e dello spiazzamento)','Gestire gli interrupt','Sostituire i blocchi cache'], a:1, ref:'Hamacher cap. 2'},
+  {q:'Il linker serve a:', c:['Tradurre in linguaggio macchina','Combinare più file oggetto risolvendo i riferimenti esterni','Gestire la memoria virtuale','Cancellare la EPROM'], a:1, ref:'Hamacher cap. 2'},
+  {q:'Uno shift a sinistra di un intero equivale a:', c:['Divisione per 2','Moltiplicazione per 2','Negazione','Complemento a 1'], a:1, ref:'Hamacher cap. 1'},
+  {q:'Chi traduce il codice sorgente in linguaggio macchina?', c:['Il sistema operativo','Il compilatore','Il loader','La ALU'], a:1, ref:'Hamacher cap. 2'},
+  {q:'Chi gestisce la scrittura sulla memoria di massa?', c:['La cache','Il sistema operativo','Il compilatore','Il registro PC'], a:1, ref:'Hamacher cap. 4'},
+  {q:'Quale meccanismo compensa la differenza di velocità tra due dispositivi?', c:['Il buffer','La ALU','Il PC','Il flip-flop'], a:0, ref:'Hamacher cap. 4'},
+  {q:'Le prestazioni del processore dipendono dalla velocità di:', c:['Solo esecuzione','Prelievo (fetch) ed esecuzione','Solo decodifica','Solo scrittura'], a:1, ref:'Hamacher cap. 5'},
+  {q:'Dove salva la ALU i risultati intermedi di un calcolo?', c:['In cache','Nei registri','In memoria secondaria','Nel PC'], a:1, ref:'Hamacher cap. 5'},
+  {q:'Quale memoria è la più lenta della gerarchia?', c:['Cache L1','Registri','Memoria secondaria','SRAM'], a:2, ref:'Hamacher cap. 8'},
+  {q:'Principale svantaggio di una DRAM molto grande:', c:['Consuma poco','Ne viene compromessa la velocità','È troppo veloce','Non serve refresh'], a:1, ref:'Hamacher cap. 8'},
+  {q:'Un\'eccezione è sollevata se un processo tenta di…', c:['Modificare la priorità di altri processi','Accedere alla memoria di altri utenti','Modificare la modalità del sistema','Tutte le precedenti'], a:3, ref:'Hamacher cap. 4'},
+  {q:'Gli interrupt sono particolarmente importanti nei sistemi:', c:['Batch','Real-time','A singolo task','Analogici'], a:1, ref:'Hamacher cap. 4'},
+  {q:'Le interruzioni sono fondamentali per i sistemi:', c:['Monotasking','Multitasking','Combinatori','Puramente sincroni'], a:1, ref:'Hamacher cap. 4'},
+  {q:'Cosa viene trasportato da un bus?', c:['Solo dati','Solo indirizzi','Dati, indirizzi e segnali di controllo','Solo controlli'], a:2, ref:'Hamacher cap. 4'},
+  {q:'Quali rappresentazioni hanno due codifiche dello zero?', c:['CP2','Senza segno','Complemento a 1 e modulo-e-segno','Esadecimale'], a:2, ref:'Hamacher cap. 1'},
+  {q:'Eliminare il bit meno significativo di un intero senza segno equivale a:', c:['Moltiplicare per 2','Dividere (intero) per 2','Negare','Nulla'], a:1, ref:'Hamacher cap. 1'},
+  {q:'In una rappresentazione Big Endian, il bit di segno si trova:', c:['Alla fine','All\'inizio (byte più significativo)','Al centro','In un registro a parte'], a:1, ref:'Hamacher cap. 2'},
+  {q:'Quale porta logica si ottiene combinando due NAND?', c:['OR','AND','NOR','XNOR'], a:1, ref:'Hamacher App. A'},
+  {q:'Quale istruzione ARM trasferisce un valore da un registro a un altro?', c:['CMP','ADD','SUB','MOV'], a:3, ref:'Hamacher cap. 3'},
+  {q:'Quale istruzione realizza un salto condizionato «se maggiore»?', c:['BGT','MOV','MUL','CLR'], a:0, ref:'Hamacher cap. 2'},
+  {q:'Quante cifre esadecimali servono per rappresentare 33?', c:['1','2','3','4'], a:1, ref:'Hamacher cap. 1'},
+  {q:'Quale porta rileva l\'overflow sommando due numeri con n bit?', c:['AND','OR','XOR','NAND'], a:2, ref:'Hamacher cap. 1'},
+  {q:'Come ti accorgi di un overflow sommando due positivi in CP2?', c:['Ottieni un numero negativo','Ottieni zero','Il risultato raddoppia','Nessun segnale'], a:0, ref:'Hamacher cap. 1'},
+  {q:'In CP2 l\'overflow può verificarsi nella:', c:['Somma di due discordi','Sottrazione di due discordi','Somma con lo zero','Divisione'], a:1, ref:'Hamacher cap. 1'},
+  {q:'Perché una cella DRAM va rinfrescata periodicamente?', c:['Il transistor si rompe','Il condensatore si scarica per correnti di dispersione','Il clock si ferma','La cache la sovrascrive'], a:1, ref:'Hamacher cap. 8'},
+  {q:'Come vengono trasmessi i dati su USB?', c:['In parallelo','In modo seriale','Solo in analogico','Sul bus indirizzi'], a:1, ref:'Hamacher cap. 4'},
+  {q:'La SRAM (celle della cache) rispetto alla DRAM:', c:['Necessita di refresh','Non necessita di refresh','È più lenta','È più densa'], a:1, ref:'Hamacher cap. 8'},
+];
+
+const GATES = {
+  AND:[0,0,0,1], OR:[0,1,1,1], NAND:[1,1,1,0], NOR:[1,0,0,0], XOR:[0,1,1,0], XNOR:[1,0,0,1]
+};
+
+/* =========================================================
+   GENERATORI DINAMICI  (ogni chiamata → oggetto quesito)
+   Tipi: 'mc' (auto), 'fill' (auto), 'self' (autovalutazione)
+   ========================================================= */
+function genMC(){
+  const m = pick(MCQ);
+  const order = [0,1,2,3].sort(()=>Math.random()-.5);
+  return {type:'mc', cat:'Crocetta', pts:2, ref:m.ref,
+    q:m.q, choices:order.map(i=>m.c[i]), correct:order.indexOf(m.a)};
+}
+function genCP2(){
+  const bits = pick([4,8]);
+  const half = Math.pow(2,bits-1);
+  const n = rint(-half, half-1);
+  return {type:'fill', cat:'Completamento', pts:2, ref:'Hamacher cap. 1',
+    q:`Scrivi <b>${n}</b> in complemento a 2 su <b>${bits} bit</b>.`,
+    answer:toBin(n,bits), placeholder:`${bits} bit`,
+    hint:`${n} ≥ 0 → binario con zeri a sinistra. Se negativo: inverti i bit di |${n}| e somma 1.`};
+}
+function genArith(){
+  const bits = pick([4,8]);
+  const half = Math.pow(2,bits-1);
+  let a,b; do{ a=rint(-half,half-1); b=rint(-half,half-1);}while(Math.abs(a-b)<1);
+  const op = pick(['+','−']);
+  const res = op==='+' ? a+b : a-b;
+  const ovf = !cp2Valid(res,bits);
+  return {type:'mc', cat:'Aritmetica CP2', pts:2, ref:'Hamacher cap. 1',
+    q:`In CP2 a ${bits} bit calcoli <code>${toBin(a,bits)}</code> ${op} <code>${toBin(b,bits)}</code> (${a} ${op} ${b}). Cosa accade?`,
+    choices:shuffleKeep([
+      {t:`Risultato ${res}, nessun overflow`, ok:!ovf},
+      {t:`Overflow: risultato fuori dall'intervallo [${-half}, ${half-1}]`, ok:ovf},
+      {t:`Risultato ${res+ (ovf?1:2)}, nessun overflow`, ok:false},
+      {t:`Errore di parità`, ok:false},
+    ])};
+}
+function genHex(){
+  const n = rint(16, 255);
+  return {type:'fill', cat:'Conversione', pts:2, ref:'Hamacher cap. 1',
+    q:`Converti <b>${n}</b> (decimale) in <b>esadecimale</b>.`,
+    answer:n.toString(16).toUpperCase(), normalize:s=>s.toUpperCase().replace(/[^0-9A-F]/g,''),
+    placeholder:'es. 1F', hint:`${n} = ${Math.floor(n/16)}·16 + ${n%16}`};
+}
+function genMaxRange(){
+  const bits = pick([4,8]);
+  const rep = pick(['senza segno','in CP2','il minimo negativo in CP2']);
+  let val, q;
+  if(rep==='senza segno'){ val=Math.pow(2,bits)-1; q=`Qual è il massimo intero rappresentabile con ${bits} bit senza segno?`; }
+  else if(rep==='in CP2'){ val=Math.pow(2,bits-1)-1; q=`Qual è il massimo intero positivo in CP2 con ${bits} bit?`; }
+  else { val=-Math.pow(2,bits-1); q=`Qual è il minimo (più negativo) rappresentabile in CP2 con ${bits} bit?`; }
+  const opts = new Set([val, val+1, val-1, Math.pow(2,bits-1)]);
+  const arr=[...opts].slice(0,4);
+  return {type:'mc', cat:'Range', pts:2, ref:'Hamacher cap. 1',
+    q, choices:shuffleKeep(arr.map(v=>({t:String(v), ok:v===val})))};
+}
+function genGate(){
+  const name = pick(Object.keys(GATES));
+  const tt = GATES[name];
+  const table = `<table class="ttable"><tr><th>A</th><th>B</th><th>Y</th></tr>
+    ${[[0,0],[0,1],[1,0],[1,1]].map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="out">${tt[i]}</td></tr>`).join('')}</table>`;
+  const opts = ['AND','OR','NAND','NOR','XOR','XNOR'].sort(()=>Math.random()-.5).slice(0,4);
+  if(!opts.includes(name)) opts[0]=name;
+  return {type:'mc', cat:'Riconoscimento porta', pts:2, ref:'Hamacher App. A',
+    q:`Quale porta logica realizza questa tabella di verità?${table}`,
+    choices:shuffleKeep(opts.map(o=>({t:o, ok:o===name})))};
+}
+function genAsmSnippet(){
+  const start = rint(2,6), step = rint(1,3);
+  let val=start, count=0;
+  // R1 parte da start, ciclo: R1 = R1 - step finché >0, conta iterazioni
+  while(val>0){ val-=step; count++; }
+  const snippet = `<pre>      Move  R1, #${start}
+      Clear R2
+<span class="lb">L:</span>    Sub   R1, R1, #${step}
+      Add   R2, R2, #1
+      Branch_if_[R1]&gt;0  L</pre>`;
+  return {type:'mc', cat:'Assembly · snippet', pts:2, ref:'Hamacher cap. 2',
+    q:`Quale valore contiene <code>R2</code> al termine di questo programma?${snippet}`,
+    choices:shuffleKeep([
+      {t:String(count), ok:true},
+      {t:String(count+1), ok:false},
+      {t:String(Math.max(1,count-1)), ok:false},
+      {t:String(start), ok:false},
+    ])};
+}
+function shuffleKeep(arr){
+  return arr.slice().sort(()=>Math.random()-.5).map(o=>({t:o.t, ok:o.ok}));
+}
+
+/* ---- Karnaugh (auto-valutazione con SOP generatrice) ---- */
+function genKarnaugh(){
+  const vars=['A','B','C'];
+  const nImpl = pick([1,2]);
+  const impls=[];
+  for(let k=0;k<nImpl;k++){
+    const nfix = pick([1,2]);
+    const chosen = vars.slice().sort(()=>Math.random()-.5).slice(0,nfix);
+    const m={}; chosen.forEach(v=>m[v]=pick([0,1]));
+    impls.push(m);
+  }
+  // tabella di verità
+  const rows=[];
+  for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c=0;c<2;c++){
+    const asg={A:a,B:b,C:c};
+    const y = impls.some(im=>Object.keys(im).every(v=>asg[v]===im[v])) ? 1:0;
+    rows.push({a,b,c,y});
+  }
+  if(rows.every(r=>r.y===0)||rows.every(r=>r.y===1)) return genKarnaugh();
+  const table = `<table class="ttable"><tr><th>A</th><th>B</th><th>C</th><th>Y</th></tr>
+    ${rows.map(r=>`<tr><td>${r.a}</td><td>${r.b}</td><td>${r.c}</td><td class="out">${r.y}</td></tr>`).join('')}</table>`;
+  const sop = impls.map(im=>vars.filter(v=>v in im).map(v=>im[v]?v:OVL(v)).join('·')).join(' + ');
+  return {type:'self', cat:'Sintesi reti combinatorie', pts:5, ref:'Hamacher App. A',
+    q:`Minimizza con Karnaugh la funzione <code>Y(A,B,C)</code> e disegna il circuito.${table}`,
+    model:`Una SOP minima valida è: <b>Y = ${sop}</b>.<br><span style="color:var(--muted);font-size:13px">Forme equivalenti sono accettabili se coprono esattamente gli stessi mintermini. Ricorda di scomporre in porte a 2 ingressi nel disegno.</span>`};
+}
+function genAsmWrite(){
+  const bank=[
+    {q:'Scrivi un programma in stile RISC che calcoli la moltiplicazione di due numeri in LOC1 e LOC2 tramite somme successive, salvando il risultato in LOC3.',
+     model:`<pre>      Load  LOC1, NUM1
+      Load  LOC2, NUM2
+      Clear LOC3
+<span class="lb">CICLO:</span> Sub   LOC2, LOC2, 1
+      Add   LOC3, LOC3, LOC1
+      Branch_if_[LOC2]&gt;0  CICLO
+      Store LOC3, RES</pre>`},
+    {q:'Scrivi un programma che sommi N valori contigui a partire dall\'indirizzo LIST e salvi il totale in SUM.',
+     model:`<pre>      Load  N, R1
+      Move  R2, #LIST
+      Clear R3
+<span class="lb">L:</span>    Load  (R2), R4
+      Add   R3, R3, R4
+      Add   R2, R2, #4
+      Sub   R1, R1, #1
+      Branch_if_[R1]&gt;0  L
+      Store R3, SUM</pre>`},
+  ];
+  const b=pick(bank);
+  return {type:'self', cat:'Assembly · scrittura', pts:4, ref:'Hamacher cap. 2', q:b.q, model:b.model};
+}
+function genOpen(){
+  const bank=[
+    {q:'Spiega la differenza tra interruzioni ed eccezioni.', model:'Le interruzioni sono segnali hardware asincroni da dispositivi esterni (sulle linee di controllo del bus); le eccezioni sono eventi software sincroni generati dal processore (div/0, overflow, chiamate di sistema). Entrambe sospendono il programma, salvano lo stato e invocano una routine; le eccezioni sono più versatili e possono richiamare routine diverse. Cita ISR e salvataggio di PC/registri.'},
+    {q:'Che cos\'è il pipelining e quale problema introduce?', model:'Sovrapposizione delle fasi (fetch, decode, execute, memory, write) di istruzioni diverse su unità dedicate → maggiore throughput. Introduce la dipendenza dai dati (stalli), mitigata con operand forwarding.'},
+    {q:'Differenza tra RAM e cache, definendo località spaziale e temporale.', model:'Entrambe volatili. La cache è più piccola, veloce e costosa (SRAM), tiene copie dei dati frequenti. Nella RAM il tempo di accesso NON dipende dalla posizione del dato. Località temporale: dati usati di recente riusati a breve; spaziale: indirizzi vicini referenziati a breve.'},
+    {q:'Quali sono le limitazioni di una cache L1 molto grande (rispetto ad aggiungere L2)?', model:'Costo elevato, maggiore spazio fisico e soprattutto minore velocità (indirizzi più grandi → accesso più lento). Meglio una gerarchia L1 piccola/veloce + L2 più grande/lenta.'},
+    {q:'Perché conviene aggiornare il PC all\'istruzione successiva e non a quella corrente?', model:'Per la sequenzialità dell\'esecuzione: dopo il fetch, incrementare il PC prepara la prossima istruzione senza ricalcolo, utile in pipeline (fetch anticipato). I salti (branch) caricano un nuovo indirizzo nel PC.'},
+  ];
+  const b=pick(bank);
+  return {type:'self', cat:'Domanda aperta', pts:3, ref:'Hamacher cap. 2–8', q:b.q, model:b.model};
+}
+
+/* =========================================================
+   COSTRUZIONE ESAME
+   ========================================================= */
+let examMode='full';
+function selMode(el,m){ document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); el.classList.add('sel'); examMode=m; }
+
+function buildExam(mode){
+  const objectivePool=[genCP2,genArith,genHex,genMaxRange,genGate,genAsmSnippet];
+  let items=[];
+  if(mode==='full'){
+    for(let i=0;i<6;i++) items.push(genMC());
+    items.push(genCP2()); items.push(genGate()); items.push(genAsmSnippet());
+    items.push(genKarnaugh()); items.push(genAsmWrite()); items.push(genOpen());
+  } else if(mode==='quick'){
+    for(let i=0;i<4;i++) items.push(genMC());
+    items.push(genCP2()); items.push(genGate()); items.push(genArith()); items.push(genMaxRange());
+  } else if(mode==='binary'){
+    for(let i=0;i<4;i++) items.push(genCP2());
+    for(let i=0;i<3;i++) items.push(genArith());
+    for(let i=0;i<3;i++) items.push(genMaxRange());
+  } else if(mode==='logic'){
+    for(let i=0;i<5;i++) items.push(genGate());
+    items.push(genMC()); items.push(genKarnaugh()); items.push(genKarnaugh());
+  }
+  // normalizza punteggi per far tornare /30 negli esami "voto"
+  return items.map((it,i)=>({...it, i}));
+}
+
+let CURRENT=null;
+function startExam(forceMode){
+  const mode = forceMode || examMode;
+  CURRENT = {mode, items:buildExam(mode), answers:{}, graded:false};
+  document.getElementById('examSetup').style.display='none';
+  const run=document.getElementById('examRun'); run.style.display='block';
+  const total = CURRENT.items.reduce((s,x)=>s+x.pts,0);
+  run.innerHTML = `
+    <div class="detail-head">
+      <div><p class="eyebrow">${labelMode(mode)} · ${CURRENT.items.length} quesiti</p><h1 class="h" style="font-size:26px">Prova in corso</h1></div>
+      <button class="btn ghost mini" onclick="resetExam()">← Nuovo</button>
+    </div>
+    <div id="qlist" style="margin-top:14px">${CURRENT.items.map(renderQ).join('')}</div>
+    <button class="btn primary" style="margin-top:6px" onclick="gradeExam(${total})">Correggi la prova ▶</button>
+    <div id="result" style="margin-top:22px"></div>`;
+  window.scrollTo({top:0});
+}
+function labelMode(m){return {full:'Esame completo',quick:'Quiz lampo',binary:'Drill complemento a 2',logic:'Drill reti combinatorie'}[m];}
+
+function renderQ(it){
+  let body='';
+  if(it.type==='mc'){
+    body = `<div class="choices">${it.choices.map((c,ci)=>{
+      const txt = typeof c==='string'? c : c.t;
+      return `<div class="choice" data-q="${it.i}" data-c="${ci}" onclick="pickChoice(${it.i},${ci})"><span class="k">${'abcd'[ci]}</span><span>${txt}</span></div>`;
+    }).join('')}</div>`;
+  } else if(it.type==='fill'){
+    body = `<input class="fill" data-q="${it.i}" placeholder="${it.placeholder||''}" oninput="CURRENT.answers[${it.i}]=this.value">`;
+  } else {
+    body = `<div class="selfgrade"><span class="sl">Rispondi su carta, poi:</span>
+      <button class="btn ghost mini" onclick="revealModel(${it.i})">Mostra soluzione modello</button></div>`;
+  }
+  return `<div class="q" id="q${it.i}">
+    <div class="q-top"><span class="q-num">${String(it.i+1).padStart(2,'0')}</span>
+      <span class="q-cat">${it.cat}</span><span class="cite">${it.ref}</span>
+      <span class="q-pts">${it.pts.toFixed(2)} pt</span></div>
+    <div class="q-body">${it.q}</div>
+    ${body}
+    <div class="reveal" id="rv${it.i}"></div>
+  </div>`;
+}
+function pickChoice(qi,ci){
+  if(CURRENT.graded) return;
+  CURRENT.answers[qi]=ci;
+  document.querySelectorAll(`.choice[data-q="${qi}"]`).forEach(el=>el.classList.toggle('sel', +el.dataset.c===ci));
+}
+function revealModel(qi){
+  const it=CURRENT.items.find(x=>x.i===qi);
+  const rv=document.getElementById('rv'+qi);
+  rv.innerHTML=`<div class="rl">Soluzione modello</div>${it.model}
+    <div class="selfgrade"><span class="sl">Come te la sei cavata?</span>
+      <button class="btn ghost mini" onclick="selfMark(${qi},1)">✓ Corretta</button>
+      <button class="btn ghost mini" onclick="selfMark(${qi},.5)">≈ Parziale</button>
+      <button class="btn ghost mini" onclick="selfMark(${qi},0)">✗ No</button>
+      <span id="sm${qi}"></span></div>`;
+  rv.classList.add('show');
+}
+function selfMark(qi,frac){
+  CURRENT.answers['self_'+qi]=frac;
+  document.getElementById('sm'+qi).innerHTML=`<span class="verdict ${frac?'ok':'no'}">${frac===1?'+pieno':frac===.5?'+metà':'0 pt'}</span>`;
+}
+
+function gradeExam(total){
+  if(CURRENT.graded) return;
+  CURRENT.graded=true;
+  let score=0;
+  CURRENT.items.forEach(it=>{
+    const rv=document.getElementById('rv'+it.i);
+    if(it.type==='mc'){
+      const chosen=CURRENT.answers[it.i];
+      const correctIdx = it.choices.findIndex(c=> typeof c==='string'? false : c.ok) ;
+      const cIdx = it.correct!==undefined ? it.correct : correctIdx;
+      document.querySelectorAll(`.choice[data-q="${it.i}"]`).forEach(el=>{
+        const k=+el.dataset.c;
+        if(k===cIdx) el.classList.add('correct');
+        if(k===chosen && chosen!==cIdx) el.classList.add('wrong');
+      });
+      if(chosen===cIdx){ score+=it.pts; }
+      rv.innerHTML=`<div class="rl">${chosen===cIdx?'Corretta':'Da rivedere'}</div><span class="cite">${it.ref}</span>`;
+      rv.classList.add('show');
+    } else if(it.type==='fill'){
+      const raw=(CURRENT.answers[it.i]||'');
+      const norm = it.normalize? it.normalize(raw) : clean(raw);
+      const target = it.normalize? it.normalize(it.answer) : clean(it.answer);
+      const ok = norm===target && norm.length>0;
+      if(ok) score+=it.pts;
+      const inp=document.querySelector(`input[data-q="${it.i}"]`);
+      if(inp) inp.style.borderColor = ok? 'var(--green)':'var(--red)';
+      rv.innerHTML=`<div class="rl">${ok?'Corretta':'Risposta attesa'}</div>
+        <span class="mono">${it.answer}</span> ${it.hint?`<div style="color:var(--muted);font-size:13px;margin-top:6px">${it.hint}</div>`:''}`;
+      rv.classList.add('show');
+    } else {
+      const frac = CURRENT.answers['self_'+it.i];
+      if(frac!==undefined) score+=it.pts*frac;
+      if(!rv.classList.contains('show')) revealModel(it.i);
+    }
+  });
+
+  // scala a /30 solo per modalità "voto"
+  const isGraded = CURRENT.mode==='full';
+  const on30 = isGraded ? Math.min(30, score) : null;
+  const pct = Math.round(score/total*100);
+
+  const res=document.getElementById('result');
+  let head, msg, lode='';
+  if(isGraded){
+    const v=Math.round(on30);
+    head=`${v}<span class="den">/30</span>`;
+    if(v>=30){ msg='Prova eccellente.'; lode='<div class="lode">e lode 🏅</div>'; }
+    else if(v>=27) msg='Ottimo. Ci sei.';
+    else if(v>=24) msg='Buon controllo della materia.';
+    else if(v>=18) msg='Superato. Rifinisci i punti deboli.';
+    else msg='Sotto il 18: ripassa e rigenera una prova.';
+  } else {
+    head=`${pct}<span class="den">%</span>`;
+    msg = pct>=80?'Ottimo ripasso.':pct>=60?'Discreto — insisti sugli errori.':'Da consolidare: rivedi i moduli collegati.';
+  }
+  res.innerHTML=`<div class="scorecard"><div class="big">${head}</div><div class="msg">${msg}</div>${lode}
+    <div class="btn-row" style="justify-content:center;margin-top:16px">
+      <button class="btn primary" onclick="resetExam();startExam('${CURRENT.mode}')">Rigenera prova ▶</button>
+      <button class="btn ghost" onclick="resetExam()">Cambia formato</button>
+    </div></div>`;
+  res.scrollIntoView({behavior:'smooth', block:'start'});
+
+  // salva statistiche
+  store.data.exams.push({mode:CURRENT.mode, score: isGraded?Math.round(on30):null, pct, ts:Date.now()});
+  store.save(); refreshStats();
+}
+function resetExam(){
+  document.getElementById('examRun').style.display='none';
+  document.getElementById('examRun').innerHTML='';
+  document.getElementById('examSetup').style.display='block';
+  window.scrollTo({top:0});
+}
+
+/* =========================================================
+   STRUMENTI
+   ========================================================= */
+function convFromDec(){
+  const dec=parseInt(document.getElementById('cvDec').value,10);
+  const bits=parseInt(document.getElementById('cvBits').value,10);
+  const out=document.getElementById('cvOut');
+  if(isNaN(dec)){ out.innerHTML=''; return; }
+  const fits=cp2Valid(dec,bits);
+  const cp2 = toBin(dec,bits);
+  const grouped = cp2.replace(/(.{4})(?=.)/g,'$1 ');
+  const hex = ((dec%Math.pow(2,bits))+Math.pow(2,bits))%Math.pow(2,bits);
+  out.innerHTML=`
+    <div class="out-box"><div class="ol">CP2 (${bits} bit)</div><div class="ov">${grouped}</div></div>
+    <div class="out-box"><div class="ol">Esadecimale</div><div class="ov">0x${hex.toString(16).toUpperCase()}</div></div>
+    <div class="out-box ${fits?'':'warn'}"><div class="ol">Nell'intervallo?</div><div class="ov">${fits?'sì':'OVERFLOW'}</div></div>`;
+}
+function doAdd(){
+  const bits=Math.max(document.getElementById('adA').value.length, document.getElementById('adB').value.length, 4);
+  const A=clean(document.getElementById('adA').value), B=clean(document.getElementById('adB').value);
+  const out=document.getElementById('adOut');
+  if(!A||!B){ out.innerHTML=''; return; }
+  const a=fromBinCP2(A,bits), b=fromBinCP2(B,bits);
+  const sum=a+b; const ovf=!cp2Valid(sum,bits);
+  out.innerHTML=`
+    <div class="out-box"><div class="ol">A + B (decimale)</div><div class="ov">${a} + ${b} = ${sum}</div></div>
+    <div class="out-box"><div class="ol">Risultato (${bits} bit)</div><div class="ov">${toBin(sum,bits)}</div></div>
+    <div class="out-box ${ovf?'warn':''}"><div class="ol">Flag overflow</div><div class="ov">${ovf?'1 · OVERFLOW':'0'}</div></div>`;
+}
+function doRange(){
+  const bits=parseInt(document.getElementById('rgBits').value,10);
+  const out=document.getElementById('rgOut');
+  if(isNaN(bits)||bits<1){ out.innerHTML=''; return; }
+  out.innerHTML=`
+    <div class="out-box"><div class="ol">Senza segno</div><div class="ov">0 … ${Math.pow(2,bits)-1}</div></div>
+    <div class="out-box"><div class="ol">CP2</div><div class="ov">${-Math.pow(2,bits-1)} … ${Math.pow(2,bits-1)-1}</div></div>
+    <div class="out-box"><div class="ol">CP1 / modulo-segno</div><div class="ov">±${Math.pow(2,bits-1)-1}</div></div>`;
+}
+
+/* =========================================================
+   RIFERIMENTI
+   ========================================================= */
+const FIGS=[
+  {n:'fig. 5.8', d:'Datapath di un processore'},
+  {n:'fig. 5.24', d:'Processore CISC a 3 bus'},
+  {n:'fig. 6.2', d:'Percorso dati · pipeline a 5 stadi'},
+  {n:'fig. 8.7', d:'Chip DRAM 32M × 8'},
+  {n:'fig. 8.8', d:'DRAM sincrona'},
+  {n:'fig. 8.16', d:'Cache · mappatura diretta'},
+  {n:'fig. 8.17', d:'Cache · mappatura associativa'},
+  {n:'fig. 8.18', d:'Cache · mappatura set-associativa'},
+  {n:'fig. 8.26', d:'Traduzione indirizzi via TLB'},
+];
+const TRAPS=[
+  {t:'AND «non associativo»',d:'Evita porte AND a 3+ ingressi nei disegni: scomponi in porte a 2 ingressi. Secondo gli appunti considera associativi solo OR e NOR.'},
+  {t:'RAM ≠ «accesso casuale»',d:'Non tradurre la sigla: spiega che il tempo di accesso al dato non dipende dalla sua posizione in memoria.'},
+  {t:'Simboli logici',d:'Usa {∧, ∨} nelle risposte: nei quesiti non scrive «AND»/«OR» per esteso.'},
+  {t:'De Morgan esteso',d:'Ricorda che vale anche per più di due fattori.'},
+  {t:'RTN richiesto',d:'Alcune risposte pronte dei quiz erano errate: scrivi tu la forma corretta, es. Add R1,R2,R3 → R1 ← [R2]+[R3].'},
+];
+
+function renderRef(){
+  document.getElementById('figList').innerHTML=FIGS.map(f=>`<div class="fig"><div class="fn">${f.n}</div><div class="fd">${f.d}</div></div>`).join('');
+  document.getElementById('trapList').innerHTML=TRAPS.map(t=>`<div class="trap"><div class="tt">${t.t}</div>${t.d}</div>`).join('');
+}
+
+/* =========================================================
+   STATISTICHE
+   ========================================================= */
+function refreshStats(){
+  const graded=store.data.exams.filter(e=>e.score!=null);
+  document.getElementById('s-exams').textContent=store.data.exams.length;
+  if(graded.length){
+    const best=Math.max(...graded.map(e=>e.score));
+    const avg=Math.round(graded.reduce((s,e)=>s+e.score,0)/graded.length);
+    document.getElementById('s-best').innerHTML=`${best}<span class="u">/30</span>`;
+    document.getElementById('s-avg').innerHTML=`${avg}<span class="u">/30</span>`;
+  }
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('svg.trace animateMotion, svg.trace .dot').forEach(el=>el.remove());
+}
+renderTopicCards(document.getElementById('topicGrid'), TOPICS);
+renderTopicCards(document.getElementById('quickTopics'), TOPICS.slice(0,4));
+renderRef();
+convFromDec(); doAdd(); doRange();
+refreshStats();
+</script>
+</body>
+</html>
