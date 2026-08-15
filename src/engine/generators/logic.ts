@@ -135,7 +135,7 @@ export function genKarnaugh(ctx: GenCtx): SelfQuestion {
     payload: { type: 'kmap', vars: names, rows, minterms, dontCares: cares },
     model:
       `Una SOP minima è: <b>Y = ${sopToString(cover, vars)}</b> ` +
-      `(${cover.length} termini). ` +
+      `(${cover.length} termin${cover.length === 1 ? 'e' : 'i'}). ` +
       '<br><span style="color:var(--color-muted);font-size:13px">Forme equivalenti sono ' +
       'accettabili se coprono esattamente gli stessi mintermini con lo stesso numero di ' +
       'termini e letterali. Ricorda di scomporre in porte a 2 ingressi nel disegno.</span>',
