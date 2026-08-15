@@ -116,6 +116,46 @@ export const open: OpenItem[] = [
     ref: 'Hamacher cap. 1',
   },
   {
+    id: 'open-cpu-01',
+    topic: 'cpu',
+    q: "Descrivi il ciclo di prelievo di un'istruzione, nominando i registri coinvolti.",
+    model:
+      "In RTN: <code>MAR ← [PC]</code>, avvio della lettura, <code>PC ← [PC]+4</code>, <code>IR ← [MDR]</code>; segue la decodifica e poi l'esecuzione. <b>MAR</b> presenta l'indirizzo alla memoria e <b>MDR</b> raccoglie il dato: il processore non parla mai direttamente con la memoria. <b>IR</b> trattiene l'istruzione per la decodifica, <b>PC</b> punta alla prossima. L'incremento del PC avviene subito dopo l'invio dell'indirizzo, non a fine istruzione: l'esecuzione è sequenziale per default, quindi conviene preparare l'indirizzo successivo mentre la memoria risponde. I salti si limitano a sovrascrivere il PC.",
+    ref: 'Hamacher cap. 5',
+  },
+  {
+    id: 'open-cpu-02',
+    topic: 'cpu',
+    q: "Confronta unità di controllo cablata e microprogrammata, e datapath a bus singolo e a tre bus.",
+    model:
+      "L'unità <b>cablata</b> è una rete sequenziale progettata su misura: veloce, ma cambiare l'insieme di istruzioni richiede di riprogettare il circuito — scelta tipica dei RISC. La <b>microprogrammata</b> tiene i segnali di controllo in una memoria di controllo ed esegue un microprogramma: flessibile e adatta a ISA complessi, ma più lenta perché ogni passo costa una lettura — scelta storica dei CISC. Quanto al datapath: con un <b>bus singolo</b> si può fare un solo trasferimento per volta, quindi un'operazione fra registri richiede più cicli; con <b>tre bus</b> (due di lettura e uno di scrittura) entrambi gli operandi raggiungono la ALU e il risultato viene riscritto nello stesso ciclo — più hardware, ma è ciò che rende praticabile la pipeline.",
+    ref: 'Hamacher cap. 5',
+  },
+  {
+    id: 'open-vm-01',
+    topic: 'vm',
+    q: "Che cos'è la memoria virtuale? Spiega la traduzione di un indirizzo e il ruolo del TLB.",
+    model:
+      "Ogni processo lavora su uno spazio di indirizzi <b>logico</b> proprio, mappato dal sistema sulla memoria <b>fisica</b>, appoggiandosi al disco per ciò che non ci sta: si eseguono programmi più grandi della RAM e si isolano i processi fra loro. Con la <b>paginazione</b>, spazio logico e memoria fisica sono divisi in pagine e frame di uguale dimensione. L'indirizzo virtuale si spezza in numero di pagina + offset: solo il numero di pagina viene tradotto in numero di frame tramite la <b>tabella delle pagine</b>, mentre l'<b>offset resta invariato</b>. Poiché la tabella sta in memoria, tradurre costerebbe un accesso in più a ogni accesso: il <b>TLB</b> è una piccola cache associativa delle traduzioni recenti che elimina quasi sempre quel costo, sfruttando la località. Se la pagina non è in memoria (bit valid a 0) si ha un <b>page fault</b>: eccezione, caricamento da disco, riesecuzione dell'istruzione.",
+    ref: 'Hamacher cap. 8',
+  },
+  {
+    id: 'open-vm-02',
+    topic: 'vm',
+    q: 'Cache e memoria virtuale risolvono lo stesso problema? Motiva.',
+    model:
+      "No, e vanno tenute distinte anche a parole. Entrambe sfruttano la <b>località</b>, ma stanno a livelli diversi della gerarchia: la <b>cache</b> sta fra CPU e memoria principale e accelera l'<b>accesso ai dati</b>; la <b>memoria virtuale</b> sta fra memoria principale e disco e serve a dare a ogni processo uno spazio proprio più grande della RAM, con protezione e possibilità di condivisione. Anche i costi sono di ordini diversi: un cache miss costa decine di cicli e si gestisce in hardware, un page fault costa un accesso a disco — milioni di cicli — e viene gestito dal sistema operativo, che può quindi permettersi politiche di sostituzione sofisticate. Il <b>TLB</b> è l'anello che li avvicina: è una cache, ma delle traduzioni, non dei dati.",
+    ref: 'Hamacher cap. 8',
+  },
+  {
+    id: 'open-pipe-02',
+    topic: 'pipe',
+    q: "Elenca i tipi di hazard in una pipeline e spiega come si mitigano.",
+    model:
+      "<b>Strutturali</b>: due istruzioni contendono la stessa risorsa nello stesso ciclo (per esempio un unico accesso alla memoria conteso fra fetch e load); si risolvono duplicando la risorsa, come cache istruzioni e dati separate. <b>Sui dati</b>: un'istruzione ha bisogno di un risultato non ancora scritto in registro; si mitigano con l'<b>operand forwarding</b>, che inoltra il risultato direttamente dall'uscita della ALU allo stadio che lo richiede — resta però il caso <i>load-use</i>, dove il dato arriva dalla memoria uno stadio più tardi e uno stallo è inevitabile. <b>Di controllo</b>: dopo un salto non si sa quale istruzione prelevare, e quelle già entrate vanno scartate; si mitigano con la predizione (statica o dinamica), con il <i>delayed branch</i> e calcolando l'indirizzo di destinazione il prima possibile.",
+    ref: 'Hamacher cap. 6',
+  },
+  {
     id: 'open-karnaugh-01',
     topic: 'karnaugh',
     q: 'Descrivi la minimizzazione con la mappa di Karnaugh e il ruolo delle indifferenze.',
