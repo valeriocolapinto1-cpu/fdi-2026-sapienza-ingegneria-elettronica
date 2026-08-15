@@ -18,10 +18,12 @@ export type TopicId =
   | 'bool' // algebra di Boole, porte
   | 'karnaugh' // sintesi di reti combinatorie
   | 'ff' // circuiti sequenziali, flip-flop
-  | 'isa' // RISC/CISC, assembly
-  | 'irq' // interruzioni ed eccezioni
+  | 'cpu' // datapath e unità di controllo
+  | 'isa' // RISC/CISC, assembly, indirizzamento
+  | 'irq' // interruzioni, eccezioni, I/O
   | 'pipe' // pipeline e prestazioni
   | 'mem' // gerarchia di memoria e cache
+  | 'vm' // memoria virtuale e TLB
   | 'ieee'; // virgola mobile
 
 /** Crocetta a risposta singola. */

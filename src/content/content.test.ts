@@ -8,13 +8,34 @@ describe('content layer', () => {
   });
 
   it('parte già popolato ai volumi richiesti', () => {
-    expect(mcq.length).toBeGreaterThanOrEqual(49);
-    expect(open.length).toBeGreaterThanOrEqual(12);
+    expect(mcq.length).toBeGreaterThanOrEqual(90);
+    expect(open.length).toBeGreaterThanOrEqual(19);
     expect(asmWrite.length).toBeGreaterThanOrEqual(2);
-    expect(topics.length).toBeGreaterThanOrEqual(9);
+    expect(topics.length).toBeGreaterThanOrEqual(11);
     expect(figures.length).toBeGreaterThanOrEqual(9);
     expect(traps.length).toBeGreaterThanOrEqual(5);
     expect(links.length).toBeGreaterThanOrEqual(6);
+  });
+
+  it('ogni modulo ha una teoria sostanziosa, non un abbozzo', () => {
+    // I moduli del prototipo stavano fra 390 e 1200 caratteri: troppo poco
+    // per studiarci sopra. Questa soglia impedisce di tornare indietro.
+    for (const topic of topics) {
+      expect(topic.body.length, `modulo "${topic.id}" troppo scarno`).toBeGreaterThan(2000);
+      // Almeno quattro sezioni: un modulo con un solo <h4> non è organizzato.
+      expect(
+        (topic.body.match(/<h4>/g) ?? []).length,
+        `modulo "${topic.id}" con troppe poche sezioni`,
+      ).toBeGreaterThanOrEqual(4);
+    }
+  });
+
+  it('ogni argomento è coperto da almeno tre crocette', () => {
+    // Un argomento senza domande non può uscire nei drill: sarebbe teoria morta.
+    for (const topic of topics) {
+      const count = mcq.filter((item) => item.topic === topic.id).length;
+      expect(count, `argomento "${topic.id}" con sole ${count} crocette`).toBeGreaterThanOrEqual(3);
+    }
   });
 
   it('cita Hamacher su ogni quesito e ogni scheda', () => {
