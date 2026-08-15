@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/fdi-2026-sapienza-ingegneria-elettronica/sw.js', { scope: '/fdi-2026-sapienza-ingegneria-elettronica/' })})}
