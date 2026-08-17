@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { simLoop, simMulCmp, simShift } from './asmSim';
 import { coverCost, minimalCover, type Implicant } from './boolean';
-import { buildExam, EXAM_MODES, questionCountFor, totalPointsFor } from './buildExam';
+import {
+  buildExam,
+  EXAM_MODES,
+  questionCountFor,
+  reachableGenerators,
+  totalPointsFor,
+} from './buildExam';
 import { GENERATORS, type GeneratorId } from './generators';
 import { normalizeFill } from './grade';
 import { mulberry32 } from './rng';
-import type { AsmLine, Exam, McQuestion, Question } from './types';
+import type { AsmLine, Exam, FillQuestion, McQuestion, Question } from './types';
 
 /** Genera N quesiti con un generatore, su semi diversi. */
 function sample(gen: GeneratorId, count: number): Question[] {
@@ -202,6 +208,109 @@ describe('genKarnaugh', () => {
   });
 });
 
+/** Via il markup: i quesiti contengono HTML inline. */
+const plain = (html: string): string => html.replace(/<[^>]+>/g, '');
+
+const num = (text: string, pattern: RegExp): number => {
+  const match = text.match(pattern);
+  if (!match?.[1]) throw new Error(`non trovato ${pattern} in:\n${text}`);
+  return Number(match[1]);
+};
+
+describe('genCacheFields', () => {
+  it('i tre campi sommano sempre all’ampiezza dell’indirizzo', () => {
+    for (const question of sample('cacheFields', 300) as McQuestion[]) {
+      const text = plain(question.q);
+      const blockBytes = num(text, /blocchi da (\d+) byte/);
+      const sets = num(text, /(\d+) (?:insiemi|linee)/);
+      const addressBits = num(text, /indirizzi da (\d+) bit/);
+
+      const offset = Math.log2(blockBytes);
+      const index = Math.log2(sets);
+      const tag = addressBits - index - offset;
+
+      // I campi devono essere interi e la scomposizione completa.
+      expect(Number.isInteger(offset) && Number.isInteger(index)).toBe(true);
+      expect(tag + index + offset).toBe(addressBits);
+      expect(tag).toBeGreaterThan(0);
+
+      // La risposta indicata come esatta è quella del campo chiesto.
+      const field = text.match(/campo (tag|indice|offset nel blocco)\?/)?.[1];
+      const expected = field === 'tag' ? tag : field === 'indice' ? index : offset;
+      expect(Number(question.options[question.correct]), `campo ${field}`).toBe(expected);
+    }
+  });
+});
+
+describe('genPageTranslate', () => {
+  it('conserva l’offset e ricalcola l’indirizzo fisico dal frame', () => {
+    let translations = 0;
+    let offsetQuestions = 0;
+
+    for (const question of sample('pageTranslate', 300) as FillQuestion[]) {
+      const text = plain(question.q);
+
+      if (question.cat === 'Memoria virtuale · traduzione') {
+        translations++;
+        const pageSize = num(text, /pagine da (\d+) byte/);
+        const virtual = Number.parseInt(
+          text.match(/0x([0-9A-F]+)/)?.[1] ?? (() => { throw new Error('no VA'); })(),
+          16,
+        );
+        const page = num(text, /pagina (\d+)/);
+        const frame = num(text, /frame (\d+)/);
+
+        const offset = virtual % pageSize;
+        expect(Math.floor(virtual / pageSize), 'pagina dichiarata').toBe(page);
+        // L'offset sopravvive alla traduzione: cambia solo la parte alta.
+        const physical = frame * pageSize + offset;
+        expect(Number.parseInt(question.answer, 16)).toBe(physical);
+        expect(physical % pageSize).toBe(offset);
+      } else {
+        offsetQuestions++;
+        const kib = num(text, /pagine da (\d+) KiB/);
+        expect(Number(question.answer)).toBe(Math.log2(kib * 1024));
+      }
+    }
+
+    expect(translations).toBeGreaterThan(0);
+    expect(offsetQuestions).toBeGreaterThan(0);
+  });
+});
+
+describe('genPipelineCycles', () => {
+  it('conta i cicli come k + (n − 1)', () => {
+    for (const question of sample('pipelineCycles', 300) as FillQuestion[]) {
+      const text = plain(question.q);
+      const stages = num(text, /(\d+) stadi/);
+      const instructions = num(text, /(\d+) istruzioni/);
+
+      const pipelined = stages + instructions - 1;
+      const expected =
+        question.cat === 'Pipeline · cicli' ? pipelined : stages * instructions - pipelined;
+
+      expect(Number(question.answer), `k=${stages} n=${instructions}`).toBe(expected);
+    }
+  });
+});
+
+describe('genRtn', () => {
+  it('la risposta esatta mette le parentesi solo sulle sorgenti', () => {
+    for (const question of sample('rtn', 200) as McQuestion[]) {
+      const right = plain(question.options[question.correct] as string);
+      const [destination, sources] = right.split('←').map((part) => part.trim());
+
+      // La destinazione si scrive, non si legge: mai fra parentesi quadre.
+      expect(destination, right).not.toMatch(/[[\]]/);
+      // Ogni registro o etichetta a destra è un contenuto, quindi fra parentesi.
+      expect(sources, right).toMatch(/\[/);
+      for (const operand of (sources ?? '').split('+').map((s) => s.trim())) {
+        expect(operand, `operando non fra parentesi in "${right}"`).toMatch(/^\[.+\]$/);
+      }
+    }
+  });
+});
+
 describe('buildExam', () => {
   it('la prova completa ha 12 quesiti e vale esattamente 30 punti', () => {
     for (let seed = 0; seed < 500; seed++) {
@@ -253,28 +362,60 @@ describe('buildExam', () => {
     expect(first).not.toBe(second);
   });
 
-  it('usa ogni generatore registrato in almeno una modalità', () => {
-    const used = new Set<string>();
-    for (const mode of EXAM_MODES) {
-      for (let seed = 0; seed < 30; seed++) {
-        for (const question of buildExam(mode, seed).questions) used.add(question.cat);
-      }
+  it('nessun generatore registrato è codice morto', () => {
+    // L'errore trovato nel prototipo: `genHex` esisteva ma nessuna modalità
+    // poteva pescarlo. Il confronto è strutturale, non a campione.
+    const reachable = reachableGenerators();
+    for (const id of Object.keys(GENERATORS) as GeneratorId[]) {
+      expect(reachable.has(id), `generatore mai raggiungibile da una prova: ${id}`).toBe(true);
     }
-    // 10 generatori, ma `asmWrite` e `open` condividono la logica di banca:
-    // qui basta verificare che nessuna categoria attesa manchi all'appello.
+  });
+
+  it('i nuovi quesiti calcolati compaiono davvero nelle prove', () => {
+    const cats = new Set<string>();
+    for (let seed = 0; seed < 400; seed++) {
+      for (const question of buildExam('full', seed).questions) cats.add(question.cat);
+    }
     for (const cat of [
-      'Crocetta',
-      'Completamento',
-      'Conversione',
-      'Aritmetica CP2',
-      'Range',
-      'Riconoscimento porta',
-      'Assembly · snippet',
-      'Sintesi reti combinatorie',
-      'Assembly · scrittura',
-      'Domanda aperta',
+      'RTN · notazione',
+      'IEEE 754 · codifica',
+      'IEEE 754 · decodifica',
+      'Memoria virtuale · traduzione',
+      'Memoria virtuale · indirizzi',
+      'Cache · campi indirizzo',
+      'Pipeline · cicli',
+      'Pipeline · prestazioni',
     ]) {
-      expect(used.has(cat), `categoria mai generata: ${cat}`).toBe(true);
+      expect(cats.has(cat), `categoria mai generata in 400 prove: ${cat}`).toBe(true);
     }
+  });
+
+  it('non concentra le crocette su un solo argomento', () => {
+    // Pescando con reinserimento capitava una prova con quattro quesiti di
+    // pipeline su sei crocette e nessuno sulle altre aree. L'estrazione senza
+    // reinserimento lo rende impossibile: ogni generatore calcolato esce una
+    // volta sola, quindi le famiglie sono distinte.
+    for (let seed = 0; seed < 300; seed++) {
+      const crocette = buildExam('full', seed).questions.slice(0, 6);
+      const families = crocette
+        .map((question) => question.cat.split(' · ')[0] as string)
+        .filter((family) => family !== 'Crocetta');
+
+      expect(new Set(families).size, `seme ${seed}: ${families.join(', ')}`).toBe(families.length);
+      // La teoria può ripetersi, ma non oltre le tre voci `mc` del pool.
+      const theory = crocette.filter((question) => question.cat === 'Crocetta').length;
+      expect(theory).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it('due prove consecutive differiscono nel mix di crocette, non solo nei numeri', () => {
+    const mix = (seed: number): string =>
+      buildExam('full', seed)
+        .questions.slice(0, 6)
+        .map((question) => question.cat)
+        .join('|');
+    // Su venti semi il mix delle prime sei crocette non può essere sempre uguale.
+    const distinct = new Set(Array.from({ length: 20 }, (_, seed) => mix(seed)));
+    expect(distinct.size).toBeGreaterThan(1);
   });
 });

@@ -129,6 +129,10 @@ Punti notevoli:
   scritta a mano. Un test rilegge i parametri dal listato mostrato e ri-esegue il programma.
 - **`engine/numeric.ts`** tiene `overflow` e `carryOut` **separati**: sono cose diverse e
   confonderle è una classica perdita di punti.
+- **`engine/ieee754.ts`** passa da un `DataView` per codificare, quindi applica lo standard
+  esattamente come l'hardware. I quesiti partono dai **campi** e ne ricavano il valore: il
+  numero mostrato è rappresentabile per costruzione e nessun arrotondamento può falsare la
+  risposta attesa.
 - **`store/storage.ts`** è l'unico punto che tocca `localStorage`, con ripiego in memoria se la
   scrittura è vietata.
 
@@ -138,11 +142,15 @@ Punti notevoli:
 
 | Tipo | Quanti | Punti |
 |---|---|---|
-| Crocette di teoria | 6 | 2 |
+| Crocette — teoria **o** quesiti calcolati (RTN, IEEE 754, traduzione indirizzi, campi di cache, cicli di pipeline) | 6 | 2 |
 | Complemento a 2, riconoscimento porta, snippet assembly | 3 | 2 |
 | Sintesi con Karnaugh | 1 | 5 |
 | Assembly da scrivere | 1 | 4 |
 | Domanda aperta | 1 | 3 |
+
+Le sei crocette sono **estratte senza reinserimento** da un insieme di otto generatori, di cui
+tre teorici: ogni prova copre quindi aree distinte, senza concentrarsi su un solo argomento, e
+due prove di fila differiscono nel *mix*, non solo nei numeri.
 
 Crocette e risposte brevi sono auto-corrette; Karnaugh, assembly e domanda aperta mostrano una
 soluzione modello e si autovalutano (pieno / parziale / no). La **lode** richiede il punteggio
