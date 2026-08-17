@@ -1,20 +1,25 @@
 import type { Question } from '../types';
 import type { GenCtx } from './context';
 import { genAsmSnippet } from './assembly';
+import { genIeee754 } from './ieee';
 import { genGate, genKarnaugh } from './logic';
+import { genCacheFields, genPageTranslate } from './memory';
 import { genArith, genCP2, genHex, genMaxRange } from './numbers';
-import { genAsmWrite, genMC, genOpen } from './theory';
+import { genPipelineCycles } from './perf';
+import { genAsmWrite, genMC, genOpen, genRtn } from './theory';
 
 export { genAsmSnippet, genGate, genKarnaugh, genArith, genCP2, genHex, genMaxRange };
-export { genAsmWrite, genMC, genOpen };
-export { makeChoices, questionId, type GenCtx } from './context';
+export { genAsmWrite, genMC, genOpen, genRtn };
+export { genIeee754, genCacheFields, genPageTranslate, genPipelineCycles };
+export { makeChoices, numericChoices, questionId, type GenCtx } from './context';
 
 /**
  * Registro dei generatori: è il punto di estensione dell'app.
  *
- * Aggiungere un tipo di quesito (IEEE 754, decodifica di un float, …) vuol
- * dire scrivere una funzione `(ctx) => Question` e registrarla qui; da quel
- * momento può comparire in qualunque blueprint d'esame.
+ * Aggiungere un tipo di quesito vuol dire scrivere una funzione
+ * `(ctx) => Question` e registrarla qui; da quel momento può comparire in
+ * qualunque blueprint d'esame — ma va anche **messa** in almeno un blueprint,
+ * altrimenti resta codice che nessuna prova può pescare.
  */
 export const GENERATORS = {
   mc: genMC,
@@ -27,6 +32,14 @@ export const GENERATORS = {
   karnaugh: genKarnaugh,
   asmWrite: genAsmWrite,
   open: genOpen,
+
+  // Quesiti calcolati sugli argomenti approfonditi: processore, memoria
+  // virtuale, cache, pipeline, virgola mobile.
+  rtn: genRtn,
+  ieee754: genIeee754,
+  pageTranslate: genPageTranslate,
+  cacheFields: genCacheFields,
+  pipelineCycles: genPipelineCycles,
 } as const satisfies Record<string, (ctx: GenCtx) => Question>;
 
 export type GeneratorId = keyof typeof GENERATORS;

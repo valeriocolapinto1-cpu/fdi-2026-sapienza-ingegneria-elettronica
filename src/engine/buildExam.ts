@@ -1,15 +1,67 @@
 import { GENERATORS, type GeneratorId } from './generators';
-import { mulberry32, randomSeed } from './rng';
+import { mulberry32, randomSeed, shuffle, type Rng } from './rng';
 import type { Exam, ExamMode, Question } from './types';
 
-/** Uno slot della prova: quale generatore e quanti punti vale. */
-interface Slot {
-  gen: GeneratorId;
-  points: number;
-}
+/**
+ * Un blocco della prova.
+ *
+ * `gen` fissa il generatore; `drawFrom` ne **estrae `count` senza
+ * reinserimento** da un insieme di generatori equivalenti. L'estrazione senza
+ * reinserimento è deliberata: pescando indipendentemente slot per slot capitava
+ * una prova con quattro quesiti di pipeline su sei crocette e nessuno sulle
+ * altre aree — irrealistico. Così ogni prova copre argomenti distinti.
+ */
+type Slot =
+  | { gen: GeneratorId; points: number }
+  | { drawFrom: readonly GeneratorId[]; count: number; points: number };
 
 const repeat = (gen: GeneratorId, points: number, times: number): Slot[] =>
   Array.from({ length: times }, () => ({ gen, points }));
+
+/**
+ * Le crocette dell'esame: in maggioranza teoria, ma anche quesiti calcolati su
+ * processore, memoria virtuale, cache, pipeline e virgola mobile.
+ *
+ * `mc` compare tre volte perché la teoria è l'esito più probabile — come nella
+ * prova reale — e perché, essendo l'estrazione senza reinserimento, è l'unico
+ * modo per far comparire più di una crocetta teorica nella stessa prova.
+ */
+const CROCETTE: readonly GeneratorId[] = [
+  'mc',
+  'mc',
+  'mc',
+  'rtn',
+  'ieee754',
+  'pageTranslate',
+  'cacheFields',
+  'pipelineCycles',
+];
+
+/** Quanti quesiti produce un blocco. */
+const slotSize = (slot: Slot): number => ('gen' in slot ? 1 : slot.count);
+
+/**
+ * Espande i blocchi nei singoli quesiti, sciogliendo le estrazioni.
+ * Usa l'`rng` della prova, quindi resta riproducibile per seme.
+ */
+function expandSlots(slots: readonly Slot[], rng: Rng): { gen: GeneratorId; points: number }[] {
+  const flat: { gen: GeneratorId; points: number }[] = [];
+  for (const slot of slots) {
+    if ('gen' in slot) {
+      flat.push({ gen: slot.gen, points: slot.points });
+      continue;
+    }
+    if (slot.drawFrom.length < slot.count) {
+      throw new Error(
+        `blueprint incoerente: si estraggono ${slot.count} generatori da un insieme di ${slot.drawFrom.length}`,
+      );
+    }
+    for (const gen of shuffle(rng, slot.drawFrom).slice(0, slot.count)) {
+      flat.push({ gen, points: slot.points });
+    }
+  }
+  return flat;
+}
 
 /**
  * Struttura delle prove.
@@ -21,7 +73,7 @@ const repeat = (gen: GeneratorId, points: number, times: number): Slot[] =>
  */
 const BLUEPRINTS: Record<ExamMode, Slot[]> = {
   full: [
-    ...repeat('mc', 2, 6),
+    { drawFrom: CROCETTE, count: 6, points: 2 },
     { gen: 'cp2', points: 2 },
     { gen: 'gate', points: 2 },
     { gen: 'asmSnippet', points: 2 },
@@ -32,7 +84,7 @@ const BLUEPRINTS: Record<ExamMode, Slot[]> = {
 
   // Ripasso lampo: solo quesiti auto-correggibili.
   quick: [
-    ...repeat('mc', 2, 3),
+    { drawFrom: CROCETTE, count: 3, points: 2 },
     { gen: 'cp2', points: 2 },
     { gen: 'hex', points: 2 },
     { gen: 'gate', points: 2 },
@@ -67,13 +119,31 @@ export const MODE_DESCRIPTIONS: Record<ExamMode, string> = {
   logic: 'Riconoscimento porte + sintesi con Karnaugh dalla tabella di verità.',
 };
 
+/**
+ * I generatori che una prova può effettivamente pescare.
+ *
+ * Esiste per un test: un generatore registrato ma assente da ogni blueprint è
+ * codice morto, e nel prototipo era proprio il caso di `genHex`. Il confronto
+ * con le chiavi di `GENERATORS` impedisce che succeda di nuovo.
+ */
+export function reachableGenerators(): Set<GeneratorId> {
+  const reachable = new Set<GeneratorId>();
+  for (const slots of Object.values(BLUEPRINTS)) {
+    for (const slot of slots) {
+      if ('gen' in slot) reachable.add(slot.gen);
+      else for (const id of slot.drawFrom) reachable.add(id);
+    }
+  }
+  return reachable;
+}
+
 /** Punti totali previsti da una modalità, senza generare la prova. */
 export function totalPointsFor(mode: ExamMode): number {
-  return BLUEPRINTS[mode].reduce((sum, slot) => sum + slot.points, 0);
+  return BLUEPRINTS[mode].reduce((sum, slot) => sum + slotSize(slot) * slot.points, 0);
 }
 
 export function questionCountFor(mode: ExamMode): number {
-  return BLUEPRINTS[mode].length;
+  return BLUEPRINTS[mode].reduce((sum, slot) => sum + slotSize(slot), 0);
 }
 
 export function isExamMode(value: string): value is ExamMode {
@@ -88,7 +158,7 @@ export function buildExam(mode: ExamMode, seed: number = randomSeed()): Exam {
   const rng = mulberry32(seed);
   const used = new Set<string>();
 
-  const questions: Question[] = BLUEPRINTS[mode].map((slot, index) =>
+  const questions: Question[] = expandSlots(BLUEPRINTS[mode], rng).map((slot, index) =>
     GENERATORS[slot.gen]({ rng, points: slot.points, used, seq: index + 1 }),
   );
 
