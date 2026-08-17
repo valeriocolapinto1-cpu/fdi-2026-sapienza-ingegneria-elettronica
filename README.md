@@ -6,6 +6,11 @@ Sito di studio e **generatore di prove d'esame** per il modulo *Architettura deg
 Replica il formato della prova scritta: **12 quesiti, 1 ora, voto su 30 con lode**. Ogni quesito
 e ogni scheda di studio riportano il riferimento al testo di Hamacher.
 
+### → **[Apri il sito](https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/)**
+
+Funziona anche da telefono e, dopo la prima visita, **offline**: si installa come app dal menu
+del browser.
+
 > ⚠︎ Strumento di studio **non ufficiale**, costruito su appunti studenteschi e sul regolamento
 > pubblico del docente. Le domande sono nello *stile* dell'esame, non sono prove reali. Le
 > «trappole» sono percezioni raccolte dagli studenti, marcate come *da verificare*. I contenuti
@@ -15,35 +20,15 @@ e ogni scheda di studio riportano il riferimento al testo di Hamacher.
 ## Cosa c'è dentro
 
 - **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli letti) e avvio rapido.
-- **Studia** — 9 moduli di teoria con citazioni Hamacher e trappole del docente.
-- **Simulatore** — quattro formati di prova, generati al volo: numeri, tabelle di verità e
-  snippet cambiano a ogni generazione.
+- **Studia** — 11 moduli di teoria con citazioni Hamacher e trappole del docente.
+- **Simulatore** — quattro formati di prova, generati al volo: numeri, tabelle di verità,
+  snippet e mix di quesiti cambiano a ogni generazione.
 - **Strumenti** — convertitore decimale ↔ complemento a 2 ↔ esadecimale, sommatore binario con
   flag di overflow **e** riporto uscente, calcolatore di range.
 - **Riferimenti** — indice delle figure da saper completare, trappole, testi e link.
 
-Funziona offline (PWA) e senza backend: nessun account, nessun dato inviato da nessuna parte.
-
-## Sviluppo in locale
-
-Serve Node 22 o superiore.
-
-```bash
-npm install
-npm run dev        # http://localhost:5173/fdi-2026-sapienza-ingegneria-elettronica/
-```
-
-| Comando | Cosa fa |
-|---|---|
-| `npm run dev` | Server di sviluppo con ricarica a caldo |
-| `npm test` | Test del motore d'esame (Vitest) |
-| `npm run test:watch` | Test in watch mode |
-| `npm run typecheck` | Solo controllo dei tipi |
-| `npm run build` | Typecheck + build statica in `dist/` |
-| `npm run preview` | Serve la build come in produzione |
-
-> Il server di sviluppo ascolta sotto `/fdi-2026-sapienza-ingegneria-elettronica/`, lo stesso
-> `base` della produzione: così dev, preview e sito pubblicato si comportano allo stesso modo.
+Nessun backend: nessun account, nessun dato inviato da nessuna parte. I progressi restano nel
+browser.
 
 ## Come aggiungere domande
 
@@ -158,13 +143,11 @@ pieno.
 
 ## Deploy
 
-Ogni push su `main` fa partire `.github/workflows/deploy.yml`: installa, esegue i test, builda e
-pubblica su GitHub Pages. Se i test falliscono, il sito non viene pubblicato.
+Automatico: ogni push su `main` fa partire `.github/workflows/deploy.yml`, che esegue i test e
+pubblica su GitHub Pages. **Se i test falliscono il sito non viene pubblicato**, quindi una
+domanda malformata non arriva mai online.
 
-**Passo manuale, una volta sola:** in *Settings → Pages*, imposta **Source: GitHub Actions**.
-Senza questo il workflow fallisce in fase di deploy.
-
-Il `base` di Vite è il nome del repository (`vite.config.ts`). Se rinomini il repo, aggiorna la
+Il `base` di Vite è il nome del repository (`vite.config.ts`): se rinomini il repo, aggiorna la
 costante `REPO` lì.
 
 ## Progetto di riferimento
