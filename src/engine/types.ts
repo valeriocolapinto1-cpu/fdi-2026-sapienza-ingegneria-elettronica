@@ -10,8 +10,17 @@ export type { HamacherRef, TopicId };
  * per cui `normalize` è un'etichetta e non una funzione di normalizzazione.
  */
 
-/** `mc` e `fill` sono auto-corretti; `self` si risolve su carta. */
-export type QuestionKind = 'mc' | 'fill' | 'self';
+/**
+ * `mc`, `fill`, `diagram` ed `expr` sono auto-corretti; `self` si risolve su
+ * carta e si autovaluta.
+ *
+ * `diagram` ed `expr` esistono perché la prova vera li ha: due «completare
+ * l'immagine» e due «da tabella di verità a espressione logica» su dodici
+ * quesiti. Nessuno dei due ha bisogno dell'autovalutazione — le etichette si
+ * confrontano una per una, e l'espressione si legge e si verifica su tutte le
+ * combinazioni — quindi entrambi danno un voto oggettivo.
+ */
+export type QuestionKind = 'mc' | 'fill' | 'self' | 'diagram' | 'expr';
 
 /** Riga di uno snippet assembly: la UI colora l'etichetta, non il testo. */
 export interface AsmLine {
@@ -88,7 +97,44 @@ export interface SelfQuestion extends QuestionBase {
   model: string;
 }
 
-export type Question = McQuestion | FillQuestion | SelfQuestion;
+/**
+ * «Completare l'immagine»: uno schema con alcune etichette da collocare.
+ *
+ * Gli slot e le opzioni sono **copiati dentro il quesito**, non risolti a
+ * correzione contro `content/diagrams.ts`: così la prova resta serializzabile
+ * e correggibile per conto proprio, come tutti gli altri quesiti.
+ */
+export interface DiagramQuestion extends QuestionBase {
+  kind: 'diagram';
+  diagramId: string;
+  /** Etichette proposte, già mescolate: le giuste più i distrattori. */
+  options: string[];
+  /** Posizioni da riempire, con l'etichetta corretta. */
+  slots: { id: string; label: string }[];
+}
+
+/**
+ * «Da tabella di verità a espressione logica».
+ *
+ * Il quesito porta la funzione, non la risposta: la correzione legge
+ * l'espressione scritta e la confronta con la SOP minima esatta, quindi
+ * qualunque forma corretta viene accettata.
+ */
+export interface ExprQuestion extends QuestionBase {
+  kind: 'expr';
+  vars: number;
+  minterms: number[];
+  dontCares: number[];
+  /** Semplificazione mostrata a correzione avvenuta. */
+  model: string;
+}
+
+export type Question =
+  | McQuestion
+  | FillQuestion
+  | SelfQuestion
+  | DiagramQuestion
+  | ExprQuestion;
 
 export type ExamMode = 'full' | 'quick' | 'binary' | 'logic';
 
@@ -109,7 +155,10 @@ export type SelfGrade = 1 | 0.5 | 0;
 export type Answer =
   | { kind: 'mc'; choice: number | null }
   | { kind: 'fill'; text: string }
-  | { kind: 'self'; grade: SelfGrade | null };
+  | { kind: 'self'; grade: SelfGrade | null }
+  /** Etichetta scelta per ogni slot, indicizzata per id di slot. */
+  | { kind: 'diagram'; picks: Record<string, string> }
+  | { kind: 'expr'; text: string };
 
 export type Outcome = 'correct' | 'partial' | 'wrong' | 'blank';
 

@@ -1,7 +1,11 @@
 import type { JSX } from 'preact';
 import { fmtPoints } from '~/lib/i18n';
 import type { Answer, Question, QuestionResult, SelfGrade } from '~/engine/types';
+import { diagramById } from '~/content/diagrams';
+import { countMatchingSlots } from '~/engine/grade';
+import { judgeSop } from '~/engine/parseSop';
 import { AsmBlock } from './AsmBlock';
+import { DiagramQuiz, type DiagramPicks } from './DiagramQuiz';
 import { Rich } from './Rich';
 import { TruthTable } from './TruthTable';
 
@@ -127,6 +131,94 @@ export function QuestionCard({
         />
       )}
 
+      {question.kind === 'diagram' &&
+        (() => {
+          const diagram = diagramById(question.diagramId);
+          if (!diagram) return null;
+          const picks: DiagramPicks = answer?.kind === 'diagram' ? answer.picks : {};
+          // A correzione avvenuta ogni slot mostra il proprio esito: è un
+          // quesito a punteggio parziale, quindi «giusto/sbagliato» sul
+          // quesito intero non basterebbe.
+          const verdict = locked
+            ? Object.fromEntries(
+                question.slots.map((slot) => [slot.id, picks[slot.id] === slot.label]),
+              )
+            : undefined;
+
+          return (
+            <DiagramQuiz
+              diagram={diagram}
+              options={question.options}
+              picks={picks}
+              locked={locked}
+              verdict={verdict}
+              onPick={(slotId, label) =>
+                onAnswer({ kind: 'diagram', picks: { ...picks, [slotId]: label } })
+              }
+            />
+          );
+        })()}
+
+      {question.kind === 'expr' && (
+        <>
+          <div class="field" style="margin-top:10px">
+            <label for={`expr-${question.id}`}>Y =</label>
+            <input
+              id={`expr-${question.id}`}
+              class={`fill${
+                locked
+                  ? result?.outcome === 'correct'
+                    ? ' ok'
+                    : result?.outcome === 'partial'
+                      ? ''
+                      : ' ko'
+                  : ''
+              }`}
+              type="text"
+              style="width:min(320px,100%)"
+              autocomplete="off"
+              spellcheck={false}
+              placeholder="es. A'B + C"
+              disabled={locked}
+              value={answer?.kind === 'expr' ? answer.text : ''}
+              onInput={(event) =>
+                onAnswer({ kind: 'expr', text: (event.target as HTMLInputElement).value })
+              }
+            />
+          </div>
+          <p class="fn">
+            Scrivila come sul foglio: <code>A'B + C</code>, <code>ĀB + C</code>,{' '}
+            <code>!A·B + C</code> sono la stessa espressione.
+          </p>
+          {locked && (
+            <div class="reveal">
+              <div
+                class={`rl${
+                  result?.outcome === 'correct'
+                    ? ''
+                    : result?.outcome === 'partial'
+                      ? ' half'
+                      : ' ko'
+                }`}
+              >
+                {(() => {
+                  const verdict = judgeSop(
+                    answer?.kind === 'expr' ? answer.text : '',
+                    new Set(question.minterms),
+                    new Set(question.dontCares),
+                    question.vars,
+                  );
+                  if (verdict.status === 'empty') return 'Non risposta';
+                  if (verdict.status === 'error') return `Non leggibile: ${verdict.message}`;
+                  return verdict.message;
+                })()}
+              </div>
+              <Rich html={question.model} />
+            </div>
+          )}
+        </>
+      )}
+
       {question.kind === 'self' && !revealed && (
         <div class="selfgrade">
           <span class="sl">Rispondi su carta, poi:</span>
@@ -175,21 +267,39 @@ export function QuestionCard({
         </div>
       )}
 
-      {locked && question.kind !== 'self' && (
+      {locked && question.kind !== 'self' && question.kind !== 'expr' && (
         <div class="reveal">
-          <div class={`rl${result.outcome === 'correct' ? '' : ' ko'}`}>
-            {result.outcome === 'correct'
-              ? 'Corretta'
-              : result.outcome === 'blank'
-                ? 'Non risposta'
-                : 'Da rivedere'}
+          <div
+            class={`rl${
+              result.outcome === 'correct' ? '' : result.outcome === 'partial' ? ' half' : ' ko'
+            }`}
+          >
+            {result.outcome === 'blank'
+              ? 'Non risposta'
+              : question.kind === 'diagram'
+                ? // Sullo schema conta quante etichette sono al posto giusto:
+                  // è il numero da cui esce il punteggio parziale.
+                  (() => {
+                    const right = countMatchingSlots(
+                      question,
+                      answer?.kind === 'diagram' ? answer.picks : {},
+                    );
+                    return `${right} etichett${right === 1 ? 'a' : 'e'} su ${
+                      question.slots.length
+                    } · ${fmtPoints(result.earned)} pt`;
+                  })()
+                : result.outcome === 'correct'
+                  ? 'Corretta'
+                  : result.outcome === 'partial'
+                    ? `Parziale: ${fmtPoints(result.earned)} di ${fmtPoints(result.max)} punti`
+                    : 'Da rivedere'}
           </div>
           {question.kind === 'fill' && (
             <p style="margin:0 0 6px">
               Risposta attesa: <span class="mono">{question.answer}</span>
             </p>
           )}
-          {question.hint && (
+          {'hint' in question && question.hint && (
             <div style="color:var(--color-muted);font-size:13px">
               <Rich as="span" html={question.hint} />
             </div>

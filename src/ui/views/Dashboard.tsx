@@ -91,11 +91,12 @@ export function Dashboard(): JSX.Element {
       <div class="panel">
         <p class="lead" style="max-width:none">
           Dal regolamento del docente e dagli appelli 2024–2025: prova scritta in aula,{' '}
-          <b>1 ora</b>, solo documento e penna — nessun appunto. Struttura tipica:{' '}
-          <b>~9 crocette</b> (teoria, complemento a 2, riconoscimento porte, snippet assembly),{' '}
-          <b>1 sintesi di rete combinatoria</b> con Karnaugh + disegno del circuito,{' '}
-          <b>1 esercizio assembly</b>, <b>1 domanda aperta</b>. Si supera con <b>≥18/30</b>; lode
-          ai brillanti. Le figure da completare provengono dalle tavole di Hamacher.
+          <b>1 ora</b>, solo documento e penna — nessun appunto. Dodici quesiti:{' '}
+          <b>4 crocette</b>, <b>2 «completare l’immagine»</b> (uno schema con le etichette da
+          collocare — ci sono sempre), <b>2 «dalla tabella di verità all’espressione logica»</b>,{' '}
+          <b>1 sintesi di rete combinatoria</b> con Karnaugh e disegno del circuito,{' '}
+          <b>2 domande aperte</b> e <b>1 programma assembly</b>. Si supera con <b>≥18/30</b>;
+          lode ai brillanti. Gli schemi da completare sono quelli delle figure di Hamacher.
         </p>
       </div>
 
