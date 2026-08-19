@@ -1,7 +1,7 @@
 import type { McqItem } from './types';
 
 /**
- * Banca delle crocette (49 voci), raggruppate per argomento.
+ * Banca delle crocette, raggruppate per argomento.
  *
  * PER AGGIUNGERE UNA DOMANDA: copia una voce nella sezione giusta, dàlle un
  * `id` non usato, scrivi le 4 alternative in `options` e metti in `correct`
@@ -1018,5 +1018,300 @@ export const mcq: McqItem[] = [
     options: ['Zero', 'Infinito', 'NaN', 'Un numero denormalizzato'],
     correct: 2,
     ref: 'Hamacher cap. 1',
+  },
+
+  // ══════════════════ Aritmetica hardware ══════════════════
+  {
+    id: 'mcq-arith-01',
+    topic: 'arith',
+    q: 'Quali funzioni realizza un <b>semisommatore</b>?',
+    options: [
+      's = a ⊕ b, c = a · b',
+      's = a · b, c = a ⊕ b',
+      's = a + b, c = a ⊕ b',
+      's = a ⊕ b, c = a + b',
+    ],
+    correct: 0,
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'mcq-arith-02',
+    topic: 'arith',
+    q: 'Quanti ingressi ha un <b>sommatore completo</b>?',
+    options: ['2', '3 (due addendi e il riporto entrante)', '4', 'Dipende dal numero di bit'],
+    correct: 1,
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'mcq-arith-03',
+    topic: 'arith',
+    q: 'Perché un sommatore <b>ripple-carry</b> a n bit è lento?',
+    options: [
+      'Perché usa porte a molti ingressi',
+      'Perché il riporto deve attraversare tutti gli n stadi in cascata',
+      'Perché richiede un clock dedicato',
+      'Perché somma un bit per ciclo di clock',
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'mcq-arith-04',
+    topic: 'arith',
+    q: 'Nel carry-lookahead, la funzione di <b>generazione</b> vale:',
+    options: ['Gᵢ = aᵢ · bᵢ', 'Gᵢ = aᵢ ⊕ bᵢ', 'Gᵢ = aᵢ + bᵢ', 'Gᵢ = aᵢ · cᵢ'],
+    correct: 0,
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'mcq-arith-05',
+    topic: 'arith',
+    q: 'Il prodotto di due numeri da n bit occupa al massimo:',
+    options: ['n bit', 'n + 1 bit', '2n bit', '2n + 1 bit'],
+    correct: 2,
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'mcq-arith-06',
+    topic: 'arith',
+    q: 'Come si ottiene un sommatore/sottrattore unico in complemento a 2?',
+    options: [
+      'Con un secondo circuito dedicato alla sottrazione',
+      'Invertendo B con degli XOR e ponendo il riporto iniziale a 1',
+      'Scambiando A e B quando si sottrae',
+      'Non è possibile: servono due circuiti',
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 9',
+  },
+
+  // ══════════════════ Reti combinatorie notevoli ══════════════════
+  {
+    id: 'mcq-comb-01',
+    topic: 'comb',
+    q: 'Un <b>decodificatore</b> con n ingressi ha:',
+    options: [
+      '2ⁿ uscite, una sola attiva per volta',
+      'n uscite, tutte attive',
+      '2ⁿ uscite, tutte attive per volta',
+      'una sola uscita',
+    ],
+    correct: 0,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-comb-02',
+    topic: 'comb',
+    q: 'A che cosa serve un <b>multiplexer</b>?',
+    options: [
+      'A convertire un numero da binario a decimale',
+      'A scegliere uno fra più ingressi dati in base alle linee di selezione',
+      'A memorizzare un bit',
+      'A generare il riporto di una somma',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-comb-03',
+    topic: 'comb',
+    q: 'Che cos’è il <b>terzo stato</b> di un buffer tri-state?',
+    options: [
+      'Un livello logico intermedio fra 0 e 1',
+      "L'alta impedenza: l'uscita si scollega elettricamente",
+      'Uno stato di errore',
+      'Un ritardo programmabile',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-comb-04',
+    topic: 'comb',
+    q: 'Perché su un bus condiviso servono uscite tri-state?',
+    options: [
+      'Per aumentare la velocità di trasmissione',
+      'Perché due dispositivi che pilotano lo stesso filo con valori opposti lo cortocircuiterebbero',
+      'Per ridurre il numero di fili',
+      'Per generare il segnale di clock',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-comb-05',
+    topic: 'comb',
+    q: 'Quale porta confronta due bit segnalando con 1 che sono <b>uguali</b>?',
+    options: ['XOR', 'XNOR', 'NAND', 'OR'],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-comb-06',
+    topic: 'comb',
+    q: 'Che cosa distingue un <b>priority encoder</b> da un encoder semplice?',
+    options: [
+      'Ha più uscite',
+      'Gestisce il caso di più ingressi attivi dando la precedenza a uno',
+      'Funziona senza alimentazione',
+      'È sequenziale invece che combinatorio',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+
+  // ══════════════════ Tempi, tecnologia, dispositivi programmabili ══════════════════
+  {
+    id: 'mcq-tech-01',
+    topic: 'tech',
+    q: 'Il <b>ritardo di propagazione</b> di una porta si misura:',
+    options: [
+      "Fra il 10% e il 90% del fronte d'uscita",
+      "Fra gli istanti in cui ingresso e uscita attraversano il 50% dell'escursione",
+      'Fra due fronti di clock consecutivi',
+      "Dal momento dell'accensione",
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-tech-02',
+    topic: 'tech',
+    q: 'In una rete combinatoria con più porte <b>in cascata</b>, il ritardo complessivo:',
+    options: [
+      'È quello della porta più veloce',
+      'È la somma dei ritardi lungo il cammino più lento (cammino critico)',
+      'È sempre uguale a quello di una singola porta',
+      'Si annulla se la rete è minimizzata',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-tech-03',
+    topic: 'tech',
+    q: 'Che cosa fissa il <b>periodo minimo di clock</b> di un circuito sincrono?',
+    options: [
+      'Il numero di flip-flop',
+      'Il cammino critico fra due registri, più il tempo di setup',
+      'La tensione di alimentazione',
+      'Il numero di ingressi del circuito',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-tech-04',
+    topic: 'tech',
+    q: 'Il <b>fan-out</b> di una porta indica:',
+    options: [
+      'Quanti ingressi accetta',
+      'Quante altre porte la sua uscita può pilotare',
+      'Il suo ritardo di propagazione',
+      'Il numero di transistor che la compongono',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-tech-05',
+    topic: 'tech',
+    q: 'In un circuito CMOS la corrente scorre in modo significativo:',
+    options: [
+      'Costantemente, anche a riposo',
+      'Quasi solo durante le commutazioni',
+      'Solo quando l’uscita vale 1',
+      'Solo quando l’uscita vale 0',
+    ],
+    correct: 1,
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'mcq-tech-06',
+    topic: 'tech',
+    q: 'Una <b>PLA</b> è organizzata come:',
+    options: [
+      'Una matrice di AND seguita da una matrice di OR, entrambe programmabili',
+      'Una matrice di flip-flop',
+      'Una memoria a sola lettura',
+      'Un insieme di multiplexer in cascata',
+    ],
+    correct: 0,
+    ref: 'Hamacher App. A',
+  },
+
+  // ══════════════════ Input/Output, DMA, bus ══════════════════
+  {
+    id: 'mcq-io-01',
+    topic: 'io',
+    q: 'Con l’I/O <b>memory-mapped</b>, per leggere un registro di interfaccia si usa:',
+    options: [
+      'Una istruzione dedicata IN',
+      'Una normale istruzione Load',
+      'Una chiamata di sistema',
+      "Un'interruzione software",
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 3',
+  },
+  {
+    id: 'mcq-io-02',
+    topic: 'io',
+    q: 'Quante interruzioni genera tipicamente un trasferimento DMA di un blocco?',
+    options: ['Una per parola trasferita', 'Una sola, a trasferimento concluso', 'Nessuna', 'Due per parola'],
+    correct: 1,
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'mcq-io-03',
+    topic: 'io',
+    q: 'Il difetto principale dell’I/O programmato (polling) è che:',
+    options: [
+      'Richiede hardware dedicato costoso',
+      'Il processore consuma tempo in un ciclo di attesa',
+      'Non funziona con dispositivi lenti',
+      'Richiede sempre il DMA',
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'mcq-io-04',
+    topic: 'io',
+    q: 'In un trasferimento con <b>handshake</b>, la velocità è quella:',
+    options: [
+      'Del dispositivo più veloce',
+      'Del dispositivo più lento fra i due',
+      'Del clock di sistema',
+      'Fissata dal bus, indipendente dai dispositivi',
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'mcq-io-05',
+    topic: 'io',
+    q: 'Quale problema introduce il DMA rispetto alla cache?',
+    options: [
+      'Rallenta il clock del processore',
+      'Scrivendo in memoria può rendere obsoleta la copia in cache (coerenza)',
+      'Impedisce le interruzioni',
+      'Richiede di disabilitare la memoria virtuale',
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 8',
+  },
+  {
+    id: 'mcq-io-06',
+    topic: 'io',
+    q: 'Perché gli standard moderni ad alta velocità (USB, PCI Express) sono <b>seriali</b>?',
+    options: [
+      'Perché il parallelo non permette il controllo di errore',
+      'Meno fili, meno interferenze e nessuno sfasamento fra le linee: si sale in frequenza',
+      'Perché costano di più',
+      'Perché il seriale trasferisce più bit per volta',
+    ],
+    correct: 1,
+    ref: 'Hamacher cap. 4',
   },
 ];

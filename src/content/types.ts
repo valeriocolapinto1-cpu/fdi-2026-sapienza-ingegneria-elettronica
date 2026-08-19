@@ -14,13 +14,17 @@ export type HamacherRef = string;
 
 /** Aree del programma. Servono anche a comporre i drill per argomento. */
 export type TopicId =
-  | 'bin' // numeri binari, complemento a 2
-  | 'bool' // algebra di Boole, porte
-  | 'karnaugh' // sintesi di reti combinatorie
-  | 'ff' // circuiti sequenziali, flip-flop
+  | 'bin' // numeri binari, basi, complemento a 2
+  | 'bool' // algebra di Boole, porte, algebra degli insiemi
+  | 'comb' // reti combinatorie notevoli: decoder, MUX, tri-state
+  | 'karnaugh' // sintesi e minimizzazione
+  | 'arith' // aritmetica hardware: sommatori, moltiplicazione
+  | 'ff' // circuiti sequenziali, flip-flop, registri, contatori
+  | 'tech' // ritardo di propagazione, CMOS, PLA/FPGA
   | 'cpu' // datapath e unità di controllo
   | 'isa' // RISC/CISC, assembly, indirizzamento
-  | 'irq' // interruzioni, eccezioni, I/O
+  | 'irq' // interruzioni ed eccezioni
+  | 'io' // I/O, DMA, bus e standard
   | 'pipe' // pipeline e prestazioni
   | 'mem' // gerarchia di memoria e cache
   | 'vm' // memoria virtuale e TLB

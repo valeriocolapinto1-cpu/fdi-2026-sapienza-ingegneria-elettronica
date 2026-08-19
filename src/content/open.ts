@@ -1,9 +1,8 @@
 import type { OpenItem } from './types';
 
 /**
- * Domande aperte di teoria (14 voci), con risposta modello per
- * l'autovalutazione. Le prime cinque vengono dal prototipo; le altre coprono
- * i moduli che ne erano scoperti (bin, bool, karnaugh, ff, isa, mem).
+ * Domande aperte di teoria, con risposta modello per l'autovalutazione.
+ * Ogni argomento del programma ne ha almeno una: lo impone un test.
  *
  * PER AGGIUNGERNE UNA: aggiungi una voce con `id` nuovo, `topic` fra quelli
  * di `types.ts` e un `model` che elenchi i punti che l'esame vuole sentire.
@@ -162,5 +161,46 @@ export const open: OpenItem[] = [
     model:
       "La mappa dispone i mintermini in celle adiacenti secondo il <b>codice Gray</b>: fra celle vicine cambia una sola variabile. Si raggruppano gli <code>1</code> in blocchi di dimensione potenza di 2, il più grandi possibile: dentro un gruppo le variabili che cambiano si eliminano, e restano quelle costanti, che formano un implicante. L'unione degli implicanti scelti dà la SOP minima. Le celle sono adiacenti anche a bordo tavola (wrap-around). Le <b>indifferenze</b> (x) possono essere prese come 1 quando servono ad allargare un gruppo, o lasciate a 0 se non aiutano: si valutano una per una, non tutte insieme. Nel disegno finale scomponi in porte a 2 ingressi.",
     ref: 'Hamacher App. A',
+  },
+
+  {
+    id: 'open-arith-01',
+    topic: 'arith',
+    q: 'Perché un sommatore ripple-carry è lento, e come lo risolve il carry-lookahead?',
+    model:
+      "Nel <b>ripple-carry</b> gli stadi sono in cascata: il riporto uscente di ciascun sommatore completo entra nel successivo, quindi lo stadio più significativo produce il risultato definitivo solo dopo che il riporto ha attraversato <b>tutti</b> gli stadi. Il ritardo cresce <b>linearmente con n</b>, e siccome questo è il cammino critico è lui a fissare il periodo minimo di clock. Il <b>carry-lookahead</b> non aspetta il riporto: lo calcola. Per ogni posizione definisce due funzioni che dipendono solo dagli operandi, quindi disponibili subito — <code>Gᵢ = aᵢ·bᵢ</code> (la posizione genera un riporto da sé) e <code>Pᵢ = aᵢ ⊕ bᵢ</code> (la posizione propaga quello che riceve) — da cui <code>cᵢ₊₁ = Gᵢ + Pᵢ·cᵢ</code>. Espandendo la ricorsione ogni riporto si esprime in funzione del solo <code>c₀</code>, quindi tutti i riporti si ottengono <b>in parallelo</b> con due livelli di porte. Il costo è il numero di porte, che esplode con n: per questo si fanno blocchi da 4 bit e si applica lo stesso schema a un livello superiore.",
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'open-arith-02',
+    topic: 'arith',
+    q: 'Descrivi semisommatore e sommatore completo, e spiega come si ottiene un sommatore/sottrattore unico.',
+    model:
+      "Il <b>semisommatore</b> somma due bit: <code>s = a ⊕ b</code> (vale 1 quando sono diversi) e <code>c = a·b</code> (il riporto esce solo se sono entrambi 1). Non accetta riporto entrante, e per questo non basta oltre la posizione meno significativa. Il <b>sommatore completo</b> ha tre ingressi: <code>s = a ⊕ b ⊕ cᵢₙ</code>, cioè 1 quando il numero di ingressi a 1 è dispari, e <code>cₒᵤₜ = a·b + cᵢₙ·(a ⊕ b)</code>. Si costruisce con due semisommatori più una OR. Per il <b>sommatore/sottrattore</b> si sfrutta il fatto che in complemento a 2 <code>A − B = A + <span class=\"ovl\">B</span> + 1</code>: ogni bit di B passa per uno XOR con la linea di controllo <code>Sub</code>, che lo inverte quando vale 1, e la stessa linea entra come riporto iniziale fornendo il «+1». Un solo circuito fa entrambe le operazioni: è la ragione pratica per cui si usa il complemento a 2.",
+    ref: 'Hamacher cap. 9',
+  },
+  {
+    id: 'open-comb-01',
+    topic: 'comb',
+    q: 'Che cosa fanno decodificatore e multiplexer? Come si sintetizza una funzione con un MUX?',
+    model:
+      "Il <b>decodificatore</b> ha n ingressi e 2ⁿ uscite e ne attiva <b>una sola</b>, quella il cui indice corrisponde al numero presentato: ogni uscita è il mintermine corrispondente. Serve a selezionare una fra molte cose — un chip di memoria, un registro. Il <b>multiplexer</b> fa l'opposto sul lato dati: sceglie uno fra 2ⁿ ingressi in base a n linee di selezione, ed è l'interruttore programmabile del circuito (dentro il processore decide quale sorgente va alla ALU). Per <b>sintetizzare una funzione</b> di n variabili con un MUX a n selezioni si collegano le variabili alle selezioni e si fissa ciascun ingresso dati al valore che la funzione assume in quella riga: gli ingressi dati <i>sono</i> la colonna delle uscite della tabella di verità. Con lo stesso MUX si copre anche una funzione di n+1 variabili, collegando a ogni ingresso dati non una costante ma la variabile residua, il suo complemento, 0 oppure 1.",
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'open-tech-01',
+    topic: 'tech',
+    q: 'Cosa si intende per ritardo di propagazione in una rete combinatoria formata da più porte in cascata?',
+    model:
+      "Il <b>ritardo di propagazione</b> di una singola porta è l'intervallo fra l'istante in cui l'ingresso attraversa il 50% dell'escursione e quello in cui l'uscita fa altrettanto: il segnale non commuta istantaneamente perché i transistor devono caricare e scaricare le capacità. Da non confondere con il <b>tempo di transizione</b>, che misura la ripidità del fronte (dal 10% al 90%). Quando più porte sono <b>in cascata</b> i ritardi si <b>sommano</b>: l'uscita finale è valida solo dopo che il segnale ha attraversato l'intera catena, e il ritardo della rete è quello del suo <b>cammino critico</b>, cioè il percorso ingresso→uscita più lento. Due conseguenze: il periodo minimo di clock è dettato dal cammino critico fra due registri più il tempo di setup, e una forma minima a due livelli (AND poi OR) è preferibile anche per velocità, non solo per numero di porte. È lo stesso motivo per cui un ripple-carry a n bit è lento: il riporto attraversa n stadi in fila.",
+    ref: 'Hamacher App. A',
+  },
+  {
+    id: 'open-io-01',
+    topic: 'io',
+    q: 'Confronta I/O programmato, guidato da interruzioni e DMA: quando conviene ciascuno?',
+    model:
+      "Tutti e tre risolvono lo stesso problema — il <b>divario di velocità</b> fra processore e periferiche. Nell'<b>I/O programmato</b> il processore interroga ciclicamente il bit di stato finché il dispositivo non è pronto (polling): semplicissimo da realizzare, ma brucia in un ciclo vuoto tutto il tempo dell'attesa; accettabile solo se il dispositivo è veloce o se non c'è altro da fare. Nell'I/O <b>guidato da interruzioni</b> il processore fa altro ed è il dispositivo a chiamare quando è pronto: si paga il costo del salvataggio dello stato e del cambio di contesto, ma non si spreca attesa — è la scelta normale per dispositivi lenti e sporadici come la tastiera. Con il <b>DMA</b> un controllore dedicato trasferisce da solo un <b>intero blocco</b> fra periferica e memoria, diventando temporaneamente padrone del bus, e manda <b>una sola</b> interruzione alla fine: indispensabile per il disco o la rete, dove un'interruzione per parola sarebbe insostenibile. Il DMA introduce però il problema della <b>coerenza</b>: scrivendo in memoria può rendere obsoleta la copia tenuta in cache.",
+    ref: 'Hamacher cap. 4',
   },
 ];
