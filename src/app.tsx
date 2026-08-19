@@ -4,14 +4,16 @@ import { t } from '~/lib/i18n';
 import { Dashboard } from '~/ui/views/Dashboard';
 import { Study } from '~/ui/views/Study';
 import { Simulator } from '~/ui/views/Simulator';
-import { Tools } from '~/ui/views/Tools';
+import { Definitions } from '~/ui/views/Definitions';
+import { Training } from '~/ui/views/Training';
 import { References } from '~/ui/views/References';
 
 const TAB_LABELS: Record<ViewId, string> = {
   dash: 'Dashboard',
   study: 'Studia',
+  def: 'Definizioni',
   exam: 'Simulatore',
-  tools: 'Strumenti',
+  train: 'Allenamento',
   ref: 'Riferimenti',
 };
 
@@ -55,7 +57,8 @@ export function App(): JSX.Element {
         {route.view === 'dash' && <Dashboard />}
         {route.view === 'study' && <Study topicId={route.param} />}
         {route.view === 'exam' && <Simulator mode={route.param} />}
-        {route.view === 'tools' && <Tools />}
+        {route.view === 'def' && <Definitions />}
+        {route.view === 'train' && <Training focus={route.param} />}
         {route.view === 'ref' && <References />}
       </main>
       <footer class="site-footer">

@@ -171,15 +171,17 @@ function RangeTool(): JSX.Element {
   );
 }
 
-export function Tools(): JSX.Element {
+/**
+ * I vecchi «strumenti»: calcolano al posto tuo, quindi non allenano. Restano
+ * in fondo alla pagina di allenamento come banco di verifica — utili per
+ * controllare un conto già fatto a mano, non per farlo al posto tuo.
+ */
+export function Converters(): JSX.Element {
   return (
-    <section class="view">
-      <p class="eyebrow">Strumenti interattivi</p>
-      <h1 class="h">Calcolatori da banco</h1>
-      <p class="lead">Verifica al volo conversioni e overflow mentre ti eserciti.</p>
-      <Converter />
+    <>
       <Adder />
+      <Converter />
       <RangeTool />
-    </section>
+    </>
   );
 }
