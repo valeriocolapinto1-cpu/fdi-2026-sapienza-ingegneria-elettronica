@@ -859,3 +859,362 @@
     }
   }
 }
+
+@layer components {
+  /* ═══════════ schemi da completare ═══════════ */
+
+  /**
+   * Lo schema è un SVG con proporzioni fisse; le etichette sono un overlay
+   * HTML posizionato in percentuale sulle coordinate del viewBox. Così in
+   * modalità esercizio sono <select> veri — raggiungibili da tastiera e
+   * leggibili dagli screen reader — invece che testo dentro l'SVG.
+   */
+  .dg {
+    position: relative;
+    width: 100%;
+    background: var(--color-well);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  .dg-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .dg-box {
+    fill: var(--color-panel-2);
+    stroke: var(--color-line);
+    stroke-width: 1.5;
+  }
+  .dg-group {
+    fill: rgba(55, 194, 214, 0.05);
+    stroke: var(--color-cyan-dim);
+    stroke-width: 1;
+    stroke-dasharray: 5 4;
+  }
+  .dg-line {
+    stroke: var(--color-line);
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .dg-text {
+    fill: var(--color-faint);
+    font-family: var(--font-mono);
+    text-anchor: middle;
+  }
+
+  .dg-slot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.25;
+    text-align: center;
+    max-width: 30%;
+  }
+  /* etichetta mostrata (modalità figura) */
+  .dg-slot .dg-label {
+    display: inline-block;
+    color: var(--color-ink);
+    background: var(--color-panel);
+    border: 1px solid var(--color-copper-dim);
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+  /* menu a tendina (modalità esercizio) */
+  .dg-slot select {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    max-width: 100%;
+    background: var(--color-panel);
+    color: var(--color-ink);
+    border: 1px dashed var(--color-copper);
+    border-radius: 5px;
+    padding: 2px 4px;
+  }
+  .dg-slot select:disabled {
+    opacity: 1;
+  }
+  .dg-slot.ok select {
+    border-style: solid;
+    border-color: var(--color-green);
+    color: var(--color-green);
+  }
+  .dg-slot.ko select {
+    border-style: solid;
+    border-color: var(--color-red);
+    color: var(--color-red);
+  }
+  /* numerino di riferimento accanto allo slot */
+  .dg-slot .dg-n {
+    display: block;
+    font-size: 9.5px;
+    color: var(--color-faint);
+  }
+
+  .dg-caption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-faint);
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .dg-slot {
+      font-size: 9.5px;
+      max-width: 34%;
+    }
+    .dg-slot select {
+      font-size: 9.5px;
+    }
+  }
+}
+
+@layer components {
+  /* ═══════════ note e didascalie ═══════════ */
+
+  /**
+   * `.fn` esisteva solo dentro `.fig`; serve anche da sola come riga di
+   * servizio (conteggi, didascalie, note sotto a un campo).
+   */
+  .fn {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-faint);
+  }
+  .fn code {
+    color: var(--color-code);
+  }
+
+  /* ═══════════ definizioni ═══════════ */
+
+  .def-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .def-chip {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
+    background: var(--color-panel-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-chip);
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .def-chip:hover {
+    border-color: var(--color-copper-dim);
+    color: var(--color-ink);
+  }
+  .def-chip.on {
+    color: var(--color-copper);
+    border-color: var(--color-copper);
+    background: rgba(200, 138, 78, 0.08);
+  }
+
+  .deflist {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .def {
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    padding: 14px 16px;
+  }
+  .def-t {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--color-ink);
+    margin: 0 0 6px;
+  }
+  .def-s {
+    color: var(--color-prose);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .def-d {
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.55;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--color-line-soft);
+  }
+  .def-f {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+  }
+  .def-topic {
+    color: var(--color-cyan);
+  }
+  .def-ref {
+    color: var(--color-faint);
+  }
+
+  /* ═══════════ allenamento ═══════════ */
+
+  .gym-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin: 16px 0 20px;
+  }
+  .gym-tab {
+    text-align: left;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .gym-tab:hover {
+    border-color: var(--color-copper-dim);
+    transform: translateY(-1px);
+  }
+  .gym-tab.on {
+    border-color: var(--color-copper);
+    background: var(--color-panel-2);
+  }
+  .gym-tab .gt-l {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--color-ink);
+  }
+  .gym-tab.on .gt-l {
+    color: var(--color-copper);
+  }
+  .gym-tab .gt-d {
+    display: block;
+    font-size: 12px;
+    color: var(--color-muted);
+    margin-top: 3px;
+  }
+
+  .gym {
+    animation: aefin-fade 0.25s ease both;
+  }
+
+  /* ═══════════ esercizio guidato ═══════════ */
+
+  .drill {
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .drill h3 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    margin: 0 0 4px;
+    color: var(--color-ink);
+  }
+
+  .steps {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+  .step {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--color-line-soft);
+  }
+  .step:first-child {
+    border-top: 0;
+  }
+  .step-n {
+    flex: 0 0 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-faint);
+  }
+  .step.ok .step-n {
+    border-color: var(--color-green);
+    color: var(--color-green);
+  }
+  .step.ko .step-n {
+    border-color: var(--color-red);
+    color: var(--color-red);
+  }
+  .step-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .step-q {
+    margin: 0 0 8px;
+    color: var(--color-prose);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .step-w,
+  .step-v {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-faint);
+  }
+  .step.ok .step-v {
+    color: var(--color-green);
+  }
+  .step.ko .step-v {
+    color: var(--color-red);
+  }
+  .step-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .step-hint {
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    background: var(--color-panel-2);
+    border-left: 2px solid var(--color-cyan-dim);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+  .step-hint code {
+    font-family: var(--font-mono);
+    color: var(--color-copper);
+  }
+
+  .drill-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-line-soft);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
+  }
+  .drill-foot .ok {
+    color: var(--color-green);
+  }
+}

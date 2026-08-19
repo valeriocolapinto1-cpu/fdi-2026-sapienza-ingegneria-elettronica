@@ -83,6 +83,12 @@ export interface Figure {
   code: string;
   /** Che cosa rappresenta. */
   desc: string;
+  /**
+   * Schema ridisegnato corrispondente, se esiste (`content/diagrams.ts`).
+   * Quando c'è, i Riferimenti mostrano il disegno invece del solo codice e
+   * offrono di esercitarsi a completarlo.
+   */
+  diagramId?: string;
 }
 
 /**

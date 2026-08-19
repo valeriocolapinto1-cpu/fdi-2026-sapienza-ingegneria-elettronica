@@ -8,7 +8,7 @@ import { useEffect, useState } from 'preact/hooks';
  * `404.html` per sopravvivere ai reload sulle route profonde. Con l'hash il
  * server vede sempre `index.html` e il problema non esiste.
  */
-export const VIEWS = ['dash', 'study', 'exam', 'tools', 'ref'] as const;
+export const VIEWS = ['dash', 'study', 'def', 'exam', 'train', 'ref'] as const;
 export type ViewId = (typeof VIEWS)[number];
 
 export const DEFAULT_VIEW: ViewId = 'dash';
