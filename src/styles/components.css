@@ -643,6 +643,11 @@
   .reveal .rl.ko {
     color: var(--color-red);
   }
+  /* Punteggio parziale: né verde né rosso. Lo schema mezzo giusto vale
+     mezzo punto, e si vede. */
+  .reveal .rl.half {
+    color: var(--color-amber);
+  }
   .selfgrade {
     display: flex;
     gap: 8px;
@@ -870,13 +875,21 @@
    * leggibili dagli screen reader — invece che testo dentro l'SVG.
    */
   .dg {
-    position: relative;
     width: 100%;
     background: var(--color-well);
     border: 1px solid var(--color-line);
     border-radius: 10px;
     padding: 10px;
     margin: 10px 0;
+  }
+  /**
+   * Riquadro di riferimento degli slot: **solo** l'SVG, senza padding né
+   * didascalia. Prima le percentuali si calcolavano sul contenitore intero,
+   * quindi ogni etichetta cadeva un po' più in basso del punto voluto.
+   */
+  .dg-frame {
+    position: relative;
+    line-height: 0;
   }
   .dg-svg {
     display: block;
@@ -903,6 +916,17 @@
     fill: var(--color-faint);
     font-family: var(--font-mono);
     text-anchor: middle;
+  }
+  /**
+   * Ancoraggio a sinistra per le scritte di bordo.
+   *
+   * Serve una classe e non l'attributo `text-anchor="start"`: una regola CSS
+   * batte sempre un attributo di presentazione, quindi l'attributo veniva
+   * ignorato e la scritta finiva centrata — e, per le etichette a sinistra,
+   * tagliata fuori dal riquadro.
+   */
+  .dg-text.dg-start {
+    text-anchor: start;
   }
 
   .dg-slot {
@@ -969,6 +993,17 @@
     }
     .dg-slot select {
       font-size: 9.5px;
+    }
+    /**
+     * Sotto una certa larghezza gli slot si accavallano: meglio tenere il
+     * disegno alla sua misura minima e farlo scorrere **dentro il riquadro**
+     * — la pagina non scorre in orizzontale, il quesito resta leggibile.
+     */
+    .dg {
+      overflow-x: auto;
+    }
+    .dg-frame {
+      min-width: 460px;
     }
   }
 }

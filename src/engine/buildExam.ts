@@ -20,16 +20,24 @@ const repeat = (gen: GeneratorId, points: number, times: number): Slot[] =>
 
 /**
  * Le crocette dell'esame: in maggioranza teoria, ma anche quesiti calcolati su
- * processore, memoria virtuale, cache, pipeline e virgola mobile.
+ * binario, porte, assembly, processore, memoria virtuale, cache, pipeline e
+ * virgola mobile.
  *
  * `mc` compare tre volte perché la teoria è l'esito più probabile — come nella
  * prova reale — e perché, essendo l'estrazione senza reinserimento, è l'unico
  * modo per far comparire più di una crocetta teorica nella stessa prova.
+ *
+ * `cp2`, `gate` e `asmSnippet` stanno qui e non più in slot fissi: nel formato
+ * vero le crocette pescano da tutto il programma, non c'è una casella
+ * riservata al complemento a 2.
  */
 const CROCETTE: readonly GeneratorId[] = [
   'mc',
   'mc',
   'mc',
+  'cp2',
+  'gate',
+  'asmSnippet',
   'rtn',
   'ieee754',
   'pageTranslate',
@@ -66,20 +74,22 @@ function expandSlots(slots: readonly Slot[], rng: Rng): { gen: GeneratorId; poin
 /**
  * Struttura delle prove.
  *
- * `full` replica il formato reale: 12 quesiti e punteggi che sommano
- * **esattamente 30** — 9 crocette da 2 (incluse CP2, porte e assembly),
- * la sintesi di Karnaugh da 5, l'assembly da scrivere da 4, la domanda
- * aperta da 3. La somma è verificata da un test.
+ * `full` ricalca il formato reale, quesito per quesito: 4 crocette,
+ * **2 «completare l'immagine»**, 2 «da tabella di verità a espressione», 1
+ * sintesi di rete combinatoria, 2 domande aperte, 1 programma assembly.
+ *
+ * Punti uniformi: 12 × 2,5 = **30**. Sul testo della prova i punti per quesito
+ * non sono indicati, quindi li tengo uguali; se il docente li pesa diversamente
+ * si cambia qui e basta, perché la somma è verificata da un test.
  */
 const BLUEPRINTS: Record<ExamMode, Slot[]> = {
   full: [
-    { drawFrom: CROCETTE, count: 6, points: 2 },
-    { gen: 'cp2', points: 2 },
-    { gen: 'gate', points: 2 },
-    { gen: 'asmSnippet', points: 2 },
-    { gen: 'karnaugh', points: 5 },
-    { gen: 'asmWrite', points: 4 },
-    { gen: 'open', points: 3 },
+    { drawFrom: CROCETTE, count: 4, points: 2.5 },
+    ...repeat('diagramLabel', 2.5, 2),
+    ...repeat('truthToExpr', 2.5, 2),
+    { gen: 'karnaugh', points: 2.5 },
+    ...repeat('open', 2.5, 2),
+    { gen: 'asmWrite', points: 2.5 },
   ],
 
   // Ripasso lampo: solo quesiti auto-correggibili.
@@ -113,7 +123,9 @@ export const MODE_LABELS: Record<ExamMode, string> = {
 };
 
 export const MODE_DESCRIPTIONS: Record<ExamMode, string> = {
-  full: 'Formato integrale su 30. Crocette + Karnaugh + assembly + domanda aperta.',
+  full:
+    'Formato integrale su 30, nell’ordine della prova vera: crocette, due schemi da completare, ' +
+    'due tabelle di verità da tradurre in espressione, sintesi combinatoria, aperte e assembly.',
   quick: 'Solo domande auto-correggibili. Voto rapido, per ripasso mirato.',
   binary: 'Esercizi generati sul binario con segno. La parte che «non deve avere dubbi».',
   logic: 'Riconoscimento porte + sintesi con Karnaugh dalla tabella di verità.',

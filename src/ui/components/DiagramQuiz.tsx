@@ -47,41 +47,43 @@ export function DiagramQuiz({
 }): JSX.Element {
   return (
     <div class="dg">
-      <svg
-        class="dg-svg"
-        viewBox={`0 0 ${diagram.width} ${diagram.height}`}
-        role="img"
-        aria-label={diagram.title}
-      >
-        <ArrowDefs />
-        <g dangerouslySetInnerHTML={{ __html: diagram.svg }} />
-      </svg>
+      <div class="dg-frame">
+        <svg
+          class="dg-svg"
+          viewBox={`0 0 ${diagram.width} ${diagram.height}`}
+          role="img"
+          aria-label={diagram.title}
+        >
+          <ArrowDefs />
+          <g dangerouslySetInnerHTML={{ __html: diagram.svg }} />
+        </svg>
 
-      {diagram.slots.map((slot, index) => {
-        const state = verdict ? (verdict[slot.id] ? ' ok' : ' ko') : '';
-        return (
-          <span
-            key={slot.id}
-            class={`dg-slot${state}`}
-            style={slotStyle(slot.x, slot.y, diagram.width, diagram.height)}
-          >
-            <select
-              aria-label={`Etichetta ${index + 1} di ${diagram.slots.length}`}
-              disabled={locked}
-              value={picks[slot.id] ?? ''}
-              onChange={(event) => onPick(slot.id, (event.target as HTMLSelectElement).value)}
+        {diagram.slots.map((slot, index) => {
+          const state = verdict ? (verdict[slot.id] ? ' ok' : ' ko') : '';
+          return (
+            <span
+              key={slot.id}
+              class={`dg-slot${state}`}
+              style={slotStyle(slot.x, slot.y, diagram.width, diagram.height)}
             >
-              <option value="">— {index + 1} —</option>
-              {options.map((label) => (
-                <option key={label} value={label}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            {verdict && !verdict[slot.id] && <span class="dg-n">{slot.label}</span>}
-          </span>
-        );
-      })}
+              <select
+                aria-label={`Etichetta ${index + 1} di ${diagram.slots.length}`}
+                disabled={locked}
+                value={picks[slot.id] ?? ''}
+                onChange={(event) => onPick(slot.id, (event.target as HTMLSelectElement).value)}
+              >
+                <option value="">— {index + 1} —</option>
+                {options.map((label) => (
+                  <option key={label} value={label}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              {verdict && !verdict[slot.id] && <span class="dg-n">{slot.label}</span>}
+            </span>
+          );
+        })}
+      </div>
 
       <div class="dg-caption">
         {diagram.title} · {diagram.ref}

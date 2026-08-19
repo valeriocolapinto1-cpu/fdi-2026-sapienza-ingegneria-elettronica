@@ -1,6 +1,13 @@
-import { minimalCover, sopToString, varNames, type Implicant } from '../boolean';
+import {
+  coversMinterm,
+  minimalCover,
+  sopToString,
+  termToString,
+  varNames,
+  type Implicant,
+} from '../boolean';
 import { pick, randInt, shuffle, type Rng } from '../rng';
-import type { McQuestion, SelfQuestion } from '../types';
+import type { ExprQuestion, McQuestion, SelfQuestion } from '../types';
 import { makeChoices, questionId, type GenCtx } from './context';
 
 /** Uscite nell'ordine AB = 00, 01, 10, 11. */
@@ -139,5 +146,77 @@ export function genKarnaugh(ctx: GenCtx): SelfQuestion {
       '<br><span style="color:var(--color-muted);font-size:13px">Forme equivalenti sono ' +
       'accettabili se coprono esattamente gli stessi mintermini con lo stesso numero di ' +
       'termini e letterali. Ricorda di scomporre in porte a 2 ingressi nel disegno.</span>',
+  };
+}
+
+
+/**
+ * «Da tabella di verità a espressione logica»: due quesiti su dodici nella
+ * prova reale.
+ *
+ * A differenza della sintesi con Karnaugh questo si corregge da solo:
+ * `judgeSop()` legge l'espressione scritta, la valuta su tutte le
+ * combinazioni e la confronta con la SOP minima esatta. Quindi va bene
+ * qualunque forma corretta, e una forma corretta ma ridondante prende metà
+ * punteggio invece di zero.
+ *
+ * La soluzione modello mostra il procedimento come si scrive sul foglio:
+ * forma canonica, raccoglimento, forma minima.
+ */
+export function genTruthToExpr(ctx: GenCtx): ExprQuestion {
+  // Due variabili come nella prova vera, tre ogni tanto per non abituarsi a
+  // una tabella di quattro righe.
+  const vars = randInt(ctx.rng, 0, 4) < 3 ? 2 : 3;
+  const cells = 1 << vars;
+  const names = varNames(vars);
+
+  // Funzione casuale non costante: né sempre 0 né sempre 1.
+  let onSet = new Set<number>();
+  do {
+    onSet = new Set(
+      Array.from({ length: cells }, (_, m) => m).filter(() => ctx.rng() < 0.5),
+    );
+  } while (onSet.size === 0 || onSet.size === cells);
+
+  const minterms = [...onSet].sort((a, b) => a - b);
+  const full = cells - 1;
+  const cover = minimalCover(onSet, new Set(), vars);
+
+  const rows = Array.from({ length: cells }, (_, m) => ({
+    in: names.map((_, i) => (m >> (vars - 1 - i)) & 1),
+    out: (onSet.has(m) ? 1 : 0) as 0 | 1,
+  }));
+
+  const canonical = minterms
+    .map((m) => termToString({ mask: full, bits: m }, vars))
+    .join(' + ');
+
+  // Per ogni gruppo della copertura: quali mintermini raccoglie e cosa resta.
+  const steps = cover.map((imp) => {
+    const grouped = minterms.filter((m) => coversMinterm(imp, m));
+    const left = grouped.map((m) => termToString({ mask: full, bits: m }, vars)).join(' + ');
+    return `${left} = <b>${termToString(imp, vars)}</b>`;
+  });
+
+  return {
+    id: questionId(ctx),
+    kind: 'expr',
+    cat: 'Tabella di verità → espressione',
+    points: ctx.points,
+    q:
+      `Ricava l’espressione logica <b>minima</b> in somma di prodotti della funzione ` +
+      `<code>Y(${names.join(',')})</code> descritta dalla tabella.`,
+    topic: 'bool',
+    ref: 'Hamacher App. A',
+    payload: { type: 'truthTable', vars: names, rows },
+    vars,
+    minterms,
+    dontCares: [],
+    model:
+      `<b>1.</b> Un termine per ogni riga a 1 (forma canonica): Y = ${canonical}.<br>` +
+      `<b>2.</b> Si raccoglie ciò che cambia: ${steps.join('; ')}.<br>` +
+      `<b>3.</b> Forma minima: <b>Y = ${sopToString(cover, vars)}</b>.` +
+      '<br><span style="color:var(--color-muted);font-size:13px">Ogni forma equivalente e ' +
+      'altrettanto compatta vale punteggio pieno.</span>',
   };
 }

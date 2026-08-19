@@ -40,6 +40,8 @@ const B = 'class="dg-box"';
 const L = 'class="dg-line"';
 const A = 'class="dg-line" marker-end="url(#aefin-arrow)"';
 const T = 'class="dg-text"';
+/** Testo ancorato a sinistra: per le scritte di bordo. */
+const TS = 'class="dg-text dg-start"';
 const G = 'class="dg-group"';
 
 export const diagrams: Diagram[] = [
@@ -120,8 +122,7 @@ export const diagrams: Diagram[] = [
       <line ${L} x1="150" y1="212" x2="330" y2="212"/>
       <line ${L} x1="240" y1="262" x2="300" y2="262"/>
       <line ${L} x1="60" y1="322" x2="300" y2="322"/>
-      <line ${L} x1="150" y1="372" x2="300" y2="372"/>
-      <text ${T} x="470" y="207" font-size="11">In A / In B → Out</text>`,
+      <line ${L} x1="150" y1="372" x2="300" y2="372"/>`,
   },
 
   {
@@ -130,16 +131,16 @@ export const diagrams: Diagram[] = [
     topic: 'mem',
     ref: 'Hamacher cap. 8',
     width: 640,
-    height: 380,
+    height: 420,
     slots: [
       { id: 'cache', x: 120, y: 22, label: 'Cache' },
       { id: 'centrale', x: 500, y: 22, label: 'Memoria centrale' },
       { id: 'gruppo', x: 40, y: 90, label: 'Gruppo' },
       { id: 'blocco', x: 120, y: 90, label: 'Blocco' },
-      { id: 'etichetta', x: 120, y: 336, label: 'Etichetta' },
-      { id: 'posizione', x: 240, y: 336, label: 'Posizione' },
-      { id: 'spiazzamento', x: 350, y: 336, label: 'Spiazzamento' },
-      { id: 'indirizzo', x: 235, y: 372, label: 'Indirizzo di memoria centrale' },
+      { id: 'etichetta', x: 120, y: 332, label: 'Etichetta' },
+      { id: 'posizione', x: 240, y: 332, label: 'Posizione' },
+      { id: 'spiazzamento', x: 350, y: 332, label: 'Spiazzamento' },
+      { id: 'indirizzo', x: 235, y: 390, label: 'Indirizzo di memoria centrale' },
     ],
     distractors: ['Tag', 'Frame', 'Pagina', 'Offset di pagina', 'Dato'],
     svg: `
@@ -216,7 +217,7 @@ export const diagrams: Diagram[] = [
     ],
     distractors: ['Etichetta', 'Indice di cache', 'Blocco', 'Registro di stato'],
     svg: `
-      <text ${T} x="60" y="20" font-size="12" text-anchor="start">Indirizzo virtuale</text>
+      <text ${TS} x="24" y="20" font-size="12">Indirizzo virtuale</text>
       <rect ${B} x="40" y="34" width="140" height="36" rx="4"/>
       <rect ${B} x="190" y="34" width="150" height="36" rx="4"/>
 
@@ -232,7 +233,7 @@ export const diagrams: Diagram[] = [
       <line ${A} x1="150" y1="215" x2="150" y2="250"/>
       <line ${A} x1="265" y1="70" x2="265" y2="250"/>
 
-      <text ${T} x="60" y="304" font-size="12" text-anchor="start">Indirizzo fisico</text>
+      <text ${TS} x="24" y="304" font-size="12">Indirizzo fisico</text>
       <rect ${B} x="40" y="250" width="140" height="36" rx="4"/>
       <rect ${B} x="190" y="250" width="150" height="36" rx="4"/>`,
   },
@@ -316,17 +317,18 @@ export const diagrams: Diagram[] = [
     title: 'Sommatore a propagazione di riporto',
     topic: 'arith',
     ref: 'Hamacher cap. 9',
-    width: 620,
+    width: 740,
     height: 240,
     slots: [
-      { id: 'fa', x: 500, y: 118, label: 'Sommatore completo' },
-      { id: 'cin', x: 585, y: 118, label: 'Riporto entrante' },
-      { id: 'cout', x: 40, y: 118, label: 'Riporto uscente' },
-      { id: 'sum', x: 500, y: 205, label: 'Bit di somma' },
-      { id: 'ops', x: 500, y: 32, label: 'Bit degli addendi' },
+      { id: 'fa', x: 545, y: 118, label: 'Sommatore completo' },
+      { id: 'cin', x: 690, y: 78, label: 'Riporto entrante' },
+      { id: 'cout', x: 55, y: 118, label: 'Riporto uscente' },
+      { id: 'sum', x: 545, y: 205, label: 'Bit di somma' },
+      { id: 'ops', x: 545, y: 30, label: 'Bit degli addendi' },
     ],
     distractors: ['Overflow', 'Bit di segno', 'Semisommatore', 'Registro'],
     svg: `
+      <g transform="translate(60,0)">
       <rect ${B} x="80" y="90" width="90" height="60" rx="6"/>
       <rect ${B} x="200" y="90" width="90" height="60" rx="6"/>
       <rect ${B} x="320" y="90" width="90" height="60" rx="6"/>
@@ -350,7 +352,8 @@ export const diagrams: Diagram[] = [
       <line ${A} x1="125" y1="150" x2="125" y2="185"/>
       <line ${A} x1="245" y1="150" x2="245" y2="185"/>
       <line ${A} x1="365" y1="150" x2="365" y2="185"/>
-      <line ${A} x1="485" y1="150" x2="485" y2="185"/>`,
+      <line ${A} x1="485" y1="150" x2="485" y2="185"/>
+      </g>`,
   },
 ];
 

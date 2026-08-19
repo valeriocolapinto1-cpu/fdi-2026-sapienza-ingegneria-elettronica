@@ -20,12 +20,16 @@ del browser.
 ## Cosa c'è dentro
 
 - **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli letti) e avvio rapido.
-- **Studia** — 11 moduli di teoria con citazioni Hamacher e trappole del docente.
+- **Studia** — 15 moduli di teoria su tutto il programma, con citazioni Hamacher e trappole del
+  docente.
+- **Definizioni** — i termini che l'esame chiede di saper enunciare, una frase ciascuno, con
+  filtro per testo e per argomento.
 - **Simulatore** — quattro formati di prova, generati al volo: numeri, tabelle di verità,
-  snippet e mix di quesiti cambiano a ogni generazione.
-- **Strumenti** — convertitore decimale ↔ complemento a 2 ↔ esadecimale, sommatore binario con
-  flag di overflow **e** riporto uscente, calcolatore di range.
-- **Riferimenti** — indice delle figure da saper completare, trappole, testi e link.
+  schemi, snippet e mix di quesiti cambiano a ogni generazione.
+- **Allenamento** — quattro palestre che fanno fare il procedimento e correggono ogni passaggio:
+  binario a mano, schemi da completare, verità e Karnaugh, assembly da eseguire a mente. In
+  fondo restano i convertitori, come banco di verifica.
+- **Riferimenti** — gli schemi ridisegnati da saper completare, le trappole, testi e link.
 
 Nessun backend: nessun account, nessun dato inviato da nessuna parte. I progressi restano nel
 browser.
@@ -127,18 +131,22 @@ Punti notevoli:
 
 | Tipo | Quanti | Punti |
 |---|---|---|
-| Crocette — teoria **o** quesiti calcolati (RTN, IEEE 754, traduzione indirizzi, campi di cache, cicli di pipeline) | 6 | 2 |
-| Complemento a 2, riconoscimento porta, snippet assembly | 3 | 2 |
-| Sintesi con Karnaugh | 1 | 5 |
-| Assembly da scrivere | 1 | 4 |
-| Domanda aperta | 1 | 3 |
+| Crocette — teoria, complemento a 2, porte logiche, assembly, RTN, IEEE 754, traduzione indirizzi, campi di cache, cicli di pipeline | 4 | 2,5 |
+| Completare lo schema | 2 | 2,5 |
+| Dalla tabella di verità all'espressione logica | 2 | 2,5 |
+| Sintesi con Karnaugh | 1 | 2,5 |
+| Domanda aperta | 2 | 2,5 |
+| Assembly da scrivere | 1 | 2,5 |
 
-Le sei crocette sono **estratte senza reinserimento** da un insieme di otto generatori, di cui
-tre teorici: ogni prova copre quindi aree distinte, senza concentrarsi su un solo argomento, e
-due prove di fila differiscono nel *mix*, non solo nei numeri.
+Le quattro crocette sono **estratte senza reinserimento** da un insieme di undici generatori, di
+cui tre teorici: ogni prova copre quindi aree distinte, senza concentrarsi su un solo argomento,
+e due prove di fila differiscono nel *mix*, non solo nei numeri.
 
-Crocette e risposte brevi sono auto-corrette; Karnaugh, assembly e domanda aperta mostrano una
-soluzione modello e si autovalutano (pieno / parziale / no). La **lode** richiede il punteggio
+Crocette, risposte brevi, schemi ed espressioni sono **auto-corretti**; Karnaugh, domande aperte
+e assembly mostrano una soluzione modello e si autovalutano (pieno / parziale / no).
+
+Due quesiti danno **credito parziale calcolato**: lo schema vale in proporzione alle etichette
+azzeccate, e un'espressione corretta ma non minima vale metà. La **lode** richiede il punteggio
 pieno.
 
 ## Deploy

@@ -11,7 +11,15 @@ import {
 import { GENERATORS, type GeneratorId } from './generators';
 import { normalizeFill } from './grade';
 import { mulberry32 } from './rng';
-import type { AsmLine, Exam, FillQuestion, McQuestion, Question } from './types';
+import type {
+  AsmLine,
+  DiagramQuestion,
+  Exam,
+  ExprQuestion,
+  FillQuestion,
+  McQuestion,
+  Question,
+} from './types';
 
 /** Genera N quesiti con un generatore, su semi diversi. */
 function sample(gen: GeneratorId, count: number): Question[] {
@@ -320,12 +328,62 @@ describe('buildExam', () => {
     }
   });
 
-  it('rispetta il mix del formato reale', () => {
-    const exam = buildExam('full', 7);
-    const kinds = exam.questions.map((question) => question.kind);
-    // 9 auto-corretti (crocette, CP2, porta, assembly) + 3 da svolgere.
-    expect(kinds.filter((kind) => kind === 'self')).toHaveLength(3);
-    expect(kinds.filter((kind) => kind !== 'self')).toHaveLength(9);
+  it('rispetta il mix del formato reale, su ogni seme', () => {
+    // 4 crocette · 2 «completare l'immagine» · 2 tabella→espressione ·
+    // 1 sintesi combinatoria · 2 aperte · 1 programma assembly.
+    for (let seed = 0; seed < 500; seed++) {
+      const kinds = buildExam('full', seed).questions.map((question) => question.kind);
+      const count = (kind: string): number => kinds.filter((k) => k === kind).length;
+
+      expect(count('diagram'), `seme ${seed}`).toBe(2);
+      expect(count('expr'), `seme ${seed}`).toBe(2);
+      // Karnaugh, due aperte e l'assembly da scrivere: gli unici da svolgere
+      // su carta e autovalutare.
+      expect(count('self'), `seme ${seed}`).toBe(4);
+      // Le quattro crocette: `mc` oppure `fill`, mai altro.
+      expect(count('mc') + count('fill'), `seme ${seed}`).toBe(4);
+    }
+  });
+
+  it('i due schemi da completare non sono mai lo stesso', () => {
+    for (let seed = 0; seed < 500; seed++) {
+      const schemi = buildExam('full', seed).questions.filter(
+        (question): question is DiagramQuestion => question.kind === 'diagram',
+      );
+      expect(new Set(schemi.map((question) => question.diagramId)).size, `seme ${seed}`).toBe(2);
+
+      for (const question of schemi) {
+        // Ogni etichetta giusta deve essere fra le opzioni, altrimenti il
+        // quesito è irrisolvibile; e ci devono essere distrattori, altrimenti
+        // si risolve per esclusione.
+        for (const slot of question.slots) {
+          expect(question.options, `${question.diagramId}/${slot.id}`).toContain(slot.label);
+        }
+        // Più etichette che posizioni: senza distrattori la risposta si
+        // troverebbe per esclusione.
+        expect(question.options.length).toBeGreaterThan(
+          new Set(question.slots.map((slot) => slot.label)).size,
+        );
+        expect(new Set(question.options).size).toBe(question.options.length);
+      }
+    }
+  });
+
+  it('il «tabella → espressione» pone una funzione non costante', () => {
+    for (let seed = 0; seed < 300; seed++) {
+      const espressioni = buildExam('full', seed).questions.filter(
+        (question): question is ExprQuestion => question.kind === 'expr',
+      );
+      for (const question of espressioni) {
+        const cells = 1 << question.vars;
+        expect(question.minterms.length).toBeGreaterThan(0);
+        expect(question.minterms.length).toBeLessThan(cells);
+        expect(question.payload?.type).toBe('truthTable');
+        // La soluzione modello mostra il procedimento, non solo il risultato.
+        expect(question.model).toMatch(/forma canonica/i);
+        expect(question.model).toMatch(/Forma minima/);
+      }
+    }
   });
 
   it.each(EXAM_MODES)('la modalità «%s» è coerente con il proprio blueprint', (mode) => {
@@ -396,7 +454,7 @@ describe('buildExam', () => {
     // reinserimento lo rende impossibile: ogni generatore calcolato esce una
     // volta sola, quindi le famiglie sono distinte.
     for (let seed = 0; seed < 300; seed++) {
-      const crocette = buildExam('full', seed).questions.slice(0, 6);
+      const crocette = buildExam('full', seed).questions.slice(0, 4);
       const families = crocette
         .map((question) => question.cat.split(' · ')[0] as string)
         .filter((family) => family !== 'Crocetta');
@@ -411,10 +469,10 @@ describe('buildExam', () => {
   it('due prove consecutive differiscono nel mix di crocette, non solo nei numeri', () => {
     const mix = (seed: number): string =>
       buildExam('full', seed)
-        .questions.slice(0, 6)
+        .questions.slice(0, 4)
         .map((question) => question.cat)
         .join('|');
-    // Su venti semi il mix delle prime sei crocette non può essere sempre uguale.
+    // Su venti semi il mix delle quattro crocette non può essere sempre uguale.
     const distinct = new Set(Array.from({ length: 20 }, (_, seed) => mix(seed)));
     expect(distinct.size).toBeGreaterThan(1);
   });

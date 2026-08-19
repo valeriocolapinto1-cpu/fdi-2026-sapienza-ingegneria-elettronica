@@ -1,5 +1,7 @@
+import { judgeSop } from './parseSop';
 import type {
   Answer,
+  DiagramQuestion,
   Exam,
   ExamResult,
   FillQuestion,
@@ -33,10 +35,27 @@ function isBlank(answer: Answer | undefined): boolean {
     case 'mc':
       return answer.choice === null;
     case 'fill':
+    case 'expr':
       return answer.text.trim() === '';
     case 'self':
       return answer.grade === null;
+    case 'diagram':
+      return Object.values(answer.picks).every((label) => label === '');
   }
+}
+
+/**
+ * Quante etichette sono al posto giusto.
+ *
+ * All'esame lo schema completato a metà non vale zero, quindi qui il punteggio
+ * è **proporzionale agli slot indovinati**: è l'unico quesito con credito
+ * parziale calcolato, non dichiarato.
+ */
+export function countMatchingSlots(
+  question: DiagramQuestion,
+  picks: Record<string, string>,
+): number {
+  return question.slots.filter((slot) => picks[slot.id] === slot.label).length;
 }
 
 function gradeQuestion(question: Question, answer: Answer | undefined): QuestionResult {
@@ -60,6 +79,28 @@ function gradeQuestion(question: Question, answer: Answer | undefined): Question
     const correct = given.length > 0 && given === expected;
     outcome = correct ? 'correct' : 'wrong';
     earned = correct ? question.points : 0;
+  } else if (question.kind === 'diagram' && answer?.kind === 'diagram') {
+    const right = countMatchingSlots(question, answer.picks);
+    const total = question.slots.length;
+    earned = total > 0 ? (question.points * right) / total : 0;
+    outcome = right === total ? 'correct' : right > 0 ? 'partial' : 'wrong';
+  } else if (question.kind === 'expr' && answer?.kind === 'expr') {
+    // Il giudizio sta in un posto solo: la stessa funzione usata dalla
+    // palestra «Verità & Karnaugh».
+    const verdict = judgeSop(
+      answer.text,
+      new Set(question.minterms),
+      new Set(question.dontCares),
+      question.vars,
+    );
+    if (verdict.status === 'minimal') {
+      outcome = 'correct';
+      earned = question.points;
+    } else if (verdict.status === 'correct') {
+      // Corretta ma ridondante: all'esame è mezzo punto, non zero.
+      outcome = 'partial';
+      earned = question.points / 2;
+    }
   } else if (question.kind === 'self' && answer?.kind === 'self' && answer.grade !== null) {
     // Autovalutazione: pieno, metà, niente.
     earned = question.points * answer.grade;
