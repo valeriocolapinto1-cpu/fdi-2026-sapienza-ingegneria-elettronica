@@ -6,6 +6,28 @@ export const ieee: Topic = {
     blurb: 'Segno, esponente polarizzato, mantissa, codifica e valori speciali.',
     ref: 'Hamacher cap. 1',
     trapIds: [],
+    prereq: ['bin'],
+    summary: [
+      'Singola precisione (32 bit): <b>1 segno + 8 esponente + 23 mantissa</b>. Doppia (64 bit): 1 + 11 + 52.',
+      'Il valore è <b>(−1)<sup>s</sup> × 1,M × 2<sup>E−bias</sup></b>: l\'1 davanti alla virgola è <b>implicito</b> e non si memorizza, così si guadagna un bit di precisione.',
+      'Il <b>bias</b> (127 e 1023) serve a rendere l\'esponente un numero senza segno: due float positivi si confrontano leggendo i bit come interi.',
+      'Esponente tutto a 0 → zero e denormalizzati. Tutto a 1 → infinito (mantissa nulla) o <b>NaN</b> (mantissa diversa da zero).',
+      'La precisione è <b>relativa</b>: pochi decimali sono rappresentabili esattamente, e confrontare due float con «=» è quasi sempre un errore.',
+    ],
+    checks: [
+      {
+        q: 'Scrivi −6,5 in singola precisione.',
+        a: '6,5 = 110,1₂ = 1,101 × 2². Segno s = 1; esponente E = 2 + 127 = 129 = 1000 0001; mantissa 101 seguita da zeri. Bit: <code>1 10000001 10100000000000000000000</code> = <code>C0D00000</code>₁₆.',
+      },
+      {
+        q: 'Perché l\'esponente è in eccesso e non in complemento a 2?',
+        a: 'Perché così l\'ordine dei pattern di bit coincide con l\'ordine dei valori: due float positivi si confrontano come se fossero interi senza segno, senza circuiti dedicati al segno dell\'esponente.',
+      },
+      {
+        q: 'Che cosa distingue infinito da NaN?',
+        a: 'Entrambi hanno l\'esponente tutto a 1. L\'<b>infinito</b> ha mantissa nulla ed è il risultato di un overflow o di una divisione per zero; il <b>NaN</b> ha mantissa diversa da zero e nasce da operazioni indefinite come 0/0 o ∞ − ∞.',
+      },
+    ],
     body: `
     <h4>Perché serve</h4>
     <p>Con la virgola fissa il numero di cifre decimali è deciso una volta per tutte e l'intervallo è angusto. La virgola mobile spende i bit su una <b>notazione scientifica binaria</b>, <code>± mantissa × 2^esponente</code>, ottenendo un intervallo enormemente più ampio a parità di bit — al prezzo di una precisione <b>relativa</b> anziché assoluta.</p>
@@ -44,5 +66,12 @@ export const ieee: Topic = {
     </ul>
 
     <h4>Da ricordare</h4>
-    <p>Lo standard si chiama <b>IEEE 754</b>. Due conseguenze pratiche: l'addizione in virgola mobile <b>non è associativa</b>, perché ogni passaggio arrotonda; e molti decimali «semplici» come 0,1 non hanno rappresentazione binaria finita, quindi il confronto per uguaglianza fra float è inaffidabile.</p>`,
+    <p>Lo standard si chiama <b>IEEE 754</b>. Due conseguenze pratiche: l'addizione in virgola mobile <b>non è associativa</b>, perché ogni passaggio arrotonda; e molti decimali «semplici» come 0,1 non hanno rappresentazione binaria finita, quindi il confronto per uguaglianza fra float è inaffidabile.</p>
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Memorizzare anche l'1 davanti alla virgola: è <b>implicito</b>, nella mantissa vanno solo le cifre dopo.</li>
+      <li>Sottrarre il bias invece di sommarlo in fase di <b>codifica</b>: si somma quando si scrive, si sottrae quando si legge.</li>
+      <li>Normalizzare male: la forma è sempre <code>1,xxx × 2ᵉ</code>, con una sola cifra diversa da zero davanti alla virgola.</li>
+      <li>Trattare esponente tutto a 0 o tutto a 1 come numeri normali: sono i casi speciali (zero, denormalizzati, infinito, NaN).</li>
+    </ul>`,
   };

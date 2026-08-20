@@ -203,4 +203,28 @@ export const open: OpenItem[] = [
       "Tutti e tre risolvono lo stesso problema — il <b>divario di velocità</b> fra processore e periferiche. Nell'<b>I/O programmato</b> il processore interroga ciclicamente il bit di stato finché il dispositivo non è pronto (polling): semplicissimo da realizzare, ma brucia in un ciclo vuoto tutto il tempo dell'attesa; accettabile solo se il dispositivo è veloce o se non c'è altro da fare. Nell'I/O <b>guidato da interruzioni</b> il processore fa altro ed è il dispositivo a chiamare quando è pronto: si paga il costo del salvataggio dello stato e del cambio di contesto, ma non si spreca attesa — è la scelta normale per dispositivi lenti e sporadici come la tastiera. Con il <b>DMA</b> un controllore dedicato trasferisce da solo un <b>intero blocco</b> fra periferica e memoria, diventando temporaneamente padrone del bus, e manda <b>una sola</b> interruzione alla fine: indispensabile per il disco o la rete, dove un'interruzione per parola sarebbe insostenibile. Il DMA introduce però il problema della <b>coerenza</b>: scrivendo in memoria può rendere obsoleta la copia tenuta in cache.",
     ref: 'Hamacher cap. 4',
   },
+  {
+    id: 'open-sw-01',
+    topic: 'sw',
+    q: 'Descrivi il percorso che porta da un sorgente assembly a un programma in esecuzione, nominando gli strumenti coinvolti.',
+    model:
+      "Quattro passaggi. L'<b>assemblatore</b> traduce il sorgente in codice oggetto: sostituisce i mnemonici con i codici operativi e le etichette con gli indirizzi. Per farlo lavora in <b>due passate</b>, perch\u00e9 un salto in avanti cita un'etichetta non ancora incontrata: nella prima costruisce la <b>tabella dei simboli</b> tenendo un contatore di posizione, nella seconda genera il codice. Le <b>direttive</b> (<code>ORIGIN</code>, <code>DATAWORD</code>, <code>RESERVE</code>, <code>EQU</code>, <code>END</code>) non producono istruzioni: dicono all'assemblatore dove collocare le cose. Il <b>collegatore</b> unisce i moduli oggetto e le librerie, risolvendo i <b>riferimenti esterni</b> — i nomi che un modulo usa ma non definisce — e calcolando la posizione definitiva di ciascun modulo; il collegamento pu\u00f2 essere statico (libreria dentro l'eseguibile) o dinamico (caricata a runtime e condivisa). Il <b>caricatore</b> copia l'eseguibile in memoria, effettua se necessario la <b>rilocazione</b> degli indirizzi assoluti, prepara la pila e salta al punto d'ingresso. Da quel momento il programma \u00e8 in esecuzione e il <b>sistema operativo</b> resta fermo: riprende il controllo solo su chiamata di sistema, interruzione o eccezione.",
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'open-perf-01',
+    topic: 'perf',
+    q: 'Un processore a frequenza pi\u00f9 alta \u00e8 necessariamente pi\u00f9 veloce? Motiva con l\u2019equazione delle prestazioni.',
+    model:
+      "No. Il tempo di esecuzione \u00e8 <b>T = (N \u00d7 S) / R</b>, dove N \u00e8 il numero di istruzioni eseguite, S il numero medio di cicli per istruzione e R la frequenza: la frequenza \u00e8 <b>uno solo</b> dei tre fattori. Una macchina a frequenza pi\u00f9 bassa pu\u00f2 risultare pi\u00f9 veloce se esegue meno istruzioni (repertorio pi\u00f9 espressivo o compilatore migliore) o se ha un S pi\u00f9 basso grazie a cache pi\u00f9 efficaci e a una pipeline con meno stalli. I tre fattori inoltre <b>non sono indipendenti</b>: ridurre N con istruzioni pi\u00f9 complesse tende ad alzare S, e alzare R accorcia il periodo obbligando a pipeline pi\u00f9 profonde, quindi a penalit\u00e0 maggiori sui salti. Per questo il confronto ha senso solo <b>a parit\u00e0 di programma</b> e si fa con i <b>benchmark</b> (per esempio le suite SPEC, riassunte con la media geometrica dei rapporti) e non con la frequenza o con i MIPS, che dipendono dal repertorio.",
+    ref: 'Hamacher cap. 1 e 12',
+  },
+  {
+    id: 'open-perf-02',
+    topic: 'perf',
+    q: 'Enuncia la legge di Amdahl e spiega perch\u00e9 mette un tetto al guadagno.',
+    model:
+      "Se una frazione <i>f</i> del tempo di esecuzione viene resa <i>k</i> volte pi\u00f9 veloce, il guadagno complessivo \u00e8 <b>1 / ((1 \u2212 f) + f/k)</b>. Il termine <code>(1 \u2212 f)</code> \u00e8 la parte <b>non</b> migliorata e resta invariato qualunque cosa si faccia: anche portando <i>k</i> all'infinito il guadagno non supera <b>1/(1 \u2212 f)</b>. Se per esempio il 40 % del tempo \u00e8 speso in codice non parallelizzabile, il tetto \u00e8 2,5\u00d7 per quanti core si aggiungano. Le conseguenze pratiche sono due: conviene ottimizzare solo ci\u00f2 che pesa davvero (e quindi <b>misurare prima</b> di ottimizzare), e nel calcolo parallelo l'aumento del numero di processori d\u00e0 rendimenti decrescenti, tanto pi\u00f9 rapidamente quanto pi\u00f9 grande \u00e8 la parte sequenziale e il costo di sincronizzazione.",
+    ref: 'Hamacher cap. 12',
+  },
 ];

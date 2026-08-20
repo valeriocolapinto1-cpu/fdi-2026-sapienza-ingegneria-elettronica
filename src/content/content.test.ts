@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { asmWrite, figures, links, mcq, open, topics, traps, validateContent } from './index';
 import { definitions } from './definitions';
 import { diagrams, diagramById } from './diagrams';
+import { outline } from './outline';
 
 describe('content layer', () => {
   it('supera tutti i controlli di integrità', () => {
@@ -13,7 +14,7 @@ describe('content layer', () => {
     expect(mcq.length).toBeGreaterThanOrEqual(90);
     expect(open.length).toBeGreaterThanOrEqual(19);
     expect(asmWrite.length).toBeGreaterThanOrEqual(2);
-    expect(topics.length).toBeGreaterThanOrEqual(11);
+    expect(topics.length).toBeGreaterThanOrEqual(17);
     expect(figures.length).toBeGreaterThanOrEqual(9);
     expect(traps.length).toBeGreaterThanOrEqual(5);
     expect(links.length).toBeGreaterThanOrEqual(6);
@@ -49,6 +50,69 @@ describe('content layer', () => {
   it('marca le trappole come percezioni da verificare', () => {
     // La specifica chiede che non passino per regole confermate.
     expect(traps.every((trap) => trap.status === 'da-verificare')).toBe(true);
+  });
+
+  it('ogni modulo ha il ripasso «in due minuti» e le domande di autoverifica', () => {
+    for (const topic of topics) {
+      // Il ripasso dell'ultimo giorno: se è troppo corto non riassume, se è
+      // troppo lungo non è un ripasso.
+      expect(topic.summary.length, `modulo "${topic.id}"`).toBeGreaterThanOrEqual(4);
+      expect(topic.summary.length, `modulo "${topic.id}"`).toBeLessThanOrEqual(8);
+      for (const line of topic.summary) {
+        expect(line.trim().length, `${topic.id}: riga di ripasso troppo scarna`).toBeGreaterThan(40);
+      }
+
+      expect(topic.checks.length, `modulo "${topic.id}"`).toBeGreaterThanOrEqual(3);
+      for (const check of topic.checks) {
+        expect(check.q.trim(), topic.id).not.toBe('');
+        // Una risposta di una riga non insegna niente: deve spiegare il perché.
+        expect(check.a.trim().length, `${topic.id}: risposta troppo breve`).toBeGreaterThan(80);
+      }
+    }
+  });
+
+  it('ogni modulo ha un esempio svolto e gli errori tipici', () => {
+    // Un esame è fatto di esercizi: la teoria senza un esempio con i numeri
+    // non insegna a farli, e l'elenco degli errori tipici è ciò che separa
+    // «ho capito» da «l'ho preso».
+    for (const topic of topics) {
+      const titles = outline(topic.body).map((section) => section.title.toLowerCase());
+      expect(
+        titles.some((title) => title.includes('esempio')),
+        `modulo "${topic.id}": nessun esempio svolto`,
+      ).toBe(true);
+      expect(
+        titles.some((title) => title.includes('errori tipici')),
+        `modulo "${topic.id}": nessuna sezione sugli errori tipici`,
+      ).toBe(true);
+    }
+  });
+
+  it('i rimandi fra moduli e schemi puntano a qualcosa che esiste', () => {
+    const ids = new Set(topics.map((topic) => topic.id));
+    for (const topic of topics) {
+      for (const id of topic.prereq ?? []) {
+        expect(ids.has(id), `modulo "${topic.id}": prerequisito sconosciuto "${id}"`).toBe(true);
+        expect(id, `modulo "${topic.id}" è prerequisito di se stesso`).not.toBe(topic.id);
+      }
+      for (const id of topic.diagramIds ?? []) {
+        expect(diagramById(id), `modulo "${topic.id}": schema sconosciuto "${id}"`).toBeDefined();
+      }
+    }
+  });
+
+  it('i prerequisiti vengono prima nell’ordine di studio', () => {
+    // L'ordine dell'elenco è pedagogico: un modulo non può dipendere da uno
+    // che si studia dopo, altrimenti il percorso consigliato è incoerente.
+    const position = new Map(topics.map((topic, index) => [topic.id, index]));
+    for (const topic of topics) {
+      for (const id of topic.prereq ?? []) {
+        expect(
+          position.get(id)!,
+          `"${topic.id}" dipende da "${id}", che però viene dopo`,
+        ).toBeLessThan(position.get(topic.id)!);
+      }
+    }
   });
 
   it('le definizioni stanno in una frase e citano il testo', () => {

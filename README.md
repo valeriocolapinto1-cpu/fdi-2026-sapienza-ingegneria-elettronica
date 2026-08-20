@@ -20,8 +20,9 @@ del browser.
 ## Cosa c'è dentro
 
 - **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli letti) e avvio rapido.
-- **Studia** — 15 moduli di teoria su tutto il programma, con citazioni Hamacher e trappole del
-  docente.
+- **Studia** — 17 moduli in ordine di studio, raggruppati per area. Ognuno ha il ripasso «in due
+  minuti», l'indice interno, un **esempio svolto con i numeri**, gli errori tipici, gli schemi
+  collegati e tre domande di **autoverifica** con la risposta a scomparsa.
 - **Definizioni** — i termini che l'esame chiede di saper enunciare, una frase ciascuno, con
   filtro per testo e per argomento.
 - **Simulatore** — quattro formati di prova, generati al volo: numeri, tabelle di verità,
@@ -43,10 +44,16 @@ browser.
 | `mcq.ts` | Crocette, raggruppate per argomento |
 | `open.ts` | Domande aperte con risposta modello |
 | `asmWrite.ts` | Esercizi «scrivi un programma» |
-| `topics.ts` | Moduli di studio |
+| `topics/` | Moduli di studio, uno per file; `index.ts` fissa l'ordine e i gruppi |
+| `definitions.ts` | I termini da saper enunciare |
+| `diagrams.ts` | Schemi ridisegnati, con gli slot da completare |
 | `traps.ts` | Trappole del docente |
 | `figures.ts` | Figure di Hamacher da saper completare |
 | `links.ts` | Testi e risorse |
+
+Un modulo di studio porta con sé, oltre al corpo della teoria: `summary` (il ripasso «in due
+minuti»), `checks` (le domande di autoverifica), `prereq` e `diagramIds`. L'indice interno **non**
+è un dato: si ricava dai titoli del corpo (`content/outline.ts`), così non può disallinearsi.
 
 ### Una crocetta
 

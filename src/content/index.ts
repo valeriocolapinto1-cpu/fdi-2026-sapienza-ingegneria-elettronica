@@ -1,13 +1,14 @@
 import { mcq } from './mcq';
 import { open } from './open';
 import { asmWrite } from './asmWrite';
-import { topics } from './topics';
+import { topics, TOPIC_GROUPS } from './topics';
 import { figures } from './figures';
 import { traps } from './traps';
 import { links } from './links';
 import type { Topic, TopicId, Trap } from './types';
 
-export { mcq, open, asmWrite, topics, figures, traps, links };
+export { mcq, open, asmWrite, topics, TOPIC_GROUPS, figures, traps, links };
+export type { TopicGroup } from './topics';
 export type * from './types';
 
 /** Soglie minime richieste dalla specifica dei contenuti. */
@@ -15,7 +16,7 @@ const MINIMUMS = {
   mcq: 40,
   open: 12,
   asmWrite: 2,
-  topics: 9,
+  topics: 17,
   figures: 9,
   traps: 5,
   links: 6,

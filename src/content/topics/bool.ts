@@ -7,6 +7,27 @@ export const bool: Topic = {
     blurb: 'Assiomi, De Morgan, SOP e POS, insiemi funzionalmente completi.',
     ref: 'Hamacher — Appendice A',
     trapIds: ['trap-and-assoc', 'trap-simboli', 'trap-demorgan'],
+    summary: [
+      'Sei porte da riconoscere <b>a memoria</b> dalla tabella di verità: AND, OR, NOT, NAND, NOR, XOR.',
+      '<b>De Morgan</b>: la negazione di un prodotto è la somma delle negazioni, e viceversa. È il teorema che serve per passare a sole NAND o sole NOR.',
+      'NAND (o NOR) da sola è <b>funzionalmente completa</b>: con quella si costruisce qualunque rete.',
+      'Dalla tabella: <b>SOP</b> = un termine prodotto per ogni riga a 1; <b>POS</b> = un termine somma per ogni riga a 0.',
+      'L\'algebra degli <b>insiemi</b> è la stessa algebra: ∪ ↔ OR, ∩ ↔ AND, complemento ↔ NOT. Le proprietà (commutativa, associativa, distributiva) valgono identiche.',
+    ],
+    checks: [
+      {
+        q: 'Scrivi NOT, AND e OR usando solo porte NAND.',
+        a: 'NOT a = <code>a NAND a</code>. AND: <code>(a NAND b) NAND (a NAND b)</code>, cioè si nega la NAND. OR: <code>(a NAND a) NAND (b NAND b)</code>, che è De Morgan applicato.',
+      },
+      {
+        q: 'Una funzione di 3 variabili vale 1 su tre righe: quanti termini ha la SOP canonica e quanti la POS canonica?',
+        a: 'Tre la SOP (un mintermine per ogni riga a 1) e cinque la POS (un maxtermine per ognuna delle 8 − 3 righe a 0). Le due forme descrivono la stessa funzione con costi diversi.',
+      },
+      {
+        q: 'Vale a + a·b = a? Perché?',
+        a: 'Sì, è l\'<b>assorbimento</b>: se a = 1 la somma fa 1 comunque, se a = 0 anche a·b vale 0. Riconoscerlo serve a scartare i termini ridondanti prima ancora di disegnare la mappa.',
+      },
+    ],
     body: `
     <h4>Le porte fondamentali</h4>
     <p>Su due ingressi <code>A</code> e <code>B</code> le uscite valgono, nell'ordine 00, 01, 10, 11:</p>
@@ -69,5 +90,30 @@ A ⊕ B  (XOR)    differenza simmetrica   sta in uno solo dei due</pre>
     contrariamente a quanto suggeriscono certe abitudini di disegno).</p>
 
     <h4>XOR, che torna spesso</h4>
-    <p><code>A⊕0 = A</code>, <code>A⊕1 = ${ovl('A')}</code>, <code>A⊕A = 0</code>. Lo XOR vale 1 quando gli ingressi sono <b>diversi</b>, quindi è il rilevatore di disuguaglianza (e lo XNOR il comparatore di uguaglianza). È anche il generatore di parità e, come si è visto, il rilevatore di overflow in CP2.</p>`,
+    <p><code>A⊕0 = A</code>, <code>A⊕1 = ${ovl('A')}</code>, <code>A⊕A = 0</code>. Lo XOR vale 1 quando gli ingressi sono <b>diversi</b>, quindi è il rilevatore di disuguaglianza (e lo XNOR il comparatore di uguaglianza). È anche il generatore di parità e, come si è visto, il rilevatore di overflow in CP2.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Funzione maggioranza:</b> Y vale 1 quando almeno due dei tre ingressi valgono 1.</p>
+    <pre>A B C │ Y
+0 0 0 │ 0      Righe a 1: 011, 101, 110, 111
+0 0 1 │ 0
+0 1 0 │ 0
+0 1 1 │ 1
+1 0 0 │ 0
+1 0 1 │ 1
+1 1 0 │ 1
+1 1 1 │ 1</pre>
+    <p>SOP canonica — un termine per ogni riga a 1:</p>
+    <pre>Y = Ā·B·C + A·B̄·C + A·B·C̄ + A·B·C</pre>
+    <p>Si semplifica raccogliendo, e il trucco è <b>riusare</b> l'ultimo termine tre volte (è lecito: <code>x + x = x</code>):</p>
+    <pre>Y = (Ā·B·C + A·B·C) + (A·B̄·C + A·B·C) + (A·B·C̄ + A·B·C)
+  = B·C·(Ā + A) + A·C·(B̄ + B) + A·B·(C̄ + C)
+  = <b>A·B + A·C + B·C</b></pre>
+    <p>Da quattro termini di tre letterali a tre termini di due: la funzione è la stessa, il circuito è quasi la metà.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Applicare De Morgan a metà: <code>A·B</code> negato è <code>Ā + B̄</code> — cambia <b>anche</b> l'operatore, non solo le variabili.</li>
+      <li>Scambiare SOP e POS: la SOP guarda le righe a <b>1</b>, la POS quelle a <b>0</b> (e lì le variabili si scrivono negate).</li>
+      <li>Dimenticare che <code>x + x = x</code>: è proprio ciò che permette di riusare un mintermine in più raccoglimenti.</li>
+    </ul>`,
   };

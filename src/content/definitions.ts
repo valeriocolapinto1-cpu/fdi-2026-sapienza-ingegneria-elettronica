@@ -502,4 +502,83 @@ export const definitions: Definition[] = [
     topic: 'ieee',
     ref: 'Hamacher cap. 1',
   },
+  // ── software e prestazioni ──
+  {
+    id: 'def-tabella-simboli',
+    term: 'Tabella dei simboli',
+    short:
+      'Struttura costruita dall\u2019assemblatore nella prima passata, che associa a ogni etichetta l\u2019indirizzo a cui corrisponde.',
+    detail:
+      '\u00c8 la ragione per cui servono <b>due passate</b>: senza, un salto in avanti non potrebbe essere tradotto, perch\u00e9 cita un\u2019etichetta non ancora incontrata.',
+    topic: 'sw',
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'def-riferimento-esterno',
+    term: 'Riferimento esterno',
+    short:
+      'Nome che un modulo usa ma non definisce: resta un \u00abbuco\u00bb nel codice oggetto finch\u00e9 il collegatore non lo risolve.',
+    topic: 'sw',
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'def-rilocazione',
+    term: 'Rilocazione',
+    short:
+      'Correzione degli indirizzi assoluti di un programma quando viene caricato a un indirizzo diverso da quello previsto.',
+    detail:
+      'Con la <b>memoria virtuale</b> il problema quasi sparisce: ogni processo vede sempre lo stesso spazio virtuale, indipendentemente da dove si trovi in memoria fisica.',
+    topic: 'sw',
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'def-chiamata-sistema',
+    term: 'Chiamata di sistema',
+    short:
+      'Richiesta di un servizio al sistema operativo, che fa passare il processore in modalit\u00e0 supervisore attraverso un punto d\u2019ingresso controllato.',
+    detail:
+      '\u00c8 uno dei <b>tre</b> soli modi in cui il sistema operativo riprende il controllo, insieme a interruzione ed eccezione.',
+    topic: 'sw',
+    ref: 'Hamacher cap. 4',
+  },
+  {
+    id: 'def-equazione-prestazioni',
+    term: 'Equazione delle prestazioni',
+    short:
+      'Il tempo di esecuzione vale T = (N \u00d7 S) / R: istruzioni eseguite, per cicli medi per istruzione, diviso la frequenza di clock.',
+    detail:
+      'I tre fattori non sono indipendenti: ridurre N con istruzioni pi\u00f9 complesse alza S, e alzare R obbliga a pipeline pi\u00f9 profonde. La sola frequenza <b>non</b> misura le prestazioni.',
+    topic: 'perf',
+    ref: 'Hamacher cap. 1',
+  },
+  {
+    id: 'def-amdahl',
+    term: 'Legge di Amdahl',
+    short:
+      'Migliorando di un fattore k una frazione f del tempo, il guadagno complessivo \u00e8 1 / ((1 \u2212 f) + f/k).',
+    detail:
+      'La parte non migliorata mette un <b>tetto</b> invalicabile: con f = 0,6 non si supera 2,5\u00d7 nemmeno con k infinito.',
+    topic: 'perf',
+    ref: 'Hamacher cap. 12',
+  },
+  {
+    id: 'def-benchmark',
+    term: 'Benchmark',
+    short:
+      'Programma reale usato per confrontare macchine, con il risultato espresso come rapporto rispetto a una macchina di riferimento.',
+    detail:
+      'Le suite SPEC riassumono i punteggi con la <b>media geometrica</b>, che a differenza di quella aritmetica non cambia ordinamento al cambiare della macchina di riferimento.',
+    topic: 'perf',
+    ref: 'Hamacher cap. 1',
+  },
+  {
+    id: 'def-coerenza-cache',
+    term: 'Coerenza delle cache',
+    short:
+      'Garanzia che tutte le copie di uno stesso blocco nelle cache dei vari core rappresentino lo stesso valore.',
+    detail:
+      'I protocolli di <i>snooping</i> fanno sorvegliare il bus a ogni cache: quando un core scrive un blocco, le altre copie vengono invalidate. Lo stesso problema lo crea il <b>DMA</b>, che scrive in memoria alle spalle del processore.',
+    topic: 'perf',
+    ref: 'Hamacher cap. 12',
+  },
 ];

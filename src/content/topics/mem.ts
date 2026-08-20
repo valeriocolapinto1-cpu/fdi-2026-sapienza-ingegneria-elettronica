@@ -6,6 +6,30 @@ export const mem: Topic = {
     blurb: 'SRAM/DRAM, località, mappature, politiche di scrittura, tempo medio di accesso.',
     ref: 'Hamacher cap. 8',
     trapIds: ['trap-ram'],
+    prereq: ['cpu'],
+    diagramIds: ['gerarchia-memoria', 'cache-set-associativa'],
+    summary: [
+      'La gerarchia esiste perché non si può avere insieme veloce, capiente ed economico: registri, cache L1/L2/L3, memoria centrale, memoria di massa.',
+      '<b>SRAM</b>: bistabile, veloce e costosa → cache. <b>DRAM</b>: condensatore, densa ed economica, va <b>rinfrescata</b> → memoria centrale.',
+      'La cache funziona per <b>località temporale</b> (ciò che serve ora servirà ancora) e <b>spaziale</b> (serviranno gli indirizzi vicini): per questo si trasferiscono <b>blocchi</b>.',
+      'Mappatura <b>diretta</b>, <b>completamente associativa</b>, <b>associativa a gruppi</b>: cambia quante posizioni può occupare un blocco. L\'indirizzo si spezza in <b>etichetta · indice · spiazzamento</b>.',
+      'Tempo medio di accesso = hit time + (miss rate × miss penalty). Il miss penalty è enorme: è lì che si perdono le prestazioni.',
+      'Scrittura: <b>write-through</b> (semplice, molto traffico) o <b>write-back</b> (bit <i>dirty</i>, si scrive solo allo sfratto).',
+    ],
+    checks: [
+      {
+        q: 'Perché la cache trasferisce blocchi e non singole parole?',
+        a: 'Per la <b>località spaziale</b>: il costo di un accesso è dominato dalla latenza, non dalla quantità di dati, quindi conviene portarsi dietro le celle vicine, che con ogni probabilità serviranno subito dopo.',
+      },
+      {
+        q: 'Cache da 8 KiB, blocchi da 32 byte, 4 vie, indirizzi a 32 bit: come si spezza l\'indirizzo?',
+        a: 'Spiazzamento <b>5 bit</b> (32 = 2⁵). Gruppi = 8192 / (32 × 4) = 64 → indice <b>6 bit</b>. Etichetta = 32 − 5 − 6 = <b>21 bit</b>. I tre campi sommano sempre all\'ampiezza dell\'indirizzo: è il controllo che conviene fare sempre.',
+      },
+      {
+        q: 'A che serve il bit dirty nella politica write-back?',
+        a: 'Segna che il blocco in cache è stato modificato e non coincide più con la memoria. Allo sfratto si riscrivono <b>solo</b> i blocchi dirty: gli altri si buttano, perché la copia in memoria è già giusta.',
+      },
+    ],
     body: `
     <h4>La gerarchia</h4>
     <p>Scendendo dai registri alla memoria secondaria la capacità cresce e il costo per bit cala, ma il tempo di accesso peggiora di ordini di grandezza:</p>
@@ -55,5 +79,23 @@ export const mem: Topic = {
     </ul>
 
     <h4>Memorie a sola lettura</h4>
-    <p><b>ROM</b> scritta in fabbrica; <b>PROM</b> programmabile una volta; <b>EPROM</b> cancellabile con <b>raggi ultravioletti</b>; <b>EEPROM</b> cancellabile <b>elettricamente</b>, byte per byte; <b>Flash</b>, evoluzione della EEPROM che cancella a blocchi. La coppia EPROM/EEPROM è chiesta spesso: il discrimine è UV contro elettrico.</p>`,
+    <p><b>ROM</b> scritta in fabbrica; <b>PROM</b> programmabile una volta; <b>EPROM</b> cancellabile con <b>raggi ultravioletti</b>; <b>EEPROM</b> cancellabile <b>elettricamente</b>, byte per byte; <b>Flash</b>, evoluzione della EEPROM che cancella a blocchi. La coppia EPROM/EEPROM è chiesta spesso: il discrimine è UV contro elettrico.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Cache da 16 KiB, blocchi da 64 byte, associativa a 2 vie, indirizzi a 32 bit: come si spezza l'indirizzo?</b></p>
+    <pre>spiazzamento = log₂(64)                     = <b>6 bit</b>
+numero di blocchi = 16384 / 64              = 256
+numero di gruppi  = 256 / 2 vie             = 128
+indice        = log₂(128)                   = <b>7 bit</b>
+etichetta     = 32 − 6 − 7                  = <b>19 bit</b></pre>
+    <p>Controllo che vale sempre: 19 + 7 + 6 = 32, cioè i tre campi <b>sommano all'ampiezza dell'indirizzo</b>. Se non torna, c'è un errore prima.</p>
+    <p><b>E quanto vale il tempo medio di accesso?</b> Con hit time 1 ciclo, miss rate 4 % e miss penalty 100 cicli:</p>
+    <pre>t_medio = 1 + 0,04 × 100 = <b>5 cicli</b></pre>
+    <p>Il 4 % di miss quintuplica il tempo medio: è il miss penalty a dominare, non l'hit time. Dimezzare il miss rate al 2 % porta a 3 cicli — un guadagno molto maggiore di qualunque ritocco all'hit time.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Confondere il numero di <b>blocchi</b> con quello dei <b>gruppi</b>: con n vie, i gruppi sono i blocchi diviso n, e l'indice si calcola sui gruppi.</li>
+      <li>Calcolare lo spiazzamento sul numero di parole invece che di byte, quando la memoria è indirizzata al byte.</li>
+      <li>Dimenticare la verifica della somma dei campi: è il controllo che intercetta quasi tutti gli errori di questo esercizio.</li>
+    </ul>`,
   };
