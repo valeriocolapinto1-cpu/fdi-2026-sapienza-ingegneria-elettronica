@@ -6,6 +6,27 @@ export const bin: Topic = {
     blurb: "Basi, rappresentazioni con segno, range, overflow. La parte più «spremuta» all'esame.",
     ref: 'Hamacher cap. 1',
     trapIds: ['trap-ram'],
+    summary: [
+      'Una notazione è <b>posizionale</b> quando il valore di una cifra dipende dalla posizione: il numero vale Σ cifra × base^posizione. Cambiare base è cambiare quel <i>peso</i>, non le regole.',
+      'Una cifra esadecimale vale esattamente <b>4 bit</b> perché 16 = 2⁴: si converte a gruppi di quattro, sempre <b>partendo da destra</b>.',
+      'In complemento a 2 il bit più significativo pesa <b>−2ᴺ⁻¹</b>. Negare = invertire tutti i bit e sommare 1.',
+      'Su N bit l\'intervallo è −2ᴺ⁻¹ … +2ᴺ⁻¹−1: <b>asimmetrico</b>, con un solo zero.',
+      '<b>Overflow ≠ riporto uscente.</b> L\'overflow è lo XOR fra riporto entrante e uscente dal bit di segno.',
+    ],
+    checks: [
+      {
+        q: 'Perché in complemento a 2 lo zero ha una sola codifica, mentre in modulo e segno ne ha due?',
+        a: 'Perché il bit più significativo non è un\'etichetta di segno ma una <b>cifra di peso negativo</b>: lo zero si scrive in un modo solo. In modulo e segno il segno è un bit a parte, quindi esistono +0 e −0.',
+      },
+      {
+        q: 'Sommando due numeri di segno opposto può esserci overflow?',
+        a: 'No. Il risultato sta sempre fra i due addendi, quindi resta nell\'intervallo rappresentabile. L\'overflow può nascere <b>solo</b> sommando due numeri dello stesso segno.',
+      },
+      {
+        q: 'Converti 1011 0110₂ in esadecimale e spiega perché il metodo funziona.',
+        a: '<code>B6</code>. Si raggruppano i bit a quattro a quattro da destra: 1011 = B, 0110 = 6. Funziona perché 16 = 2⁴, quindi ogni gruppo di quattro bit è esattamente una cifra esadecimale.',
+      },
+    ],
     body: `
     <h4>Basi e conversioni</h4>
     <p>Un numero in base <code>b</code> è una somma di cifre pesate: <code>1011₂ = 1·2³ + 0·2² + 1·2¹ + 1·2⁰ = 11</code>. Per convertire da decimale a binario si divide ripetutamente per 2 e si leggono i resti <b>dal basso verso l'alto</b>.</p>
@@ -72,5 +93,26 @@ export const bin: Topic = {
       <li><b>Logico</b>: entra 0 da sinistra. Corretto per i numeri senza segno.</li>
       <li><b>Aritmetico</b>: replica il bit di segno. Necessario in CP2, altrimenti un negativo diventa positivo.</li>
     </ul>
-    <p>Eliminare il bit meno significativo di un intero senza segno equivale a dividerlo per 2.</p>`,
+    <p>Eliminare il bit meno significativo di un intero senza segno equivale a dividerlo per 2.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Rappresenta −45 su 8 bit e verifica il risultato.</b></p>
+    <pre>45 = 32 + 8 + 4 + 1        →  0010 1101
+inverti tutti i bit        →  1101 0010
+somma 1                    →  1101 0011   =  D3₁₆</pre>
+    <p>Verifica: 45 + (−45) deve fare 0. <code>0010 1101 + 1101 0011 = 1 0000 0000</code>: gli otto bit bassi sono tutti zero, il nono è il <b>riporto uscente</b> che si scarta. Riporto uscente = 1, overflow = 0 — ed è la prova che i due flag sono cose diverse.</p>
+    <p><b>Ora 45 − 60 su 8 bit.</b> Si somma il complemento a 2 di 60:</p>
+    <pre>60 = 0011 1100  →  −60 = 1100 0100
+
+  0010 1101   (45)
++ 1100 0100   (−60)
+= 1111 0001   →  è negativo: inverti e +1 → 0000 1111 = 15, quindi −15 ✓</pre>
+    <p>Riporto uscente 0, overflow 0: gli addendi hanno segno opposto, quindi l'overflow è <b>impossibile</b> per costruzione.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Invertire i bit e <b>dimenticare il +1</b>: si ottiene il complemento a 1, che è un'altra rappresentazione.</li>
+      <li>Estendere un numero negativo riempiendo di zeri: l'estensione del segno replica il <b>bit più significativo</b>, non lo zero.</li>
+      <li>Chiamare overflow il riporto uscente. In complemento a 2 il riporto uscente da solo <b>non</b> segnala nulla.</li>
+      <li>Raggruppare i bit per l'esadecimale partendo da sinistra: si parte sempre <b>da destra</b>, aggiungendo zeri in testa se serve.</li>
+    </ul>`,
   };

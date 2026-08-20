@@ -6,6 +6,28 @@ export const tech: Topic = {
   blurb: 'Ritardo di propagazione, cammino critico, fan-in/fan-out, CMOS, PLA e FPGA.',
   ref: 'Hamacher — Appendice A',
   trapIds: [],
+    prereq: ['bool'],
+    summary: [
+      '<b>Ritardo di propagazione</b> t<sub>PD</sub>: tempo fra la variazione dell\'ingresso e quella dell\'uscita, misurato al 50% dell\'escursione.',
+      'In cascata i ritardi <b>si sommano</b> lungo il cammino: il più lungo è il <b>cammino critico</b> e fissa la frequenza massima di clock.',
+      '<b>Fan-in</b> = quanti ingressi ha una porta. <b>Fan-out</b> = quante porte può pilotare: più carico, più capacità, più ritardo.',
+      'Una porta <b>CMOS</b> ha una rete di pull-up a pMOS e una di pull-down a nMOS, complementari: a riposo non c\'è percorso fra alimentazione e massa, quindi il consumo statico è quasi nullo.',
+      'Logica programmabile: <b>PLA/PAL</b> (piani AND-OR), <b>CPLD</b> e <b>FPGA</b> (celle e interconnessioni riconfigurabili).',
+    ],
+    checks: [
+      {
+        q: 'Perché il cammino critico determina la frequenza di clock?',
+        a: 'Perché il periodo deve bastare al segnale per attraversare il percorso combinatorio più lungo e arrivare stabile al flip-flop prima del setup. Se il clock è più veloce, il dato campionato è quello sbagliato.',
+      },
+      {
+        q: 'Un buffer aggiunge ritardo: perché a volte si mette lo stesso?',
+        a: 'Per pilotare un fan-out elevato: il buffer isola la capacità di carico e la ripartisce, riducendo il ritardo complessivo del ramo rispetto a una porta debole che carica tutto da sola.',
+      },
+      {
+        q: 'Perché il CMOS consuma quasi solo quando commuta?',
+        a: 'Perché a regime una delle due reti è aperta: non esiste un percorso continuo fra alimentazione e massa. La corrente scorre solo mentre le capacità si caricano e si scaricano, quindi il consumo dinamico cresce con la frequenza.',
+      },
+    ],
   body: `
     <h4>Ritardo di propagazione</h4>
     <p>Una porta logica non commuta all'istante: il segnale impiega un tempo a farsi strada nei
@@ -72,5 +94,22 @@ uscita     ────────────╲______
       complesse, sequenziali comprese, e di riconfigurarle.</li>
     </ul>
     <p>Il compromesso di fondo è sempre lo stesso: un circuito dedicato è più veloce e più
-    efficiente, uno programmabile è disponibile subito e si corregge senza rifare il chip.</p>`,
+    efficiente, uno programmabile è disponibile subito e si corregge senza rifare il chip.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Qual è la frequenza massima di questo stadio?</b> Fra due registri c'è una rete combinatoria il cui cammino più lungo attraversa quattro porte da 2 ns ciascuna; il flip-flop ha tempo di propagazione 1 ns e tempo di setup 1 ns.</p>
+    <pre>periodo minimo = t_propagazione + t_cammino_critico + t_setup
+               = 1 ns + (4 × 2 ns) + 1 ns
+               = 10 ns
+
+f_max = 1 / 10 ns = <b>100 MHz</b></pre>
+    <p>Ora si spezza la rete in due stadi da due porte, mettendo in mezzo un registro:</p>
+    <pre>periodo = 1 + (2 × 2) + 1 = 6 ns   →   f_max ≈ 167 MHz</pre>
+    <p>La frequenza sale del 67 %, non del 100 %: i tempi del flip-flop restano e ora si pagano due volte. È il limite che spiega perché non conviene spingere una pipeline oltre un certo numero di stadi.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Sommare i ritardi di rami <b>paralleli</b>: il ritardo della rete è quello del cammino più lungo, non la somma di tutti.</li>
+      <li>Confondere il ritardo di propagazione (fra i 50 % di ingresso e uscita) con il tempo di <b>transizione</b> (dal 10 % al 90 % dell'uscita).</li>
+      <li>Dimenticare setup e propagazione del flip-flop nel calcolo del periodo: il combinatorio non è tutto il tempo disponibile.</li>
+    </ul>`,
 };

@@ -6,6 +6,30 @@ export const pipe: Topic = {
     blurb: 'Stadi, hazard sui dati e sul controllo, forwarding, equazione delle prestazioni.',
     ref: 'Hamacher cap. 6',
     trapIds: [],
+    prereq: ['cpu', 'isa'],
+    diagramIds: ['pipeline-5-stadi'],
+    summary: [
+      'Equazione delle prestazioni: <b>T = (N × S) / R</b> — istruzioni × cicli per istruzione, diviso la frequenza. Si migliora agendo su uno dei tre fattori, e spesso migliorarne uno peggiora un altro.',
+      'Pipeline a k stadi: n istruzioni escono in <b>k + (n − 1)</b> cicli. Il guadagno tende a k ma non lo raggiunge mai.',
+      'Tre famiglie di <b>hazard</b>: strutturali (risorsa contesa), sui dati (leggo un valore non ancora scritto), di controllo (salti).',
+      '<b>Forwarding</b>: il risultato viene passato direttamente allo stadio che lo aspetta, senza attendere la scrittura nel registro. Non elimina lo stallo dopo una load.',
+      'I salti costano cicli: si rimedia con predizione, delay slot e calcolo anticipato della condizione.',
+      'Oltre un\'istruzione per ciclo: <b>superscalare</b> (più unità, decisione a run time) o <b>VLIW</b> (è il compilatore a impacchettare).',
+    ],
+    checks: [
+      {
+        q: 'Quanti cicli servono a 100 istruzioni in una pipeline ideale a 5 stadi?',
+        a: '5 + 99 = <b>104</b>. Il primo risultato esce dopo 5 cicli (riempimento), poi ne esce uno per ciclo. Senza pipeline sarebbero 500.',
+      },
+      {
+        q: 'Il forwarding elimina tutti gli stalli sui dati?',
+        a: 'No. Dopo una <code>Load</code> il dato è disponibile solo alla fine dello stadio di memoria: se l\'istruzione successiva lo usa subito, resta uno stallo di un ciclo (<b>load-use hazard</b>). Il compilatore lo nasconde riordinando le istruzioni.',
+      },
+      {
+        q: 'Perché una pipeline a 5 stadi non rende il processore 5 volte più veloce?',
+        a: 'Per tre motivi: il riempimento e lo svuotamento, gli stalli dovuti agli hazard, e lo sbilanciamento degli stadi — il periodo è quello dello stadio <b>più lento</b>, più il ritardo dei registri di stadio.',
+      },
+    ],
     body: `
     <h4>L'equazione delle prestazioni</h4>
     <p>Il tempo di esecuzione di un programma si scompone in tre fattori:</p>
@@ -48,5 +72,26 @@ Sub R5, R3, R4      <span class="cm">; ma serve gia allo stadio E</span></pre>
     </ul>
 
     <h4>Oltre una istruzione per ciclo</h4>
-    <p>Un processore <b>superscalare</b> replica le unità funzionali e avvia più istruzioni per ciclo, portando il CPI sotto 1. Richiede però di individuare a runtime le istruzioni indipendenti, quindi hardware di controllo notevolmente più complesso.</p>`,
+    <p>Un processore <b>superscalare</b> replica le unità funzionali e avvia più istruzioni per ciclo, portando il CPI sotto 1. Richiede però di individuare a runtime le istruzioni indipendenti, quindi hardware di controllo notevolmente più complesso.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Quattro istruzioni con una dipendenza:</b> la seconda usa il risultato della prima.</p>
+    <pre>I1: Add  R3, R1, R2
+I2: Sub  R5, R3, R4      ← ha bisogno di R3
+
+ciclo      1  2  3  4  5  6  7
+I1         F  D  E  M  W
+I2 (senza     F  D  ·  ·  E  M  W     tre cicli di stallo:
+   forward)                            R3 è scritto solo in W
+I2 (con       F  D  E  M  W            forwarding da E di I1 a E di I2
+   forward)</pre>
+    <p>Il forwarding porta il risultato dall'uscita della ALU direttamente al suo ingresso al ciclo dopo, senza aspettare la scrittura nel registro: lo stallo sparisce del tutto.</p>
+    <p><b>Ma se I1 fosse una <code>Load</code></b>, il dato sarebbe pronto solo alla fine dello stadio M, cioè un ciclo più tardi: resterebbe <b>uno</b> stallo, che nessun forwarding può eliminare. Il compilatore lo nasconde spostando in quel buco un'istruzione indipendente.</p>
+    <p><b>Conto dei cicli</b>: 4 istruzioni in una pipeline a 5 stadi senza stalli richiedono 5 + 3 = <b>8</b> cicli; con un solo stallo, 9.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Calcolare i cicli come k × n: la pipeline serve proprio a non pagare k cicli per istruzione. Sono <b>k + (n − 1)</b>.</li>
+      <li>Credere che il forwarding risolva anche il load-use hazard: lì un ciclo si perde comunque.</li>
+      <li>Dimenticare i salti: fino a quando la condizione non è nota le istruzioni prelevate potrebbero essere quelle sbagliate e vanno annullate.</li>
+    </ul>`,
   };

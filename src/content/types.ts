@@ -28,7 +28,9 @@ export type TopicId =
   | 'pipe' // pipeline e prestazioni
   | 'mem' // gerarchia di memoria e cache
   | 'vm' // memoria virtuale e TLB
-  | 'ieee'; // virgola mobile
+  | 'ieee' // virgola mobile
+  | 'sw' // dal codice sorgente all'eseguibile, ruolo del sistema operativo
+  | 'perf'; // prestazioni, legge di Amdahl, parallelismo
 
 /** Crocetta a risposta singola. */
 export interface McqItem {
@@ -62,6 +64,18 @@ export interface AsmWriteItem {
   ref: HamacherRef;
 }
 
+/**
+ * Domanda di autoverifica in fondo a un modulo.
+ *
+ * Non è una crocetta: è la domanda che ti fai da solo dopo aver letto, con la
+ * risposta nascosta finché non hai provato a rispondere. Serve a scoprire se
+ * hai capito o se hai solo riconosciuto il testo.
+ */
+export interface TopicCheck {
+  q: string;
+  a: string;
+}
+
 /** Scheda di studio. */
 export interface Topic {
   id: TopicId;
@@ -69,11 +83,23 @@ export interface Topic {
   title: string;
   /** Riga di sintesi mostrata sulla card. */
   blurb: string;
+  /**
+   * «In due minuti»: i punti che devono restare in testa dopo la lettura.
+   * Sono anche il ripasso dell'ultimo giorno, quando non c'è tempo di
+   * rileggere tutto.
+   */
+  summary: string[];
   /** Corpo della teoria in HTML (riscritto in forma originale). */
   body: string;
+  /** Domande di controllo, con risposta a scomparsa. */
+  checks: TopicCheck[];
   ref: HamacherRef;
   /** Trappole collegate, risolte contro la banca `traps`. */
   trapIds: string[];
+  /** Moduli che conviene aver letto prima di questo. */
+  prereq?: TopicId[];
+  /** Schemi di `diagrams.ts` che illustrano il modulo. */
+  diagramIds?: string[];
 }
 
 /** Figura di Hamacher che l'esame può chiedere di completare. */

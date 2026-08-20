@@ -1253,3 +1253,168 @@
     color: var(--color-green);
   }
 }
+
+@layer components {
+  /* ═══════════ studio: ripasso, indice, autoverifica ═══════════ */
+
+  /**
+   * «In due minuti»: il ripasso dell'ultimo giorno. Sta in cima al modulo
+   * perché è anche la mappa di ciò che si sta per leggere.
+   */
+  .recap {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: linear-gradient(180deg, var(--color-panel-2), var(--color-panel));
+    border: 1px solid var(--color-copper-dim);
+    border-radius: var(--radius-panel);
+  }
+  .recap h2 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-copper);
+    margin: 0 0 10px;
+  }
+  .recap ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .recap li {
+    color: var(--color-prose);
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin-bottom: 7px;
+  }
+  .recap li::marker {
+    color: var(--color-copper-dim);
+  }
+  .recap-note {
+    margin: 10px 0 0;
+    font-size: 12.5px;
+    color: var(--color-faint);
+  }
+
+  .toc {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+  }
+  .toc-t {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+    margin: 0 0 8px;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 20px;
+    columns: 2;
+    column-gap: 26px;
+  }
+  .toc li {
+    margin-bottom: 4px;
+    break-inside: avoid;
+  }
+  .toc a {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 640px) {
+    .toc ol {
+      columns: 1;
+    }
+  }
+
+  /* I titoli di sezione sono bersaglio dell'indice: senza questo margine
+     finiscono sotto la barra superiore, che è appiccicata in alto. */
+  .prose h4[id] {
+    scroll-margin-top: 74px;
+  }
+
+  .checks {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+  .chk {
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .chk-q {
+    margin: 0 0 10px;
+    color: var(--color-ink);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .chk-n {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--color-copper-dim);
+    color: var(--color-copper);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    vertical-align: 1px;
+  }
+  .chk-a {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--color-panel-2);
+    border-left: 2px solid var(--color-green);
+    border-radius: 0 8px 8px 0;
+    color: var(--color-prose);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 26px;
+  }
+  .pg {
+    display: block;
+    padding: 12px 14px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  .pg:hover {
+    border-color: var(--color-copper-dim);
+  }
+  .pg.next {
+    text-align: right;
+  }
+  .pg-l {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+  .pg-t {
+    display: block;
+    margin-top: 3px;
+    color: var(--color-ink);
+    font-size: 14px;
+  }
+}

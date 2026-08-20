@@ -7,6 +7,28 @@ export const karnaugh: Topic = {
     blurb: 'Dalla tabella di verità al circuito minimo. Esce quasi sempre.',
     ref: 'Hamacher — Appendice A',
     trapIds: ['trap-and-assoc'],
+    prereq: ['bool'],
+    summary: [
+      'Le colonne vanno in ordine <b>Gray</b> — 00, 01, 11, 10 — perché fra celle vicine deve cambiare un solo bit. Sbagliare l\'ordine invalida tutti i raggruppamenti.',
+      'Gruppi di 1, 2, 4, 8 celle: <b>mai 3</b>. Ogni raddoppio elimina una variabile, quindi accorcia il termine di un letterale.',
+      'Gruppi il più grandi possibile, <b>sovrapponibili</b>, con adiacenza <b>circolare</b>: bordi opposti e i quattro angoli sono vicini.',
+      'Implicante <b>primo</b> = gruppo non allargabile. <b>Essenziale</b> = copre un 1 che nessun altro primo copre: quelli vanno presi per forza.',
+      'Le <b>indifferenze</b> si prendono a 1 solo se allargano un gruppo, valutandole una per una.',
+    ],
+    checks: [
+      {
+        q: 'Perché un gruppo di 3 celle non è valido?',
+        a: 'Perché la semplificazione funziona solo se il gruppo è un sottocubo di 2ᵏ celle: allora esattamente k variabili cambiano e spariscono. Con 3 celle non esiste nessuna variabile che cambi in tutte le combinazioni, quindi il termine non si semplifica.',
+      },
+      {
+        q: 'Che differenza c\'è fra una SOP corretta e una SOP minima?',
+        a: 'Corretta = copre esattamente gli stessi mintermini della funzione. Minima = lo fa con il minor numero di termini e, a parità, di letterali. All\'esame una risposta corretta ma non minima perde punti.',
+      },
+      {
+        q: 'Quando conviene raggruppare gli zeri invece degli uni?',
+        a: 'Quando gli zeri sono pochi: raggruppandoli si ottiene la SOP di Ȳ e, negando con De Morgan, una POS spesso più corta della SOP.',
+      },
+    ],
     body: `
     <h4>Idea</h4>
     <p>La mappa dispone i mintermini in celle adiacenti secondo il <b>codice Gray</b>: fra due celle vicine cambia <b>una sola variabile</b>. Raggruppando gli <code>1</code> in blocchi di dimensione potenza di 2 si eliminano le variabili che cambiano dentro il gruppo, e restano solo quelle costanti.</p>
@@ -46,5 +68,12 @@ AB 00 | m0  m1  m3  m2
 
     <h4>Dal risultato al circuito</h4>
     <p>Ogni termine prodotto diventa una porta AND, la somma finale una porta OR, le variabili negate degli invertitori. Nel disegno <b>scomponi in porte a 2 ingressi</b>: un prodotto di tre letterali si realizza con due AND in cascata.</p>
-    <p>Allenati nel Simulatore → drill «Reti combinatorie»: la soluzione mostrata è calcolata da un minimizzatore esatto, quindi è sempre davvero minima.</p>`,
+    <p>Allenati nel Simulatore → drill «Reti combinatorie»: la soluzione mostrata è calcolata da un minimizzatore esatto, quindi è sempre davvero minima.</p>
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Scrivere le colonne in ordine 00, 01, 10, 11: la mappa perde l'adiacenza e <b>tutti</b> i raggruppamenti diventano sbagliati.</li>
+      <li>Fermarsi a una copertura corretta ma non minima, per non aver visto un gruppo più grande o l'adiacenza ai bordi.</li>
+      <li>Coprire un gruppo di sole indifferenze: non serve a nulla, perché nessun 1 viene coperto.</li>
+      <li>Dimenticare gli implicanti <b>essenziali</b>: vanno presi per primi, e spesso da soli chiudono quasi tutta la copertura.</li>
+    </ul>`,
   };

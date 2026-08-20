@@ -7,6 +7,29 @@ export const arith: Topic = {
   blurb: 'Semisommatore, sommatore completo, ripple-carry, carry-lookahead, moltiplicazione.',
   ref: 'Hamacher cap. 9',
   trapIds: ['trap-and-assoc'],
+    prereq: ['bin', 'comb'],
+    diagramIds: ['sommatore-ripple'],
+    summary: [
+      '<b>Semisommatore</b>: S = A ⊕ B, riporto = A · B. <b>Sommatore completo</b>: aggiunge il riporto entrante, S = A ⊕ B ⊕ Cin.',
+      '<b>Ripple-carry</b>: n sommatori completi in cascata. Semplice, ma il ritardo cresce <b>linearmente</b> con n perché il riporto deve attraversarli tutti.',
+      '<b>Carry-lookahead</b>: G = A·B (genera), P = A ⊕ B (propaga); i riporti si calcolano in parallelo. Ritardo quasi costante, molte più porte.',
+      'Un solo circuito per somma e sottrazione: A − B = A + B̅ + 1, cioè si invertono i bit di B e si forza a 1 il riporto entrante.',
+      'Moltiplicazione = <b>somme e spostamenti</b>; l\'algoritmo di Booth tratta i numeri in complemento a 2 senza casi particolari.',
+    ],
+    checks: [
+      {
+        q: 'Perché il ripple-carry è lento, e quanto?',
+        a: 'Il riporto di ogni stadio dipende da quello precedente, quindi il risultato è pronto solo dopo che il riporto ha attraversato tutti gli stadi: il ritardo è circa n volte quello di un sommatore completo, cioè cresce <b>linearmente</b> col numero di bit.',
+      },
+      {
+        q: 'Che cosa significa che uno stadio «genera» o «propaga» il riporto?',
+        a: '<b>Genera</b> se produce un riporto da solo, indipendentemente da quello entrante: succede quando A = B = 1, cioè G = A·B. <b>Propaga</b> se lascia passare il riporto entrante: succede quando A ⊕ B = 1. Da queste due funzioni si ricavano tutti i riporti in parallelo.',
+      },
+      {
+        q: 'Come si esegue una sottrazione avendo solo un sommatore?',
+        a: 'Si invertono i bit del sottraendo e si mette a 1 il riporto entrante del primo stadio: invertire + 1 è esattamente il complemento a 2, quindi A + (−B) senza circuiti aggiuntivi.',
+      },
+    ],
   body: `
     <h4>Semisommatore (half adder)</h4>
     <p>Somma <b>due</b> bit e produce somma e riporto. Non accetta un riporto entrante, ed è per
@@ -112,5 +135,26 @@ c₃ = G₂ + P₂G₁ + P₂P₁G₀ + P₂P₁P₀c₀</pre>
     domande sul <b>ritardo</b> nascono qui — un ripple-carry a 32 bit è lento perché il riporto
     attraversa 32 stadi in cascata, ed è questo cammino a fissare il periodo minimo di clock.
     L'espressione ${ovl('a')}·b + a·${ovl('b')} che riconosci come XOR è la somma del
-    semisommatore.</p>`,
+    semisommatore.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Somma 5 + 6 su 4 bit con un ripple-carry, mostrando i riporti.</b></p>
+    <pre>riporti:  0 1 1 0
+   A   =    0 1 0 1   (5)
+   B   =    0 1 1 0   (6)
+  ────────────────────
+   S   =    1 0 1 1   (−5 letto in CP2!)</pre>
+    <p>Il riporto <b>entrante</b> nel bit di segno è 1, quello <b>uscente</b> è 0: 1 ⊕ 0 = 1, quindi <b>overflow</b>. Ed è giusto: su 4 bit il massimo è +7, e 11 non ci sta. Il risultato letto in CP2 vale −5 e non ha senso — la macchina non se ne accorge da sola, per questo esiste il flag.</p>
+    <p><b>Ora 5 − 6 con lo stesso circuito.</b> Si invertono i bit di B e si forza a 1 il riporto entrante:</p>
+    <pre>B = 0110  →  B̄ = 1001,  Cin = 1
+
+  0101 + 1001 + 1 = 1111  =  −1 ✓
+riporto uscente 0, riporto entrante nel segno 0  →  nessun overflow</pre>
+    <p>Un unico sommatore fa entrambe le operazioni: la linea di controllo che sceglie somma o sottrazione pilota sia gli XOR che invertono B, sia il riporto entrante.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Invertire B e dimenticare il riporto entrante a 1: si sottrae B+1 invece di B.</li>
+      <li>Dichiarare overflow guardando solo il riporto uscente: serve lo <b>XOR</b> dei due riporti sul bit di segno.</li>
+      <li>Nella moltiplicazione, sommare i prodotti parziali senza <b>estendere il segno</b> quando si lavora in complemento a 2 (è il problema che l'algoritmo di Booth risolve).</li>
+    </ul>`,
 };

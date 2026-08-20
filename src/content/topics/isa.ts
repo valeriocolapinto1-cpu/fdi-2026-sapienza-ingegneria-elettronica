@@ -6,6 +6,28 @@ export const isa: Topic = {
     blurb: 'ISA, modi di indirizzamento, RTN, sottoprogrammi e pile.',
     ref: 'Hamacher cap. 2–3',
     trapIds: ['trap-rtn'],
+    prereq: ['cpu'],
+    summary: [
+      '<b>RISC</b>: istruzioni di lunghezza fissa, solo load/store accedono alla memoria, molti registri. <b>CISC</b>: istruzioni di lunghezza variabile, operandi in memoria, microcodice.',
+      'Modi di indirizzamento da riconoscere: immediato, a registro, diretto, indiretto, <b>base + spiazzamento</b>, indicizzato, relativo al PC.',
+      'I salti condizionati leggono i <b>flag</b> (Z, N, V, C) oppure confrontano direttamente due registri.',
+      'Sottoprogrammi: l\'indirizzo di ritorno va in un registro o sulla <b>pila</b>; la pila serve anche a parametri, variabili locali e salvataggio dei registri.',
+      '<b>Big-endian / little-endian</b>: ordine dei byte dentro la parola. Conta quando si leggono dati scritti da un\'altra macchina.',
+    ],
+    checks: [
+      {
+        q: 'Che cosa fa <code>Load R1, 20(R2)</code>?',
+        a: 'È base + spiazzamento: calcola l\'indirizzo <code>[R2] + 20</code> e carica in R1 il <b>contenuto</b> di quella cella. R2 non viene modificato, e lo spiazzamento è una costante nell\'istruzione.',
+      },
+      {
+        q: 'Perché i RISC usano istruzioni di lunghezza fissa?',
+        a: 'Perché prelievo e decodifica diventano regolari: ogni istruzione occupa lo stesso spazio e i campi stanno sempre nelle stesse posizioni. È la condizione che rende efficiente la pipeline.',
+      },
+      {
+        q: 'Perché l\'indirizzo di ritorno finisce sulla pila e non sempre in un registro?',
+        a: 'Con le chiamate annidate un singolo registro verrebbe sovrascritto dalla seconda chiamata. La pila, essendo LIFO, conserva un indirizzo di ritorno per ogni livello di annidamento.',
+      },
+    ],
     body: `
     <h4>RISC</h4>
     <ul>
@@ -70,5 +92,24 @@ export const isa: Topic = {
     <p><b>Big endian</b>: il byte più significativo all'indirizzo più basso — il bit di segno si trova quindi all'inizio. <b>Little endian</b>: il meno significativo per primo. Conta quando si scambiano dati fra macchine diverse o si accede a una parola byte per byte.</p>
 
     <h4>Dalla sorgente all'esecuzione</h4>
-    <p>Il <b>compilatore</b> traduce in linguaggio macchina producendo file oggetto; il <b>linker</b> li combina risolvendo i riferimenti esterni; il <b>loader</b> porta il programma in memoria applicando lo spiazzamento necessario. Sono tre passaggi distinti, e all'esame vengono chiesti separatamente.</p>`,
+    <p>Il <b>compilatore</b> traduce in linguaggio macchina producendo file oggetto; il <b>linker</b> li combina risolvendo i riferimenti esterni; il <b>loader</b> porta il programma in memoria applicando lo spiazzamento necessario. Sono tre passaggi distinti, e all'esame vengono chiesti separatamente.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Somma dei primi n elementi di un vettore</b>, con i modi di indirizzamento evidenziati:</p>
+    <pre>      Move  R2, #NUM      ; <b>immediato</b>: R2 ← indirizzo del vettore
+      Move  R3, N         ; <b>diretto</b>: R3 ← contenuto della cella N
+      Clear R1
+CICLO: Add   R1, (R2)      ; <b>indiretto</b>: R1 ← [R1] + contenuto puntato da R2
+      Add   R2, #4        ; avanza di una parola
+      Sub   R3, #1
+      Branch&gt;0 CICLO      ; <b>relativo al PC</b>
+      Move  SOMMA, R1</pre>
+    <p>Quattro modi diversi in sette righe, ed è questo che l'esame vuole vedere riconosciuto. Attenzione alla differenza fra <code>#NUM</code> (l'<b>indirizzo</b>) e <code>NUM</code> (il <b>contenuto</b>): è l'errore che costa più punti in assoluto.</p>
+    <p>Con l'indirizzamento base+spiazzamento le due righe centrali diventano una sola, usando un indice che cresce: <code>Add R1, VETT(R2)</code> con <code>R2</code> che avanza di 4.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Confondere indirizzo e contenuto: <code>Move R2, #NUM</code> mette in R2 <b>l'indirizzo</b>; senza cancelletto ci mette il valore contenuto lì.</li>
+      <li>Avanzare il puntatore di 1 invece che della dimensione della parola (4 byte se le parole sono a 32 bit e la memoria è indirizzata al byte).</li>
+      <li>Dimenticare di inizializzare l'accumulatore, o mettere il salto <b>prima</b> dell'aggiornamento del contatore.</li>
+    </ul>`,
   };

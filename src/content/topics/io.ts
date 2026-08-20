@@ -6,6 +6,30 @@ export const io: Topic = {
   blurb: 'I/O programmato, memory-mapped, handshake, DMA, bus e standard seriali.',
   ref: 'Hamacher cap. 3–4',
   trapIds: [],
+    prereq: ['irq'],
+    diagramIds: ['interfaccia-io'],
+    summary: [
+      'Ogni dispositivo espone tre registri: <b>dati</b>, <b>stato</b>, <b>controllo</b>. Programmare l\'I/O significa leggere e scrivere quei registri.',
+      '<b>Memory-mapped</b>: i registri occupano indirizzi di memoria e si usano le normali load/store. <b>Isolato</b>: spazio separato e istruzioni dedicate (IN/OUT).',
+      'Tre modi di trasferire: <b>programmato</b> (attesa attiva), <b>a interruzione</b>, <b>DMA</b>.',
+      'Il <b>DMA</b> trasferisce blocchi direttamente da e verso la memoria e interrompe solo alla fine: ruba cicli al processore ma gli evita di gestire ogni parola.',
+      '<b>Handshake</b>: due segnali, richiesta e conferma, per sincronizzare parti a velocità diverse.',
+      'Il <b>bus</b> ha tre gruppi di linee — dati, indirizzi, controllo; gli standard moderni (PCI Express, USB) sono seriali e a pacchetti.',
+    ],
+    checks: [
+      {
+        q: 'Perché l\'I/O programmato spreca tempo di processore?',
+        a: 'Perché il processore interroga in continuazione il registro di stato in attesa che il dispositivo sia pronto (<b>busy waiting</b>): in quel tempo non fa nient\'altro, e la periferica è ordini di grandezza più lenta.',
+      },
+      {
+        q: 'Che cosa fa il DMA che l\'I/O a interruzione da solo non fa?',
+        a: 'Trasferisce l\'<b>intero blocco</b> senza far passare i dati per il processore: una sola interruzione a fine blocco invece di una per ogni parola. Il processore interviene per impostare il trasferimento e alla fine.',
+      },
+      {
+        q: 'Qual è il vantaggio del memory-mapped I/O, e qual è il prezzo?',
+        a: 'Vantaggio: nessuna istruzione speciale — tutte le istruzioni di accesso alla memoria, con tutti i modi di indirizzamento, valgono anche per i dispositivi. Prezzo: una parte dello spazio di indirizzamento non è più disponibile per la memoria.',
+      },
+    ],
   body: `
     <h4>Il problema dell'I/O</h4>
     <p>Processore e memoria lavorano in nanosecondi, una tastiera in decimi di secondo, un disco
@@ -80,5 +104,24 @@ export const io: Topic = {
     <p>Gli stessi meccanismi con periferiche minuscole: un <b>timer</b> con i suoi registri di
     conteggio e di stato, che genera un'interruzione periodica ed è la base della multiprogrammazione;
     un <b>display a sette segmenti</b>, dove una rete combinatoria traduce la cifra binaria
-    nell'accensione dei segmenti — un classico esercizio di sintesi con tabella di verità.</p>`,
+    nell'accensione dei segmenti — un classico esercizio di sintesi con tabella di verità.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Leggere un settore di 512 byte da disco: quanto costa al processore?</b> Confrontiamo i tre modi, supponendo che il dispositivo consegni una parola (4 byte) per volta, cioè 128 parole.</p>
+    <pre>I/O programmato   128 attese attive: il processore resta bloccato
+                  per l'intera durata del trasferimento
+
+A interruzione    128 interruzioni, una per parola: ogni volta
+                  salvataggio stato + ISR + ripristino (decine di cicli)
+
+DMA               1 sola interruzione, a blocco completato.
+                  Il processore imposta indirizzo, conteggio e verso,
+                  poi fa altro; il controllore ruba qualche ciclo di bus</pre>
+    <p>Con 128 parole la differenza è già netta; con un file da un megabyte l'I/O a interruzione è semplicemente impraticabile. È per questo che dischi e rete usano il DMA e la tastiera no: con la tastiera le interruzioni sono poche e rare, e il DMA sarebbe complicazione inutile.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Dire che il DMA «elimina le interruzioni»: ne resta una, quella di fine blocco — che è proprio il punto.</li>
+      <li>Dimenticare che il DMA scrivendo in memoria può rendere <b>obsoleta</b> la copia in cache: è il problema della coerenza.</li>
+      <li>Confondere memory-mapped I/O (dove stanno i registri) con il modo di trasferire (programmato, a interruzione, DMA): sono due scelte indipendenti.</li>
+    </ul>`,
 };

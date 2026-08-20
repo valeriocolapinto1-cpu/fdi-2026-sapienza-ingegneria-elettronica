@@ -6,6 +6,29 @@ export const ff: Topic = {
     blurb: 'Latch, flip-flop D/JK/T, master-slave, registri e contatori.',
     ref: 'Hamacher — Appendice A',
     trapIds: [],
+    prereq: ['bool'],
+    summary: [
+      '<b>Combinatorio</b>: l\'uscita dipende solo dagli ingressi adesso. <b>Sequenziale</b>: dipende anche dallo <b>stato</b>, cioè dal passato.',
+      '<b>Latch</b> = sensibile al <b>livello</b> (trasparente finché l\'abilitazione è attiva). <b>Flip-flop</b> = sensibile al <b>fronte</b>.',
+      'SR ha la combinazione proibita S = R = 1; il D la elimina; il JK la usa per commutare; il T commuta a comando.',
+      '<b>Master-slave</b>: due latch in cascata con clock opposti — il dato entra su un fronte ed esce sull\'altro, quindi si campiona una volta per periodo.',
+      'Registri a scorrimento e contatori si costruiscono con flip-flop D o T; l\'accesso può essere seriale o parallelo.',
+      '<b>Setup</b> e <b>hold</b> vanno rispettati attorno al fronte: violarli porta a metastabilità, cioè a un\'uscita che non si decide.',
+    ],
+    checks: [
+      {
+        q: 'Perché un latch D trasparente non basta a costruire un registro di pipeline?',
+        a: 'Perché finché l\'abilitazione è alta l\'uscita insegue l\'ingresso: il dato può attraversare più stadi nello stesso colpo di clock. Il flip-flop campiona <b>solo sul fronte</b>, quindi ogni stadio avanza di un passo per periodo.',
+      },
+      {
+        q: 'Che differenza c\'è fra setup time e hold time?',
+        a: 'Il <b>setup</b> è quanto tempo prima del fronte il dato deve essere già stabile; l\'<b>hold</b> è quanto deve restarlo dopo il fronte. Sono due vincoli diversi e vanno rispettati entrambi.',
+      },
+      {
+        q: 'Come si ottiene un contatore modulo 10 da un contatore binario a 4 bit?',
+        a: 'Si rileva con una porta la configurazione 1010 e la si usa per azzerare il contatore: si contano così i valori da 0 a 9 e si riparte.',
+      },
+    ],
     body: `
     <h4>Combinatorio vs sequenziale</h4>
     <p>In una rete <b>combinatoria</b> l'uscita dipende solo dagli ingressi attuali. In una rete <b>sequenziale</b> dipende anche dallo <b>stato</b>, cioè dalla storia passata: serve un elemento di memoria, ottenuto con la <b>retroazione</b> (l'uscita rientra come ingresso).</p>
@@ -50,5 +73,20 @@ export const ff: Topic = {
     </ul>
 
     <h4>Tempi</h4>
-    <p>Il dato deve essere stabile un po' <b>prima</b> del fronte (<i>setup time</i>) e restare stabile un po' <b>dopo</b> (<i>hold time</i>). Il periodo minimo di clock è vincolato dal ritardo di propagazione più lungo fra due registri, più il setup.</p>`,
+    <p>Il dato deve essere stabile un po' <b>prima</b> del fronte (<i>setup time</i>) e restare stabile un po' <b>dopo</b> (<i>hold time</i>). Il periodo minimo di clock è vincolato dal ritardo di propagazione più lungo fra due registri, più il setup.</p>
+    <h4>Esempio svolto</h4>
+    <p><b>Stesso ingresso, due componenti diversi.</b> Il clock è alto nella prima metà del periodo; D cambia due volte <i>durante</i> quella metà:</p>
+    <pre>clock   ‾‾‾|___|‾‾‾|___
+D       0  1 0 1   1
+latch D 0  1 0 1   1     ← trasparente: insegue D per tutto il livello alto
+FF-D ↑  0  1 1 1   1     ← campiona SOLO sul fronte di salita</pre>
+    <p>Il latch ha seguito ogni variazione; il flip-flop ha registrato solo il valore presente <b>sul fronte</b>. È esattamente la ragione per cui i registri di una pipeline sono flip-flop: garantiscono un avanzamento per periodo, qualunque cosa faccia il combinatorio nel frattempo.</p>
+    <p><b>Contatore modulo 6</b> (0…5) con flip-flop D: si conta in binario su 3 bit e si rileva con una AND la configurazione <code>110</code> (cioè 6), usandone l'uscita per azzerare il contatore. Il conteggio diventa 0,1,2,3,4,5,0,… — e lo stesso schema con <code>1010</code> dà il modulo 10.</p>
+
+    <h4>Errori tipici</h4>
+    <ul>
+      <li>Dire «il latch è più lento»: non è una questione di velocità ma di <b>quando</b> campiona — livello contro fronte.</li>
+      <li>Dimenticare che nel JK la combinazione J = K = 1 <b>commuta</b> lo stato invece di essere proibita: è il motivo per cui esiste.</li>
+      <li>Costruire un contatore asincrono (ogni flip-flop pilotato dall'uscita del precedente) e stupirsi dei <b>glitch</b>: i ritardi si sommano e le uscite non cambiano tutte insieme.</li>
+    </ul>`,
   };
