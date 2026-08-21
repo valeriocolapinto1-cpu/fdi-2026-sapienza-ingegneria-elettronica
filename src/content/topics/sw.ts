@@ -82,4 +82,67 @@ FINE:     ...                  ; indirizzo 128</pre>
       a: 'No: è un programma anche lui e la CPU è una sola. Riprende il controllo solo in tre casi — <b>chiamata di sistema</b>, <b>interruzione</b>, <b>eccezione</b> — e in ognuno il passaggio avviene attraverso un punto d’ingresso controllato, con cambio in modalità supervisore.',
     },
   ],
+  exercises: [
+    {
+      id: 'ex-sw-1',
+      level: 'base',
+      q: 'Dato questo sorgente, elenca gli indirizzi assegnati a ogni riga e scrivi la <b>tabella dei simboli</b>. Le parole sono a 32 bit e la memoria è indirizzata al byte.',
+      hint: 'Tieni un contatore di posizione che parte dal valore di ORIGIN e cresce di 4 a ogni istruzione. Le etichette non occupano spazio: nominano l’indirizzo della riga su cui stanno.',
+      solution: `<pre>          ORIGIN 200
+PARTE:    Move  R1, #0        ; 200
+          Move  R2, CONT      ; 204
+GIRO:     Add   R1, R1, R2    ; 208
+          Sub   R2, R2, #1    ; 212
+          Branch&gt;0 GIRO       ; 216
+          Move  TOT, R1       ; 220
+CONT:     DATAWORD 8          ; 224
+TOT:      RESERVE 4           ; 228
+          END PARTE</pre><p>Tabella dei simboli al termine della prima passata:</p><pre>PARTE → 200      GIRO → 208      CONT → 224      TOT → 228</pre><p>Attenzione a due cose: <code>DATAWORD</code> e <code>RESERVE</code> <b>occupano memoria</b> e fanno avanzare il contatore esattamente come le istruzioni; <code>ORIGIN</code> e <code>END</code> no, perché sono istruzioni per l’assemblatore e non finiscono in memoria.</p>`,
+    },
+    {
+      id: 'ex-sw-2',
+      level: 'base',
+      q: 'L’assemblatore segnala «simbolo <code>FINE</code> non definito». In quale delle due passate se ne accorge, e perché non prima?',
+      hint: 'Chiediti che cosa fa ciascuna passata e quando l’assemblatore è in grado di sapere che un’etichetta <b>non</b> esiste.',
+      solution: '<p>Se ne accorge nella <b>seconda</b> passata, cioè quando prova a tradurre l’istruzione che nomina <code>FINE</code> e non trova la voce nella tabella dei simboli.</p><p>Non può accorgersene prima perché durante la prima passata l’etichetta potrebbe semplicemente <b>essere più avanti</b>: incontrare un riferimento a un nome ancora ignoto è la situazione normale, non un errore. Solo a scansione conclusa la tabella è completa, e da quel momento un nome assente è davvero assente.</p><p>È lo stesso motivo per cui esistono due passate: la prima <b>raccoglie</b>, la seconda <b>usa</b>. Un assemblatore a una sola passata dovrebbe tenere una lista dei riferimenti in sospeso e tornare a correggerli alla fine — che è, di fatto, una seconda passata mascherata.</p>',
+    },
+    {
+      id: 'ex-sw-3',
+      level: 'esame',
+      q: 'Con <code>ORIGIN 100</code>, calcola l’indirizzo di ogni riga: due istruzioni, poi <code>RESERVE 20</code>, poi <code>DATAWORD 7</code>, poi un’altra istruzione, infine l’etichetta <code>DOPO</code>. Parole a 32 bit, memoria al byte.',
+      hint: '<code>RESERVE</code> prende il numero di <b>byte</b> indicato, non di parole. Le istruzioni ne occupano 4 ciascuna.',
+      solution: `<pre>          ORIGIN 100
+          Move R1, #0        →  100
+          Move R2, #1        →  104
+BUFFER:   RESERVE 20         →  108   (occupa 108…127)
+COST:     DATAWORD 7         →  128
+          Add  R1, R1, R2    →  132
+DOPO:     ...                →  136</pre><p>Il punto delicato è <code>RESERVE 20</code>: riserva venti <b>byte</b>, cioè cinque parole, quindi il contatore salta da 108 a 128. Chi lo legge come «venti parole» sbaglia tutti gli indirizzi successivi; chi lo legge come «una riga come le altre» avanza di 4 e sbaglia comunque.</p><p>Nota anche che <code>RESERVE</code> <b>non inizializza</b>: quei venti byte contengono valori indefiniti finché il programma non ci scrive.</p>`,
+    },
+    {
+      id: 'ex-sw-4',
+      level: 'esame',
+      q: 'Una libreria grafica occupa 2 MB. Cinque programmi la usano e sono in esecuzione contemporaneamente. Quanta memoria serve con collegamento <b>statico</b> e quanta con collegamento <b>dinamico</b>?',
+      hint: 'Con lo statico la libreria entra dentro ogni eseguibile. Con il dinamico esiste una copia sola, condivisa.',
+      solution: `<pre>STATICO    5 programmi × 2 MB = <b>10 MB</b> di codice di libreria in memoria
+           (più 2 MB dentro ciascun file eseguibile su disco)
+
+DINAMICO   una copia sola = <b>2 MB</b>, mappata nello spazio di indirizzi
+           di tutti e cinque i processi</pre><p>Il dinamico vince anche sull’<b>aggiornamento</b>: correggere un difetto nella libreria significa sostituire un file, senza ricollegare i cinque programmi.</p><p>Che cosa costa: l’eseguibile non è più autosufficiente. Se la libreria manca, è di versione sbagliata o è stata sostituita in modo incompatibile, il programma non parte o si comporta male — il classico «manca una DLL». Lo statico paga spazio per comprare indipendenza.</p>`,
+    },
+    {
+      id: 'ex-sw-5',
+      level: 'esame',
+      q: 'Attribuisci ciascun messaggio d’errore allo strumento che lo produce — compilatore, assemblatore, collegatore, caricatore o esecuzione: «manca il punto e virgola» · «simbolo <code>stampa</code> non definito» · «indirizzo non allineato» · «riferimento esterno <code>sqrt</code> irrisolto» · «memoria insufficiente per caricare il programma».',
+      hint: 'Ogni strumento vede solo una cosa: il compilatore la sintassi, l’assemblatore un modulo per volta, il collegatore i rapporti fra moduli, il caricatore la memoria disponibile.',
+      solution: `<pre>«manca il punto e virgola»            → <b>compilatore</b> (analisi sintattica)
+«simbolo stampa non definito»          → <b>assemblatore</b> (etichetta assente
+                                         dentro QUESTO modulo)
+«riferimento esterno sqrt irrisolto»   → <b>collegatore</b> (nessun modulo o
+                                         libreria lo definisce)
+«memoria insufficiente per caricare»   → <b>caricatore</b>
+«indirizzo non allineato»              → <b>esecuzione</b> (eccezione
+                                         sollevata dall'hardware)</pre><p>La coppia che si confonde più spesso è la seconda con la terza. Se il nome dovrebbe stare <b>nello stesso file</b> ed è assente, se ne accorge l’assemblatore in seconda passata. Se il nome è dichiarato esterno e va cercato <b>in un altro modulo</b>, l’assemblatore lascia il buco e la palla passa al collegatore.</p>`,
+    },
+  ],
 };

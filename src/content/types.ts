@@ -76,6 +76,28 @@ export interface TopicCheck {
   a: string;
 }
 
+/**
+ * Esercizio svolto in fondo a un modulo.
+ *
+ * Non è un quesito d'esame generato dal motore: è un esercizio **scritto**,
+ * con il suo svolgimento passo per passo. Serve a imparare il procedimento,
+ * non a essere valutati — per la valutazione c'è il simulatore.
+ *
+ * `hint` esiste perché guardare subito la soluzione non insegna niente: la
+ * spinta iniziale permette di riprovare da soli prima di arrendersi.
+ */
+export interface TopicExercise {
+  id: string;
+  /** Testo, come lo troveresti sul foglio. */
+  q: string;
+  /** Da dove si comincia, senza dare la risposta. */
+  hint: string;
+  /** Svolgimento completo, passo per passo. */
+  solution: string;
+  /** `base` = per capire il meccanismo; `esame` = difficoltà e formato della prova. */
+  level: 'base' | 'esame';
+}
+
 /** Scheda di studio. */
 export interface Topic {
   id: TopicId;
@@ -93,6 +115,8 @@ export interface Topic {
   body: string;
   /** Domande di controllo, con risposta a scomparsa. */
   checks: TopicCheck[];
+  /** Esercizi svolti: si prova, si chiede un aiuto, si confronta. */
+  exercises: TopicExercise[];
   ref: HamacherRef;
   /** Trappole collegate, risolte contro la banca `traps`. */
   trapIds: string[];

@@ -98,4 +98,69 @@ etichetta     = 32 − 6 − 7                  = <b>19 bit</b></pre>
       <li>Calcolare lo spiazzamento sul numero di parole invece che di byte, quando la memoria è indirizzata al byte.</li>
       <li>Dimenticare la verifica della somma dei campi: è il controllo che intercetta quasi tutti gli errori di questo esercizio.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-mem-1',
+        level: 'base',
+        q: 'Cache da <b>32 KiB</b> a mappatura <b>diretta</b>, blocchi da <b>16 byte</b>, indirizzi a <b>32 bit</b>. Come si spezza l’indirizzo?',
+        hint: 'Tre campi, sempre nello stesso ordine: etichetta, indice, spiazzamento. Si parte dal fondo, cioè dallo spiazzamento.',
+        solution: `<pre>spiazzamento = log₂(16 byte)              = <b>4 bit</b>
+numero di blocchi = 32768 / 16            = 2048
+indice = log₂(2048)                       = <b>11 bit</b>
+etichetta = 32 − 11 − 4                   = <b>17 bit</b></pre><p>Controllo obbligatorio: 17 + 11 + 4 = 32 ✓, i tre campi sommano all’ampiezza dell’indirizzo.</p><p>Nella mappatura diretta l’indice individua <b>una sola</b> linea possibile, quindi si confronta una sola etichetta: hardware minimo e risposta rapidissima. Il prezzo sono i <b>conflitti</b>: due blocchi con lo stesso indice si sfrattano a vicenda anche se il resto della cache è vuoto.</p>`,
+      },
+      {
+        id: 'ex-mem-2',
+        level: 'base',
+        q: 'Una cache ha tempo di accesso 2 ns, miss rate 5 % e penalità di miss 80 ns. Qual è il <b>tempo medio di accesso</b>? E se il miss rate scendesse al 2 %?',
+        hint: 'Il tempo medio è quello dell’hit più, in proporzione ai miss, la penalità aggiuntiva.',
+        solution: `<pre>t_medio = t_hit + miss_rate × miss_penalty
+
+con 5 %:  2 + 0,05 × 80 = 2 + 4 = <b>6 ns</b>
+con 2 %:  2 + 0,02 × 80 = 2 + 1,6 = <b>3,6 ns</b></pre><p>Un miss su venti <b>triplica</b> il tempo medio rispetto all’hit. Dimezzare e più il miss rate lo riporta quasi al valore ideale.</p><p>La morale progettuale: conviene molto di più lavorare sul <b>miss rate</b> (cache più grande, più associativa, blocchi di dimensione adeguata) o sulla <b>penalità</b> (cache di secondo livello) che non sull’hit time. E si vede anche perché la memoria virtuale con page fault da milioni di cicli richiede un tasso di fault bassissimo per essere praticabile.</p>`,
+      },
+      {
+        id: 'ex-mem-3',
+        level: 'esame',
+        q: 'Stessa cache dell’esercizio 1 — 32 KiB, blocchi da 16 byte, indirizzi a 32 bit — ma <b>associativa a 4 vie</b>. Come cambiano i campi? E che problema risolve l’associatività?',
+        hint: 'Con n vie l’indice non individua più un blocco ma un <b>gruppo</b> di n blocchi. Conta quanti gruppi ci sono.',
+        solution: `<pre>spiazzamento = log₂(16)                   = <b>4 bit</b>   (invariato)
+numero di blocchi = 32768 / 16            = 2048
+numero di gruppi  = 2048 / 4 vie          = 512
+indice = log₂(512)                        = <b>9 bit</b>
+etichetta = 32 − 9 − 4                    = <b>19 bit</b></pre><p>Rispetto alla mappatura diretta l’indice <b>perde 2 bit</b> e l’etichetta li guadagna: 19 + 9 + 4 = 32 ✓.</p><p>Il problema risolto sono i <b>conflitti</b>. Con la mappatura diretta due blocchi che condividono l’indice non possono coesistere: un ciclo che accede alternativamente a due indirizzi «sfortunati» produce un miss a ogni accesso, con la cache quasi vuota. Con quattro vie ce ne stanno quattro nello stesso gruppo.</p><p>Il costo: quattro confronti di etichetta in parallelo invece di uno (più hardware, hit time leggermente più alto) e la necessità di una politica di <b>sostituzione</b>, che nella mappatura diretta non serve perché non c’è scelta.</p>`,
+      },
+      {
+        id: 'ex-mem-4',
+        level: 'esame',
+        q: 'Su 1000 istruzioni, il 20 % sono <code>store</code>. Il miss rate è 5 % e il 30 % dei blocchi sfrattati è <i>dirty</i>. I blocchi sono da 16 byte, le parole da 4. Confronta il <b>traffico verso la memoria</b> con write-through e con write-back.',
+        hint: 'Conta separatamente il traffico in lettura (il caricamento dei blocchi dopo un miss, uguale nei due casi) e quello in scrittura, che è ciò che distingue le due politiche.',
+        solution: `<pre>LETTURE (uguali nei due casi)
+  miss = 1000 × 5 % = 50  →  50 blocchi × 16 B = 800 byte
+
+WRITE-THROUGH: ogni store scrive anche in memoria
+  200 store × 4 byte = 800 byte
+  traffico totale = 800 + 800 = <b>1600 byte</b>
+
+WRITE-BACK: si riscrive solo il blocco sfrattato se dirty
+  50 sfratti × 30 % = 15 blocchi × 16 B = 240 byte
+  traffico totale = 800 + 240 = <b>1040 byte</b></pre><p>Il write-back genera qui il <b>35 % di traffico in meno</b>, e il divario cresce quando un blocco viene scritto più volte prima di essere sfrattato: il write-through paga <b>ogni</b> scrittura, il write-back una sola volta per blocco.</p><p>Che cosa si perde: con il write-back la memoria è temporaneamente <b>non aggiornata</b>, il che complica la vita a DMA e multiprocessori (è il problema della coerenza) e rende necessario un bit <i>dirty</i> per ogni blocco.</p>`,
+      },
+      {
+        id: 'ex-mem-5',
+        level: 'esame',
+        q: 'Cache associativa a <b>2 vie</b> con <b>2 gruppi</b> (quattro blocchi in tutto), politica <b>LRU</b>. Il gruppo si sceglie con «numero di blocco modulo 2». Traccia gli accessi ai blocchi <code>0, 1, 2, 0, 3, 1, 2, 4, 0</code> indicando hit e miss.',
+        hint: 'Per ogni accesso: calcola il gruppo, guarda se il blocco c’è, e aggiorna l’ordine di uso. Si sfratta solo quando il gruppo è pieno.',
+        solution: `<pre>accesso  gruppo  contenuto dopo        esito
+   0       0     g0: [0]               MISS
+   1       1     g1: [1]               MISS
+   2       0     g0: [0, 2]            MISS
+   0       0     g0: [2, 0]            HIT   (0 diventa il più recente)
+   3       1     g1: [1, 3]            MISS
+   1       1     g1: [3, 1]            HIT
+   2       0     g0: [0, 2]            HIT
+   4       0     g0: [2, 4]            MISS  → sfratta 0 (meno recente)
+   0       0     g0: [4, 0]            MISS  → sfratta 2</pre><p>Bilancio: <b>6 miss e 3 hit</b>. I primi quattro miss sono <i>obbligatori</i> (il blocco non era mai stato caricato); gli ultimi due sono di <b>capacità/conflitto</b>, causati dallo sfratto.</p><p>Nota l’ultimo passaggio: al momento di caricare il blocco 4, nel gruppo 0 c’erano 0 e 2, usati rispettivamente al quarto e al settimo accesso. LRU sfratta il <b>meno recentemente usato</b>, cioè lo 0 — che però viene richiesto subito dopo. È il caso in cui LRU sbaglia previsione: nessuna politica reale può indovinare sempre, perché il futuro non lo conosce.</p>`,
+      },
+    ],
   };

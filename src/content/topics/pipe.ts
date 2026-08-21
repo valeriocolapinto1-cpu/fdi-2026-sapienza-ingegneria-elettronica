@@ -94,4 +94,71 @@ I2 (con       F  D  E  M  W            forwarding da E di I1 a E di I2
       <li>Credere che il forwarding risolva anche il load-use hazard: lì un ciclo si perde comunque.</li>
       <li>Dimenticare i salti: fino a quando la condizione non è nota le istruzioni prelevate potrebbero essere quelle sbagliate e vanno annullate.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-pipe-1',
+        level: 'base',
+        q: 'Disegna il diagramma a stadi di <b>quattro istruzioni indipendenti</b> in una pipeline a 5 stadi (F, D, E, M, W) e conta i cicli necessari.',
+        hint: 'Ogni istruzione entra un ciclo dopo la precedente. Il conto non è 4 × 5: chiediti quando esce l’<b>ultima</b>.',
+        solution: `<pre>ciclo:  1  2  3  4  5  6  7  8
+I1      F  D  E  M  W
+I2         F  D  E  M  W
+I3            F  D  E  M  W
+I4               F  D  E  M  W</pre><p>L’ultima istruzione completa al ciclo <b>8</b>. La formula generale:</p><pre>cicli = k + (n − 1) = 5 + 3 = 8</pre><p>I primi 4 cicli sono il <b>riempimento</b>: la pipeline non ha ancora prodotto nulla. Dal ciclo 5 in poi esce un risultato per ciclo. Senza pipeline le stesse quattro istruzioni avrebbero richiesto 4 × 5 = 20 cicli.</p>`,
+      },
+      {
+        id: 'ex-pipe-2',
+        level: 'base',
+        q: 'Un programma esegue 1000 istruzioni su una pipeline a 5 stadi, senza stalli. Quanti cicli servono? Qual è lo <b>speedup</b> rispetto a un processore non pipeline che impiega 5 cicli per istruzione?',
+        hint: 'Applica k + (n − 1) e confronta con n × k. Poi guarda a che numero tende il rapporto.',
+        solution: `<pre>con pipeline:    5 + 999 = 1004 cicli
+senza pipeline: 1000 × 5   = 5000 cicli
+
+speedup = 5000 / 1004 = <b>4,98×</b></pre><p>Quasi 5, cioè quasi il numero di stadi — ma non 5. La differenza sono i 4 cicli di riempimento, che si diluiscono al crescere di n: con 10 istruzioni lo speedup sarebbe 50/14 = 3,6; con un milione, 4,99998.</p><p>Il limite teorico è k, e nella realtà non lo si raggiunge mai: qui abbiamo <b>ipotizzato zero stalli</b>, cosa che nessun programma reale garantisce, e abbiamo ignorato che gli stadi non sono perfettamente bilanciati.</p>`,
+      },
+      {
+        id: 'ex-pipe-3',
+        level: 'esame',
+        q: 'Data la sequenza <code>Add R3,R1,R2</code> · <code>Sub R5,R3,R4</code> · <code>And R6,R3,R7</code>, individua le dipendenze e disegna il diagramma <b>senza</b> e <b>con</b> forwarding, contando i cicli in entrambi i casi.',
+        hint: 'Cerca i registri scritti da un’istruzione e letti dalle successive. Poi chiediti in quale stadio il valore è <b>disponibile</b> e in quale <b>serve</b>.',
+        solution: `<p>Dipendenze: R3 è scritto da I1 e letto sia da I2 sia da I3. Sono due dipendenze <b>RAW</b> (read after write).</p><pre>SENZA FORWARDING (R3 leggibile solo dopo lo stadio W di I1)
+ciclo:  1  2  3  4  5  6  7  8  9
+I1      F  D  E  M  W
+I2         F  D  ·  ·  E  M  W
+I3            F  ·  ·  D  E  M  W
+                                → 9 cicli
+
+CON FORWARDING (il risultato passa dall'uscita della ALU)
+ciclo:  1  2  3  4  5  6  7
+I1      F  D  E  M  W
+I2         F  D  E  M  W
+I3            F  D  E  M  W
+                          → 7 cicli</pre><p>Con il forwarding il risultato di I1 viene prelevato all’uscita dello stadio E e portato direttamente all’ingresso della ALU al ciclo successivo: I2 non deve aspettare la scrittura nel banco dei registri. Due cicli risparmiati su tre istruzioni — su un programma vero, un guadagno enorme.</p>`,
+      },
+      {
+        id: 'ex-pipe-4',
+        level: 'esame',
+        q: 'Perché la sequenza <code>Load R1,(R2)</code> · <code>Add R3,R1,R4</code> costa uno stallo <b>anche con il forwarding</b>? Come lo elimina il compilatore?',
+        hint: 'Confronta lo stadio in cui il dato diventa disponibile con quello in cui serve. Per la Load non è lo stesso caso di un’operazione aritmetica.',
+        solution: `<pre>ciclo:  1  2  3  4  5  6
+Load    F  D  E  M  W
+                 ↓ il dato esce dalla MEMORIA alla fine di M
+Add        F  D  ·  E  M  W
+                    ↑ serve all'inizio di E</pre><p>Per un’operazione aritmetica il risultato è pronto alla fine dello stadio E, cioè <b>un ciclo prima</b> di quando serve all’istruzione seguente: il forwarding arriva in tempo. Per una <code>Load</code> il dato esce dalla memoria alla fine dello stadio M, cioè <b>esattamente</b> quando servirebbe: nessun percorso di forwarding può anticiparlo, perché significherebbe mandarlo indietro nel tempo.</p><p>Resta quindi <b>uno</b> stallo, e si chiama <b>load-use hazard</b>. Il compilatore lo elimina spostando in quel buco un’istruzione indipendente:</p><pre>PRIMA                     DOPO
+Load R1,(R2)              Load R1,(R2)
+Add  R3,R1,R4    ←stallo  Sub  R7,R8,R9   ← istruzione indipendente
+Sub  R7,R8,R9             Add  R3,R1,R4   ← ora il dato c'è</pre><p>Stesso risultato, un ciclo in meno: è il tipo di riordino che rende il compilatore parte integrante delle prestazioni.</p>`,
+      },
+      {
+        id: 'ex-pipe-5',
+        level: 'esame',
+        q: 'In una pipeline a 5 stadi l’esito di un salto si conosce alla fine del <b>terzo</b> stadio. Il 20 % delle istruzioni sono salti e di questi il 60 % viene preso. Calcola il <b>CPI medio</b> supponendo che, quando il salto è preso, si perdano le istruzioni già prelevate.',
+        hint: 'Conta quante istruzioni sbagliate sono entrate in pipeline prima che l’esito fosse noto: quelle vanno annullate, e ogni annullamento è un ciclo perso.',
+        solution: `<p>Se l’esito si conosce alla fine dello stadio 3, nel frattempo sono entrate le istruzioni ai cicli 2 e 3: <b>due</b> istruzioni da annullare quando il salto è preso. Quando non è preso, la sequenza proseguiva già correttamente e non si perde nulla.</p><pre>penalità = 2 cicli, ma solo sui salti PRESI
+
+CPI = 1 + (frazione di salti) × (frazione presi) × penalità
+    = 1 + 0,20 × 0,60 × 2
+    = 1 + 0,24 = <b>1,24</b></pre><p>Un 24 % di cicli in più rispetto all’ideale, solo per i salti. Le contromisure: <b>anticipare</b> il calcolo della condizione a uno stadio precedente (riduce la penalità), <b>predire</b> l’esito e proseguire sul ramo previsto (annulla solo quando la previsione sbaglia), o riempire i cicli con il <b>delay slot</b>, lasciando al compilatore il compito di trovare istruzioni utili da metterci.</p>`,
+      },
+    ],
   };

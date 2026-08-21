@@ -105,4 +105,56 @@ ingressi dati: I₀…I₇ = 0, 0, 0, 1, 0, 1, 1, 1
       <li>Dimenticare l'ordine dei mintermini: I₀ corrisponde a S = 000, I₇ a S = 111.</li>
       <li>Unire due uscite normali sullo stesso filo per «fare l'OR»: serve una porta, o dei buffer tri-state con una sola abilitazione attiva.</li>
     </ul>`,
+  exercises: [
+    {
+      id: 'ex-comb-1',
+      level: 'base',
+      q: 'Costruisci un decodificatore <b>3→8</b> usando due decodificatori <b>2→4</b> con ingresso di abilitazione.',
+      hint: 'Con tre bit di indirizzo, uno deve decidere <i>quale dei due</i> decoder lavora e gli altri due scelgono la riga dentro il blocco.',
+      solution: `<pre>A₂ ──┬── EN del decoder ALTO   (uscite 4…7)
+     └──▷o── EN del decoder BASSO (uscite 0…3)
+
+A₁, A₀ ──── ingressi di ENTRAMBI i decoder</pre><p>Quando A₂ = 0 il primo decoder è abilitato e attiva una delle uscite 0-3 secondo A₁A₀; quando A₂ = 1 tocca al secondo, che copre le uscite 4-7. Serve un solo invertitore.</p><p>È esattamente lo schema con cui si compongono i banchi di memoria: i bit alti dell’indirizzo scelgono il chip, i bassi la cella al suo interno.</p>`,
+    },
+    {
+      id: 'ex-comb-2',
+      level: 'base',
+      q: 'Realizza con un multiplexer <b>8→1</b> la funzione di <b>parità dispari</b> di tre bit: <code>Y = A ⊕ B ⊕ C</code>.',
+      hint: 'I selettori prendono le variabili; sugli ingressi dati vanno le costanti della colonna d’uscita, nell’ordine dei mintermini da I₀ a I₇.',
+      solution: `<pre>A B C │ Y      ingresso
+0 0 0 │ 0      I₀ = 0
+0 0 1 │ 1      I₁ = 1
+0 1 0 │ 1      I₂ = 1
+0 1 1 │ 0      I₃ = 0
+1 0 0 │ 1      I₄ = 1
+1 0 1 │ 0      I₅ = 0
+1 1 0 │ 0      I₆ = 0
+1 1 1 │ 1      I₇ = 1</pre><p>Collegamenti: S₂S₁S₀ = A B C, e gli otto ingressi dati alle costanti <code>0,1,1,0,1,0,0,1</code>. Nessuna porta logica: la tabella di verità <b>è</b> il cablaggio.</p>`,
+    },
+    {
+      id: 'ex-comb-3',
+      level: 'esame',
+      q: 'Realizza <code>Y(A,B,C) = Σm(1,2,5,7)</code> con un multiplexer <b>4→1</b>, usando A e B come selettori.',
+      hint: 'Con solo due selettori restano quattro ingressi per otto mintermini: ogni ingresso copre <b>due</b> righe, che differiscono per C. Su ciascuno va 0, 1, C oppure C̄.',
+      solution: `<pre>A B │ C=0        C=1        ingresso
+0 0 │ m0 = 0     m1 = 1     I₀ = C
+0 1 │ m2 = 1     m3 = 0     I₁ = C̄
+1 0 │ m4 = 0     m5 = 1     I₂ = C
+1 1 │ m6 = 0     m7 = 1     I₃ = C</pre><p>Quindi: I₀ = C, I₁ = C̄ (serve un invertitore), I₂ = C, I₃ = C. Il circuito completo è un MUX 4→1, un invertitore e nulla più.</p><p>La regola generale: con n selettori e n+1 variabili, ogni ingresso vale una delle quattro funzioni della variabile residua — 0, 1, la variabile, la variabile negata.</p>`,
+    },
+    {
+      id: 'ex-comb-4',
+      level: 'esame',
+      q: 'Progetta un comparatore di <b>uguaglianza</b> fra due numeri a 2 bit, A₁A₀ e B₁B₀. Poi aggiungi l’uscita «A maggiore di B».',
+      hint: 'Due bit sono uguali quando il loro XOR è 0, cioè quando il loro <b>XNOR</b> è 1. Per il maggiore, ragiona a partire dal bit più significativo.',
+      solution: '<p><b>Uguaglianza</b> — tutti i bit devono coincidere:</p><pre>EQ = (A₁ ⊙ B₁) · (A₀ ⊙ B₀)        dove ⊙ è lo XNOR</pre><p><b>Maggiore</b> — A > B se il bit alto di A è 1 e quello di B è 0; oppure se i bit alti sono uguali e il confronto si sposta su quelli bassi:</p><pre>GT = A₁·B̄₁ + (A₁ ⊙ B₁)·A₀·B̄₀</pre><p>La struttura si estende a n bit ripetendo lo stesso schema: è la ragione per cui i comparatori si costruiscono a cascata, dal bit più significativo verso il basso.</p>',
+    },
+    {
+      id: 'ex-comb-5',
+      level: 'esame',
+      q: 'Quattro registri a 8 bit devono poter scrivere sullo stesso bus a 8 bit. Quanti buffer tri-state servono, quante abilitazioni possono essere attive contemporaneamente, e che cosa succede se per errore ne sono attive due?',
+      hint: 'Il tri-state serve una linea per volta: conta quante linee ci sono in totale, non quanti registri.',
+      solution: '<p>Ogni bit di ogni registro ha bisogno del proprio buffer: <b>4 × 8 = 32 buffer</b>, organizzati in quattro banchi da otto, ciascuno con una sola linea di abilitazione comune.</p><p>Le abilitazioni attive devono essere <b>al più una</b>: è proprio questa la condizione che rende possibile la condivisione del bus. Chi non è abilitato va in alta impedenza, cioè si «stacca» elettricamente dalla linea.</p><p>Se due banchi sono abilitati insieme e su un bit impongono valori opposti, si crea un percorso diretto fra alimentazione e massa: il valore sulla linea è indefinito e la corrente elevata può danneggiare i buffer. Per questo la selezione passa sempre da un <b>decodificatore</b>, che per costruzione attiva una sola uscita.</p>',
+    },
+  ],
 };

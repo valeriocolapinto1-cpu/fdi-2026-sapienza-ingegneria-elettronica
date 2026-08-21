@@ -85,4 +85,53 @@ export const cpu: Topic = {
       <li>Dimenticare l'incremento del PC, o metterlo in un passo suo: si fa <b>durante</b> l'attesa della memoria, che altrimenti sarebbe tempo perso.</li>
       <li>Saltare il <code>WMFC</code> e leggere MDR troppo presto.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-cpu-1',
+        level: 'base',
+        q: 'Un’istruzione deve leggere un dato dalla memoria. Quali registri entrano in gioco, in che ordine, e a che serve ciascuno?',
+        hint: 'La memoria non parla direttamente con i registri generali: c’è sempre una coppia di registri che fa da interfaccia.',
+        solution: `<pre>1. l'indirizzo del dato va in <b>MAR</b>   (Memory Address Register)
+2. si attiva il segnale <b>Read</b>
+3. la memoria deposita il dato in <b>MDR</b> (Memory Data Register)
+4. da MDR il dato passa al registro destinazione</pre><p>MAR e MDR esistono perché la memoria è lenta e sta «fuori»: servono due punti di appoggio stabili, uno per l’indirizzo e uno per il dato, mentre il processore aspetta. L’attesa ha anche un nome nei diagrammi di controllo: <b>WMFC</b>, cioè «attendi che la memoria abbia finito».</p><p>Gli altri due registri da saper nominare sono <b>PC</b>, che contiene l’indirizzo della prossima istruzione, e <b>IR</b>, che contiene l’istruzione in corso di esecuzione.</p>`,
+      },
+      {
+        id: 'ex-cpu-2',
+        level: 'base',
+        q: 'Scrivi in RTN la sequenza di <b>prelievo dell’istruzione</b> e spiega perché l’incremento del PC si colloca proprio lì.',
+        hint: 'Il prelievo è uguale per tutte le istruzioni. Chiediti che cosa fa il processore mentre aspetta la risposta della memoria.',
+        solution: `<pre>1.  PC_out, MAR_in, Read, Select4, Add, Z_in
+2.  Z_out, PC_in, WMFC
+3.  MDR_out, IR_in</pre><p>Passo per passo: l’indirizzo della prossima istruzione esce dal PC e finisce in MAR, si avvia la lettura, e <b>contemporaneamente</b> la ALU calcola PC + 4 mettendolo nel registro temporaneo Z. Al passo 2 quel valore torna nel PC mentre si attende la memoria. Al passo 3 l’istruzione arrivata in MDR viene copiata in IR.</p><p>L’incremento sta lì perché la memoria impiega comunque diversi cicli: farlo durante l’attesa <b>non costa nulla</b>. Metterlo in un passo separato allungherebbe ogni istruzione di un ciclo — su miliardi di istruzioni, una differenza enorme.</p>`,
+      },
+      {
+        id: 'ex-cpu-3',
+        level: 'esame',
+        q: 'Scrivi la sequenza di controllo completa dell’istruzione <code>Load R1, (R2)</code> su un datapath a <b>bus singolo</b>: carica in R1 il contenuto della cella il cui indirizzo sta in R2.',
+        hint: 'Prelievo (tre passi, sempre gli stessi) più la parte specifica. La memoria va letta due volte: una per l’istruzione, una per il dato.',
+        solution: `<pre>1.  PC_out, MAR_in, Read, Select4, Add, Z_in
+2.  Z_out, PC_in, WMFC
+3.  MDR_out, IR_in
+────────────────────────── fine prelievo
+4.  R2_out, MAR_in, Read
+5.  WMFC
+6.  MDR_out, R1_in, End</pre><p>Al passo 4 il contenuto di R2 — che è un <b>indirizzo</b> — viene mandato a MAR e parte la seconda lettura. Il passo 5 è pura attesa: qui, a differenza del prelievo, non c’è nulla di utile da fare in parallelo. Al passo 6 il dato passa da MDR a R1.</p><p>Se l’istruzione fosse stata <code>Load R1, 20(R2)</code> servirebbe un passo in più per sommare lo spiazzamento: R2 in Y, poi lo spiazzamento dall’IR sommato a Y e il risultato in MAR.</p>`,
+      },
+      {
+        id: 'ex-cpu-4',
+        level: 'esame',
+        q: 'L’istruzione <code>Add R1, R2, R3</code> richiede 6 cicli su un datapath a bus singolo e 4 su uno a tre bus. Con un ciclo di clock da 2 ns, quanto dura l’istruzione nei due casi? E su un programma di 10⁶ istruzioni analoghe?',
+        hint: 'Moltiplica cicli per durata del ciclo, poi scala. Chiediti anche <b>perché</b> il bus singolo richiede due cicli in più.',
+        solution: `<pre>bus singolo:  6 × 2 ns = <b>12 ns</b>       →  10⁶ × 12 ns = 12 ms
+tre bus:      4 × 2 ns = <b>8 ns</b>        →  10⁶ ×  8 ns =  8 ms</pre><p>Un terzo di tempo in meno. La ragione dei due cicli risparmiati: sul bus singolo i due operandi devono viaggiare in momenti diversi (uno viene parcheggiato nel registro temporaneo Y) e il risultato in un terzo momento, mentre con tre bus i due operandi escono insieme su bus A e B e il risultato rientra su bus C nello <b>stesso ciclo</b>.</p><p>Il prezzo è l’hardware: tre bus significa triplicare le linee e i multiplexer di accesso al banco dei registri. È il tipico compromesso costo/prestazioni che l’esame chiede di saper argomentare, non solo di calcolare.</p>`,
+      },
+      {
+        id: 'ex-cpu-5',
+        level: 'esame',
+        q: 'A metà progetto il committente chiede di aggiungere dodici istruzioni complesse. L’unità di controllo era prevista <b>cablata</b>: conviene cambiare idea? Che cosa si guadagna e che cosa si perde?',
+        hint: 'Chiediti dove sta scritta la sequenza dei segnali di controllo nei due casi, e che cosa significa «modificarla».',
+        solution: '<p>Con l’unità <b>cablata</b> la sequenza dei segnali è una rete logica: aggiungere dodici istruzioni significa <b>ridisegnare la rete</b>, rifare la sintesi e riverificare i tempi di tutto il blocco. Con l’unità <b>microprogrammata</b> le sequenze stanno in una memoria di controllo: aggiungere istruzioni significa <b>scrivere altre microistruzioni</b>, senza toccare l’hardware.</p><p>Quindi sì, conviene passare al microprogrammato — ed è storicamente la scelta dei processori CISC, il cui repertorio ricco è fatto proprio di istruzioni complesse.</p><p>Che cosa si perde: <b>velocità</b>. Ogni passo richiede di leggere una microistruzione dalla memoria di controllo, e quella lettura si aggiunge al ciclo. Un’unità cablata può generare i segnali in modo combinatorio, senza letture intermedie. È il motivo per cui i RISC, che puntano su un ciclo brevissimo e su istruzioni semplici, tornano al controllo cablato.</p>',
+      },
+    ],
   };

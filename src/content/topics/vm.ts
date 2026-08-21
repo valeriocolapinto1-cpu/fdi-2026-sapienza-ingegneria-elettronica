@@ -80,4 +80,81 @@ indirizzo fisico = frame · 4096 + offset
       <li>Confondere TLB miss e page fault: il primo costa un accesso in più, il secondo un accesso al <b>disco</b>, cioè milioni di volte tanto.</li>
       <li>Dimenticare che la tabella delle pagine sta in memoria: è la ragione per cui il TLB esiste.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-vm-1',
+        level: 'base',
+        q: 'Pagine da <b>4 KiB</b>. Traduci l’indirizzo virtuale <code>0x0002A7F4</code> sapendo che la pagina cercata sta nel frame <code>0x0C3</code>.',
+        hint: 'Prima separa offset e numero di pagina contando i bit. Con pagine da 4 KiB il taglio cade su un confine comodo in esadecimale.',
+        solution: `<pre>4 KiB = 2¹² byte  →  offset = 12 bit = 3 cifre esadecimali
+
+0x0002A7F4  =  0x0002A | 7F4
+               ↑ pagina  ↑ offset
+
+pagina 0x0002A  →  (tabella delle pagine)  →  frame 0x0C3
+
+fisico = 0x0C3 &lt;&lt; 12  |  0x7F4  =  <b>0x000C37F4</b></pre><p>Verifica immediata: le ultime <b>tre cifre esadecimali sono rimaste 7F4</b>. Se in un esercizio cambiano, la traduzione è sbagliata: pagina e frame hanno la stessa dimensione, quindi la posizione interna non può cambiare.</p>`,
+      },
+      {
+        id: 'ex-vm-2',
+        level: 'base',
+        q: 'Indirizzi virtuali a <b>32 bit</b>, pagine da <b>4 KiB</b>, ogni voce della tabella delle pagine occupa <b>4 byte</b>. Quanto occupa la tabella di un processo? E se i processi attivi sono 100?',
+        hint: 'Il numero di voci è il numero di pagine dello spazio virtuale, non di quelle effettivamente usate.',
+        solution: `<pre>numero di pagine = 2³² / 2¹² = 2²⁰ = 1 048 576 voci
+dimensione = 2²⁰ × 4 byte = <b>4 MiB</b> per processo
+
+100 processi → 100 × 4 MiB = <b>400 MiB</b> di sole tabelle</pre><p>Un risultato assurdo: le tabelle occuperebbero più della memoria che devono gestire, e per giunta la maggior parte delle voci si riferisce a pagine <b>mai usate</b>, perché nessun processo occupa davvero 4 GiB.</p><p>Da qui le due soluzioni reali: la tabella a <b>più livelli</b>, in cui si allocano solo i rami effettivamente usati, e la tabella <b>invertita</b>, che ha una voce per frame fisico invece che per pagina virtuale — quindi cresce con la memoria installata e non con lo spazio di indirizzamento.</p>`,
+      },
+      {
+        id: 'ex-vm-3',
+        level: 'esame',
+        q: 'Un accesso in memoria può risolversi in tre modi: <b>TLB hit</b>, <b>TLB miss</b> senza page fault, <b>page fault</b>. Descrivi che cosa succede in ciascun caso e quanto costa, in ordine di grandezza.',
+        hint: 'Chiediti ogni volta dove si trova la traduzione e dove si trova il dato: sono due domande diverse.',
+        solution: `<pre>TLB HIT
+  la traduzione è nel TLB → indirizzo fisico immediato → si legge il dato
+  costo: ~1 accesso in memoria (il dato), il TLB è quasi istantaneo
+
+TLB MISS, pagina presente
+  la traduzione non è nel TLB → si legge la tabella delle pagine in
+  memoria → si aggiorna il TLB → si legge il dato
+  costo: ~2 accessi in memoria
+
+PAGE FAULT
+  la voce dice «non valida»: la pagina non è in memoria fisica.
+  Eccezione → il sistema operativo sceglie un frame, eventualmente
+  riscrive su disco quello sfrattato se dirty, carica la pagina,
+  aggiorna la tabella, e l'istruzione viene RIESEGUITA
+  costo: ~10 ms, cioè MILIONI di cicli</pre><p>I tre casi non sono alternative dello stesso ordine: fra il secondo e il terzo ci sono cinque ordini di grandezza. È il motivo per cui il tasso di page fault deve restare bassissimo, mentre un TLB miss ogni tanto è del tutto tollerabile.</p>`,
+      },
+      {
+        id: 'ex-vm-4',
+        level: 'esame',
+        q: 'TLB con tasso di successo <b>99 %</b>, accesso alla memoria 100 cicli, TLB trascurabile. Il tasso di page fault è <b>0,001 %</b> e un fault costa 10 ms su un processore a <b>1 GHz</b>. Calcola il numero medio di cicli per accesso.',
+        hint: 'Calcola prima il contributo delle traduzioni, poi quello dei page fault convertendo i millisecondi in cicli. Guarda quale dei due domina.',
+        solution: `<pre>TLB hit  (99 %):   100 cicli          (solo il dato)
+TLB miss (1 %):    200 cicli          (tabella + dato)
+
+media senza fault = 0,99×100 + 0,01×200 = 99 + 2 = 101 cicli
+
+un page fault = 10 ms × 1 GHz = 10⁷ cicli
+contributo    = 0,00001 × 10⁷ = <b>100 cicli</b>
+
+totale ≈ 101 + 100 = <b>201 cicli</b> per accesso</pre><p>Il risultato sorprendente: un page fault ogni <b>centomila</b> accessi <b>raddoppia</b> il tempo medio. Un evento rarissimo domina la media, perché il suo costo è cinque ordini di grandezza sopra tutto il resto.</p><p>È la lezione generale della gerarchia di memoria: quando le penalità sono enormi, ciò che conta non è il caso tipico ma la <b>frequenza dei casi catastrofici</b>. E spiega perché il sistema operativo lavora tanto sulle politiche di sostituzione delle pagine.</p>`,
+      },
+      {
+        id: 'ex-vm-5',
+        level: 'esame',
+        q: 'Un programma tenta di scrivere in una pagina marcata di <b>sola lettura</b>. Descrivi che cosa accade, passo per passo, e a che cosa serve questo meccanismo.',
+        hint: 'La verifica non la fa il programma né il compilatore: la fanno i bit di protezione nella voce della tabella delle pagine, controllati dall’hardware a ogni accesso.',
+        solution: `<pre>1. il programma esegue una Store verso un indirizzo virtuale
+2. l'unità di gestione della memoria traduce l'indirizzo e legge
+   i bit di protezione della voce corrispondente
+3. il bit «scrivibile» è a 0, ma l'accesso è in scrittura:
+   → violazione
+4. viene sollevata un'ECCEZIONE (violazione di protezione),
+   sincrona rispetto all'istruzione
+5. il controllo passa al sistema operativo, che tipicamente
+   termina il processo — il classico «segmentation fault»</pre><p>A che serve: a <b>isolare</b> i processi e a proteggere ciò che non deve cambiare. Il codice di un programma è mappato in sola lettura, così un difetto non può riscrivere le proprie istruzioni; le pagine di un processo non sono raggiungibili da un altro, perché semplicemente non compaiono nella sua tabella.</p><p>Lo stesso meccanismo, usato in positivo, abilita la <b>copia su scrittura</b>: due processi condividono le stesse pagine fisiche marcate in sola lettura, e solo quando uno prova a scrivere l’eccezione fa creare al sistema operativo una copia privata. È così che le chiamate di creazione di un processo diventano economiche.</p>`,
+      },
+    ],
   };

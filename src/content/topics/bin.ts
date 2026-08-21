@@ -115,4 +115,58 @@ somma 1                    →  1101 0011   =  D3₁₆</pre>
       <li>Chiamare overflow il riporto uscente. In complemento a 2 il riporto uscente da solo <b>non</b> segnala nulla.</li>
       <li>Raggruppare i bit per l'esadecimale partendo da sinistra: si parte sempre <b>da destra</b>, aggiungendo zeri in testa se serve.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-bin-1',
+        level: 'base',
+        q: 'Converti <b>173₁₀</b> in binario, ottale ed esadecimale.',
+        hint: 'Per il binario, divisioni successive per 2 leggendo i resti dal basso — oppure la somma di potenze. Poi dal binario si passa a ottale e esadecimale <b>raggruppando i bit</b>, rispettivamente a tre a tre e a quattro a quattro, sempre partendo da destra.',
+        solution: `<pre>173 = 128 + 32 + 8 + 4 + 1
+    = 1010 1101₂
+
+ottale      → 10 101 101 → 0 2 5 5   =  255₈
+esadecimale → 1010 1101  → A D       =  AD₁₆</pre><p>Il raggruppamento funziona perché 8 = 2³ e 16 = 2⁴: tre bit sono esattamente una cifra ottale, quattro una esadecimale. Nel gruppo più a sinistra si aggiungono zeri in testa se non è completo.</p>`,
+      },
+      {
+        id: 'ex-bin-2',
+        level: 'base',
+        q: 'Rappresenta <b>−87</b> in complemento a 2 su 8 bit e scrivi il risultato in esadecimale.',
+        hint: 'Tre passaggi: il modulo in binario, l’inversione di tutti i bit, la somma di 1. Il segno non è un bit a parte da mettere «a mano».',
+        solution: `<pre>87 = 64 + 16 + 4 + 2 + 1   →  0101 0111
+inverti                    →  1010 1000
+somma 1                    →  1010 1001  =  A9₁₆</pre><p>Verifica veloce: il bit più significativo è 1, quindi il numero è negativo. Rileggendolo — inverti e somma 1 — si torna a 0101 0111 = 87, quindi il valore è −87. ✓</p>`,
+      },
+      {
+        id: 'ex-bin-3',
+        level: 'esame',
+        q: 'Su 8 bit, in complemento a 2, calcola <b>100 + 45</b>. Indica il valore che la macchina legge, il <b>riporto uscente</b> e il flag di <b>overflow</b>.',
+        hint: 'Somma i due numeri come se fossero senza segno, poi guarda separatamente il riporto che <i>entra</i> nel bit di segno e quello che <i>esce</i>.',
+        solution: `<pre>  0110 0100   (100)
++ 0010 1101   (45)
+─────────────
+  1001 0001</pre><p>Il risultato ha il bit più significativo a 1, quindi letto in complemento a 2 vale −111 (inverti e somma 1: 0110 1111 = 111). Ma 100 + 45 fa 145, che su 8 bit in CP2 <b>non è rappresentabile</b>: il massimo è +127.</p><pre>riporto uscente        = 0
+riporto entrante segno = 1
+overflow = 1 ⊕ 0       = <b>1</b></pre><p>Ecco perché i due flag vanno tenuti distinti: qui il riporto uscente è <b>zero</b> e ciononostante c’è overflow. La regola dei segni conferma: due addendi positivi con risultato negativo.</p>`,
+      },
+      {
+        id: 'ex-bin-4',
+        level: 'esame',
+        q: 'Il numero <code>1011₂</code> è scritto in complemento a 2 su 4 bit. Quanto vale? Estendilo a 8 e a 16 bit.',
+        hint: 'Prima leggi il valore: bit più significativo a 1 significa negativo. Poi ricorda che estendere non vuol dire riempire di zeri.',
+        solution: `<p>Lettura: 1011 ha il MSB a 1 → negativo. Inverti (0100) e somma 1 (0101 = 5), quindi vale <b>−5</b>.</p><pre>4 bit    1011
+8 bit    1111 1011
+16 bit   1111 1111 1111 1011</pre><p>Si replica il <b>bit di segno</b>, non lo zero. Verifica su 8 bit: inverti (0000 0100) e somma 1 → 0000 0101 = 5, quindi −5 ✓. Con gli zeri avresti ottenuto 0000 1011 = +11, cioè un altro numero.</p>`,
+      },
+      {
+        id: 'ex-bin-5',
+        level: 'esame',
+        q: 'Un abaco ha quattro aste, e su ogni asta si possono alzare da 0 a 4 palline. In che <b>base</b> conta? Scrivi <b>89₁₀</b> su quell’abaco e di’ qual è il numero più grande rappresentabile.',
+        hint: 'Il numero di simboli disponibili per ogni posizione <b>è</b> la base. Poi si procede come per il binario, dividendo per la base invece che per 2.',
+        solution: `<p>Ogni asta ha cinque configurazioni (0, 1, 2, 3, 4): le cifre disponibili sono cinque, quindi la base è <b>5</b>. Ogni asta pesa una potenza di 5: 1, 5, 25, 125.</p><pre>89 : 5 = 17  resto 4      ← cifra delle unità
+17 : 5 =  3  resto 2
+ 3 : 5 =  0  resto 3      ← cifra più significativa
+
+89₁₀ = 324₅ = 3·25 + 2·5 + 4 = 75 + 10 + 4 ✓</pre><p>Il più grande è 4444₅ = 5⁴ − 1 = <b>624</b>. Vale la regola generale: con n posizioni in base b si rappresentano bⁿ valori, da 0 a bⁿ − 1 — la stessa che dà 2⁸ = 256 valori su un byte.</p>`,
+      },
+    ],
   };

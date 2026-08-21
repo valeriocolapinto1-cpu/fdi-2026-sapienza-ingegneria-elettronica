@@ -157,4 +157,75 @@ riporto uscente 0, riporto entrante nel segno 0  →  nessun overflow</pre>
       <li>Dichiarare overflow guardando solo il riporto uscente: serve lo <b>XOR</b> dei due riporti sul bit di segno.</li>
       <li>Nella moltiplicazione, sommare i prodotti parziali senza <b>estendere il segno</b> quando si lavora in complemento a 2 (è il problema che l'algoritmo di Booth risolve).</li>
     </ul>`,
+  exercises: [
+    {
+      id: 'ex-arith-1',
+      level: 'base',
+      q: 'Compila la tabella di verità del <b>semisommatore</b> e ricava le espressioni della somma S e del riporto C.',
+      hint: 'Due ingressi, quattro righe. Guarda quali righe danno S = 1 e quali danno C = 1: sono due funzioni che conosci già.',
+      solution: `<pre>A B │ S  C
+0 0 │ 0  0
+0 1 │ 1  0
+1 0 │ 1  0
+1 1 │ 0  1</pre><p>La colonna S vale 1 quando gli ingressi sono <b>diversi</b>: è lo XOR. La colonna C vale 1 solo quando entrambi valgono 1: è l’AND.</p><pre>S = A ⊕ B        C = A · B</pre><p>Si chiama «semi» perché non ha il riporto entrante: non si può quindi metterne due in cascata. Aggiungendo Cin si ottiene il sommatore completo, con S = A ⊕ B ⊕ Cin e Cout = A·B + Cin·(A ⊕ B).</p>`,
+    },
+    {
+      id: 'ex-arith-2',
+      level: 'base',
+      q: 'Esegui <code>1011 + 0110</code> su 4 bit mostrando i riporti. Poi interpreta il risultato <b>come numeri senza segno</b> e <b>come numeri in complemento a 2</b>: in quale dei due casi c’è un errore?',
+      hint: 'I bit sono gli stessi: cambia solo come li leggi. Il riporto uscente e l’overflow segnalano problemi <b>diversi</b>, uno per ciascuna interpretazione.',
+      solution: `<pre>riporti: 1 1 1 0
+   A  =    1 0 1 1
+   B  =    0 1 1 0
+  ─────────────────
+   S  =  1 0 0 0 1   ← il primo 1 è il riporto uscente</pre><p><b>Senza segno</b>: 11 + 6 = 17, ma su 4 bit il massimo è 15. Il risultato troncato vale 0001 = 1: sbagliato, e il <b>riporto uscente = 1</b> è proprio il campanello d’allarme per l’aritmetica senza segno.</p><p><b>In complemento a 2</b>: 1011 = −5 e 0110 = +6, quindi il risultato atteso è +1 — ed è esattamente 0001. Nessun errore. Il flag di overflow lo conferma: riporto entrante nel bit di segno = 1, riporto uscente = 1, quindi 1 ⊕ 1 = <b>0</b>.</p><p>Stessi bit, stesso circuito, due verdetti opposti: è il motivo per cui il processore calcola <b>entrambi</b> i flag e lascia al programma decidere quale guardare.</p>`,
+    },
+    {
+      id: 'ex-arith-3',
+      level: 'esame',
+      q: 'Con un sommatore/sottrattore a 5 bit, calcola <code>7 − 12</code> in complemento a 2. Mostra i valori in ingresso al sommatore e i due flag.',
+      hint: 'La sottrazione non esiste come circuito a parte: si invertono i bit del sottraendo e si forza a 1 il riporto entrante.',
+      solution: `<pre>7  = 0 0111
+12 = 0 1100      →  invertito: 1 0011,  Cin = 1
+
+  0 0111
++ 1 0011
++      1
+─────────
+  1 1011</pre><p>Il risultato su 5 bit è 11011: bit più significativo a 1, quindi negativo. Rileggendolo — inverti (00100) e somma 1 (00101 = 5) — vale <b>−5</b>, ed è giusto.</p><pre>riporto uscente = 0
+riporto entrante nel bit di segno = 0
+overflow = 0 ⊕ 0 = 0</pre><p>Nessun overflow, come deve essere: gli operandi effettivi (+7 e −12) hanno segno opposto, quindi il risultato non può uscire dall’intervallo.</p>`,
+    },
+    {
+      id: 'ex-arith-4',
+      level: 'esame',
+      q: 'Per <code>A = 1101</code> e <code>B = 0111</code> con riporto entrante 0, calcola i segnali <b>generate</b> e <b>propagate</b> di ogni bit e i riporti c₁…c₄ con le formule del carry-lookahead. Ricava poi la somma.',
+      hint: 'Per ogni posizione: gᵢ = aᵢ·bᵢ, pᵢ = aᵢ ⊕ bᵢ. Poi cᵢ₊₁ = gᵢ + pᵢ·cᵢ, applicata a catena ma calcolabile in parallelo.',
+      solution: `<pre>bit      3    2    1    0
+A        1    1    0    1
+B        0    1    1    1
+─────────────────────────
+g = a·b  0    1    0    1
+p = a⊕b  1    0    1    0</pre><p>Riporti, partendo da c₀ = 0:</p><pre>c₁ = g₀ + p₀·c₀ = 1 + 0·0 = 1
+c₂ = g₁ + p₁·c₁ = 0 + 1·1 = 1
+c₃ = g₂ + p₂·c₂ = 1 + 0·1 = 1
+c₄ = g₃ + p₃·c₃ = 0 + 1·1 = 1   ← riporto uscente</pre><p>Somma, con sᵢ = pᵢ ⊕ cᵢ:</p><pre>s₀ = 0⊕0 = 0    s₁ = 1⊕1 = 0    s₂ = 0⊕1 = 1    s₃ = 1⊕1 = 0
+
+S = 0100,  riporto uscente 1</pre><p>Controllo: 13 + 7 = 20 = 1 0100₂ ✓. Il punto dell’esercizio è che c₃ e c₄ si ottengono da g e p <b>senza aspettare</b> gli stadi precedenti: è questo che rende il lookahead veloce, al prezzo di molte più porte.</p>`,
+    },
+    {
+      id: 'ex-arith-5',
+      level: 'esame',
+      q: 'Moltiplica <code>1101 × 0101</code> (numeri senza segno) con il metodo delle <b>somme e spostamenti</b>, mostrando i prodotti parziali.',
+      hint: 'Un prodotto parziale per ogni bit del moltiplicatore: vale il moltiplicando se il bit è 1, zero se è 0, e va spostato a sinistra di tante posizioni quant’è il peso del bit.',
+      solution: `<pre>moltiplicando 1101 (13),  moltiplicatore 0101 (5)
+
+bit 0 = 1  →   0000 1101      (spostato di 0)
+bit 1 = 0  →   0000 0000      (spostato di 1)
+bit 2 = 1  →   0011 0100      (spostato di 2)
+bit 3 = 0  →   0000 0000      (spostato di 3)
+              ───────────
+ somma    =    0100 0001</pre><p>0100 0001₂ = 65 = 13 × 5 ✓.</p><p>Due osservazioni da esame. Il risultato di una moltiplicazione fra numeri a n bit occupa <b>2n bit</b>: per questo i processori scrivono il prodotto in due registri o in un registro doppio. E il metodo funziona così com’è solo per numeri <b>senza segno</b>: con il complemento a 2 i prodotti parziali andrebbero estesi in segno, ed è il problema che l’algoritmo di Booth risolve elegantemente.</p>`,
+    },
+  ],
 };
