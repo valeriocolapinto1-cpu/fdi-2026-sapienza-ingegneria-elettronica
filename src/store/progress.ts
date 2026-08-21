@@ -23,27 +23,61 @@ export interface ExamRecord {
  */
 export type BankOutcomes = Record<string, { right: number; wrong: number }>;
 
+/**
+ * Progressi salvati.
+ *
+ * **Aperto** e **studiato** sono cose diverse, e tenerle separate è il punto
+ * della carriera di studio: aprire un modulo è automatico e non significa
+ * nulla, dichiararlo studiato è una decisione tua. Prima esisteva solo la
+ * prima, chiamata però «studiato» — un'imprecisione che qui si chiude.
+ */
 export interface ProgressData {
-  version: 1;
+  version: 2;
   exams: ExamRecord[];
-  /** Moduli di studio aperti almeno una volta. */
-  studied: TopicId[];
+  /** Moduli aperti almeno una volta. Automatico. */
+  visited: TopicId[];
+  /** Moduli dichiarati studiati, con l'istante in cui li hai segnati. */
+  done: Partial<Record<TopicId, number>>;
   bank: BankOutcomes;
 }
 
-const EMPTY: ProgressData = { version: 1, exams: [], studied: [], bank: {} };
+const EMPTY: ProgressData = { version: 2, exams: [], visited: [], done: {}, bank: {} };
 
 /** Non lasciamo crescere lo storico all'infinito. */
 const MAX_EXAMS = 200;
 
+/** La forma dei dati salvati dalla versione precedente. */
+interface ProgressV1 {
+  version: 1;
+  exams?: ExamRecord[];
+  studied?: TopicId[];
+  bank?: BankOutcomes;
+}
+
 function read(store: KeyValueStore): ProgressData {
-  const data = store.get<ProgressData>(KEY, EMPTY);
-  // Difesa contro dati vecchi o manomessi: si riparte pulito.
-  if (typeof data !== 'object' || data === null || data.version !== 1) return EMPTY;
+  const data = store.get<ProgressData | ProgressV1 | null>(KEY, null);
+  if (typeof data !== 'object' || data === null) return EMPTY;
+
+  // Migrazione dalla v1: i moduli lì elencati erano stati **aperti**, non
+  // dichiarati studiati. Diventano quindi `visited`, e la carriera parte
+  // vuota — è l'interpretazione onesta di quel dato.
+  if (data.version === 1) {
+    const old = data as ProgressV1;
+    return {
+      version: 2,
+      exams: Array.isArray(old.exams) ? old.exams : [],
+      visited: Array.isArray(old.studied) ? old.studied : [],
+      done: {},
+      bank: typeof old.bank === 'object' && old.bank !== null ? old.bank : {},
+    };
+  }
+
+  if (data.version !== 2) return EMPTY;
   return {
-    version: 1,
+    version: 2,
     exams: Array.isArray(data.exams) ? data.exams : [],
-    studied: Array.isArray(data.studied) ? data.studied : [],
+    visited: Array.isArray(data.visited) ? data.visited : [],
+    done: typeof data.done === 'object' && data.done !== null ? data.done : {},
     bank: typeof data.bank === 'object' && data.bank !== null ? data.bank : {},
   };
 }
@@ -92,10 +126,47 @@ export function recordExam(result: ExamResult): void {
   write({ ...data, exams: [...data.exams, record].slice(-MAX_EXAMS), bank });
 }
 
-export function markStudied(topicId: TopicId): void {
+/** Il modulo è stato aperto. Automatico, non fa parte della carriera. */
+export function markVisited(topicId: TopicId): void {
   const data = getProgress();
-  if (data.studied.includes(topicId)) return;
-  write({ ...data, studied: [...data.studied, topicId] });
+  if (data.visited.includes(topicId)) return;
+  write({ ...data, visited: [...data.visited, topicId] });
+}
+
+/** Dichiara (o ritira) un modulo come studiato. */
+export function setStudied(topicId: TopicId, studied: boolean, at = Date.now()): void {
+  const data = getProgress();
+  const done = { ...data.done };
+  if (studied) done[topicId] = at;
+  else delete done[topicId];
+  write({ ...data, done });
+}
+
+export function toggleStudied(topicId: TopicId): void {
+  const data = getProgress();
+  setStudied(topicId, data.done[topicId] === undefined);
+}
+
+/** Segna in blocco: serve al pulsante «tutto il blocco» della carriera. */
+export function setStudiedMany(ids: readonly TopicId[], studied: boolean): void {
+  const data = getProgress();
+  const done = { ...data.done };
+  const now = Date.now();
+  for (const id of ids) {
+    if (studied) done[id] = done[id] ?? now;
+    else delete done[id];
+  }
+  write({ ...data, done });
+}
+
+export function isStudied(data: ProgressData, topicId: TopicId): boolean {
+  return data.done[topicId] !== undefined;
+}
+
+/** Azzera solo la carriera di studio, lasciando intatto lo storico delle prove. */
+export function resetCareer(): void {
+  const data = getProgress();
+  write({ ...data, done: {} });
 }
 
 export function resetProgress(): void {
@@ -109,7 +180,10 @@ export interface Stats {
   best: number | null;
   /** Media dei voti in trentesimi, arrotondata. */
   average: number | null;
+  /** Moduli **dichiarati** studiati. */
   studiedCount: number;
+  /** Moduli aperti almeno una volta. */
+  visitedCount: number;
   lodi: number;
 }
 
@@ -124,7 +198,8 @@ export function computeStats(data: ProgressData = getProgress()): Stats {
     average: graded.length
       ? Math.round(graded.reduce((sum, exam) => sum + exam.score30, 0) / graded.length)
       : null,
-    studiedCount: data.studied.length,
+    studiedCount: Object.keys(data.done).length,
+    visitedCount: data.visited.length,
     lodi: graded.filter((exam) => exam.lode).length,
   };
 }

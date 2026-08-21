@@ -19,7 +19,10 @@ del browser.
 
 ## Cosa c'è dentro
 
-- **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli letti) e avvio rapido.
+- **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli studiati) e avvio rapido.
+- **Carriera** — l'elenco dei 17 moduli con una spunta per ciascuno: lo segni **tu** quando l'hai
+  studiato davvero, con barra di avanzamento, minuti che restano e data di completamento. Aprire
+  un modulo è automatico e non conta.
 - **Studia** — 17 moduli in ordine di studio, raggruppati per area, pensati per **partire da
   zero**: ognuno apre con la rampa «Da dove si parte» (cosa serve sapere prima, che problema si
   risolve, le parole nuove definite al primo uso), poi il ripasso «in due minuti», l'indice

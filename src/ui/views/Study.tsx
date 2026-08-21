@@ -5,21 +5,22 @@ import { anchored, outline, readingMinutes } from '~/content/outline';
 import { diagramById } from '~/content/diagrams';
 import type { Topic, TopicCheck, TopicExercise } from '~/content/types';
 import { hrefFor, navigate } from '~/lib/router';
-import { markStudied, useProgress } from '~/store/progress';
+import { isStudied, markVisited, toggleStudied, useProgress } from '~/store/progress';
 import { DiagramFigure } from '~/ui/components/DiagramFigure';
 import { Rich } from '~/ui/components/Rich';
 import { TrapNote } from '~/ui/components/TrapNote';
 
 export function TopicCard({ topic, index }: { topic: Topic; index: number }): JSX.Element {
   const progress = useProgress();
-  const visited = progress.studied.includes(topic.id);
+  const done = isStudied(progress, topic.id);
+  const opened = progress.visited.includes(topic.id);
 
   return (
-    <a class="card" href={hrefFor('study', topic.id)}>
+    <a class={`card${done ? ' studied' : ''}`} href={hrefFor('study', topic.id)}>
       <span class="bar" aria-hidden="true" />
       <div class="idx">
         MOD {String(index + 1).padStart(2, '0')}
-        {visited && ' · letto'}
+        {done ? ' · ✓ studiato' : opened ? ' · aperto' : ''}
       </div>
       <h3>{topic.title}</h3>
       <p>{topic.blurb}</p>
@@ -92,8 +93,11 @@ function ExerciseItem({
 }
 
 function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
-  // Segna il modulo come letto appena viene aperto.
-  useEffect(() => markStudied(topic.id), [topic.id]);
+  // Aprire un modulo lo segna come **visitato**, non come studiato: la
+  // spunta della carriera la mette lo studente.
+  useEffect(() => markVisited(topic.id), [topic.id]);
+  const progress = useProgress();
+  const done = isStudied(progress, topic.id);
 
   const linked = trapsForTopic(topic);
   const sections = outline(topic.body);
@@ -121,6 +125,20 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
         </div>
         <a class="btn ghost mini" href={hrefFor('study')}>
           ← Tutti i moduli
+        </a>
+      </div>
+
+      <div class="btn-row" style="margin-top:10px">
+        <button
+          type="button"
+          class={`btn ${done ? 'ghost' : 'primary'} mini`}
+          aria-pressed={done}
+          onClick={() => toggleStudied(topic.id)}
+        >
+          {done ? '✓ Studiato — togli la spunta' : 'Segna come studiato'}
+        </button>
+        <a class="btn ghost mini" href={hrefFor('carriera')}>
+          La tua carriera
         </a>
       </div>
 
@@ -269,7 +287,7 @@ export function Study({ topicId }: { topicId: string | null }): JSX.Element {
     );
   }
 
-  const read = topics.filter((item) => progress.studied.includes(item.id)).length;
+  const read = topics.filter((item) => isStudied(progress, item.id)).length;
   const totalMinutes = topics.reduce((sum, item) => sum + readingMinutes(item.body), 0);
 
   return (
@@ -279,7 +297,9 @@ export function Study({ topicId }: { topicId: string | null }): JSX.Element {
       <p class="lead">
         Diciassette moduli in ordine di studio, dal binario alle prestazioni: ognuno con il
         ripasso «in due minuti», la teoria distesa e le domande per verificare da solo se hai
-        capito. In tutto circa {totalMinutes} minuti di lettura — {read} moduli già aperti.
+        capito. In tutto circa {totalMinutes} minuti di lettura — <b>{read} su {topics.length}</b>{' '}
+        già segnati come studiati nella{' '}
+        <a href={hrefFor('carriera')}>tua carriera</a>.
       </p>
 
       {TOPIC_GROUPS.map((group) => (
