@@ -30,6 +30,10 @@ export const karnaugh: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> tabelle di verità, mintermini e forma SOP, dal modulo su <a href="#/study/bool">algebra di Boole</a>.</p>
+    <p><b>Che problema risolve.</b> Da una tabella di verità si ricava sempre una SOP, scrivendo un termine per ogni riga a 1. Ma quella forma è quasi sempre <b>più lunga del necessario</b>: più termini significano più porte, più costo, più consumo e più ritardo. Semplificare con l’algebra funziona, però richiede di indovinare quali raccoglimenti tentare. La mappa di Karnaugh trasforma quell’intuizione in una procedura <b>visiva</b>: i termini semplificabili diventano celle vicine, e semplificare diventa «cerchia i gruppi più grandi».</p>
+    <p><b>Le parole nuove.</b> Il <b>codice Gray</b> è un ordinamento in cui fra due valori consecutivi cambia un solo bit: è il motivo per cui le colonne vanno 00, 01, 11, 10. Un <b>implicante</b> è un gruppo valido di celle a 1; è <b>primo</b> se non si può allargare, <b>essenziale</b> se è l’unico a coprire una certa cella. Un’<b>indifferenza</b> (don’t care, scritta <code>x</code>) è una combinazione che non si presenta mai o il cui valore d’uscita non interessa: si può usare come 1 o come 0, a piacere.</p>
     <h4>Idea</h4>
     <p>La mappa dispone i mintermini in celle adiacenti secondo il <b>codice Gray</b>: fra due celle vicine cambia <b>una sola variabile</b>. Raggruppando gli <code>1</code> in blocchi di dimensione potenza di 2 si eliminano le variabili che cambiano dentro il gruppo, e restano solo quelle costanti.</p>
 
@@ -55,6 +59,29 @@ AB 00 | m0  m1  m3  m2
     <h4>Implicanti primi ed essenziali</h4>
     <p>Un <b>implicante</b> è un gruppo valido; è <b>primo</b> se non può essere ingrandito ulteriormente. È <b>essenziale</b> se copre almeno un <code>1</code> che nessun altro implicante primo copre: gli essenziali vanno presi per forza. Si completa poi la copertura con il minor numero di implicanti primi rimanenti.</p>
 
+    <h4>Perché funziona: l’adiacenza è algebra</h4>
+    <p>La mappa sembra un trucco visivo, ma sotto c’è un solo teorema. Prendiamo due celle vicine, che per costruzione differiscono in <b>una sola</b> variabile — diciamo A. I due mintermini corrispondenti si scrivono X·A e X·Ā, dove X è il prodotto delle variabili che <i>non</i> cambiano:</p>
+    <pre>X·A + X·Ā = X·(A + Ā) = X·1 = X</pre>
+    <p>La variabile che cambia <b>sparisce</b>. Ecco perché un gruppo di 2 celle elimina una variabile, uno di 4 ne elimina due (si applica il teorema due volte), uno di 8 ne elimina tre. E si capisce anche perché i gruppi devono avere dimensione potenza di 2: solo così le celle formano un insieme in cui, per ogni variabile «interna», compaiono <b>entrambe</b> le polarità in tutte le combinazioni delle altre. Con 3 celle non accade, e il raccoglimento non si può fare.</p>
+    <p>Lo stesso argomento spiega l’ordinamento Gray delle colonne: la vicinanza sulla mappa deve corrispondere alla differenza di un solo bit, altrimenti la formula di sopra non si applica e cerchiare celle contigue produce termini sbagliati.</p>
+
+    <h4>La procedura, in cinque passi</h4>
+    <p>All’esame conviene seguirla sempre nello stesso ordine, invece di cercare gruppi a caso:</p>
+    <ol>
+      <li><b>Riempi la mappa</b> dalla tabella di verità, controllando l’ordine Gray delle intestazioni. Un errore qui invalida tutto il resto.</li>
+      <li><b>Cerca i gruppi più grandi possibile</b>, partendo da quelli di 8, poi 4, poi 2, poi le celle isolate. Ricorda i bordi e gli angoli.</li>
+      <li><b>Individua gli implicanti essenziali</b>: per ogni 1, conta da quanti gruppi è coperto. Se da uno solo, quel gruppo è obbligatorio — segnalo.</li>
+      <li><b>Completa la copertura</b> scegliendo, fra i gruppi rimasti, il minor numero possibile che copra gli 1 ancora scoperti.</li>
+      <li><b>Scrivi i termini</b>: per ogni gruppo, il prodotto delle variabili che restano costanti, negate dove valgono 0.</li>
+    </ol>
+    <p>Alla fine, due controlli veloci: ogni 1 è coperto? nessun gruppo copre uno 0? Se entrambe le risposte sono sì, la forma è <b>corretta</b>; la minimalità dipende dall’aver fatto bene i passi 2-4.</p>
+
+    <h4>Quando la regola degli essenziali non basta</h4>
+    <p>Esistono mappe in cui <b>nessun</b> implicante è essenziale, perché ogni 1 è coperto da almeno due gruppi. Si chiamano <b>cicliche</b>. Lì il passo 3 non produce nulla e bisogna scegliere per tentativi, verificando quale combinazione dia il costo minore. Sono i casi in cui esistono <b>più soluzioni minime diverse</b>, tutte ugualmente accettabili: se la tua non coincide con quella del docente, controlla il numero di termini e di letterali prima di darti torto.</p>
+
+    <h4>Oltre le quattro variabili</h4>
+    <p>A cinque variabili la mappa diventa due mappe a quattro affiancate, una per E = 0 e una per E = 1: sono adiacenti «in profondità», cioè celle nella stessa posizione delle due mappe formano un gruppo valido. Si riesce a gestire, ma è scomodo; da sei in su la rappresentazione visiva perde senso.</p>
+    <p>Per quei casi esiste il metodo di <b>Quine-McCluskey</b>: la stessa idea — combinare termini che differiscono di un bit — eseguita in modo tabellare e sistematico, quindi programmabile. È l’algoritmo che sta dentro gli strumenti di sintesi automatica, ed è anche quello che il simulatore di questo sito usa per verificare che la soluzione mostrata sia davvero minima.</p>
     <h4>Esempio svolto</h4>
     <p>Sia <code>Y(A,B,C) = 1</code> per i mintermini 1, 3, 5, 7 — cioè ogni volta che <code>C = 1</code>, indipendentemente da A e B. Il gruppo di 4 celle elimina due variabili e la SOP minima è semplicemente:</p>
     <pre>Y = C          (1 termine, 1 letterale)</pre>

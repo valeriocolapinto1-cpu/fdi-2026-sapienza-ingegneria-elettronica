@@ -20,9 +20,12 @@ del browser.
 ## Cosa c'è dentro
 
 - **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli letti) e avvio rapido.
-- **Studia** — 17 moduli in ordine di studio, raggruppati per area. Ognuno ha il ripasso «in due
-  minuti», l'indice interno, un **esempio svolto con i numeri**, gli errori tipici, gli schemi
-  collegati e tre domande di **autoverifica** con la risposta a scomparsa.
+- **Studia** — 17 moduli in ordine di studio, raggruppati per area, pensati per **partire da
+  zero**: ognuno apre con la rampa «Da dove si parte» (cosa serve sapere prima, che problema si
+  risolve, le parole nuove definite al primo uso), poi il ripasso «in due minuti», l'indice
+  interno, la teoria distesa con un **esempio svolto con i numeri**, gli errori tipici, gli schemi
+  collegati, tre domande di **autoverifica** e **cinque esercizi** con suggerimento e svolgimento
+  passo per passo — 85 in tutto.
 - **Definizioni** — i termini che l'esame chiede di saper enunciare, una frase ciascuno, con
   filtro per testo e per argomento.
 - **Simulatore** — quattro formati di prova, generati al volo: numeri, tabelle di verità,
@@ -52,7 +55,8 @@ browser.
 | `links.ts` | Testi e risorse |
 
 Un modulo di studio porta con sé, oltre al corpo della teoria: `summary` (il ripasso «in due
-minuti»), `checks` (le domande di autoverifica), `prereq` e `diagramIds`. L'indice interno **non**
+minuti»), `checks` (le domande di autoverifica), `exercises` (gli esercizi svolti, con `hint` e
+`solution` separati), `prereq` e `diagramIds`. L'indice interno **non**
 è un dato: si ricava dai titoli del corpo (`content/outline.ts`), così non può disallinearsi.
 
 ### Una crocetta

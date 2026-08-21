@@ -29,6 +29,10 @@ export const isa: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> com’è fatto un processore e che cosa sono PC, IR e registri generali, dal modulo sul <a href="#/study/cpu">processore</a>.</p>
+    <p><b>Che problema risolve.</b> Il processore esegue istruzioni: ma <i>quali</i>? Quante ne servono, come si scrivono, come si dice a un’istruzione dove prendere i dati? L’<b>architettura del repertorio di istruzioni</b> è il contratto fra hardware e software: tutto ciò che un programmatore deve sapere della macchina, e tutto ciò che il costruttore si impegna a mantenere. È il livello a cui si decide se avere poche istruzioni semplici o molte complesse — la contrapposizione RISC/CISC.</p>
+    <p><b>Le parole nuove.</b> Un <b>mnemonico</b> è il nome leggibile di un’istruzione (<code>Add</code>) al posto del suo codice binario. Il <b>codice operativo</b> (opcode) è il campo che dice quale operazione è. Un <b>modo di indirizzamento</b> è la regola con cui l’istruzione indica dove sta un operando: il valore stesso, un registro, una cella, o un calcolo. La <b>pila</b> (stack) è un’area di memoria gestita con la regola «ultimo entrato, primo uscito», usata per le chiamate di procedura.</p>
     <h4>RISC</h4>
     <ul>
       <li>Istruzioni semplici, di <b>lunghezza fissa</b> (una parola): la decodifica è immediata e il prelievo prevedibile.</li>

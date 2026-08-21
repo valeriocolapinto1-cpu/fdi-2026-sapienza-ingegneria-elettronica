@@ -29,6 +29,10 @@ export const bool: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> che un segnale elettrico può valere solo 0 o 1 (lo hai visto nel modulo sui <a href="#/study/bin">numeri binari</a>). Nient’altro.</p>
+    <p><b>Che problema risolve.</b> Abbiamo dei fili che valgono 0 o 1 e vogliamo costruirci sopra qualcosa che <b>decida</b>: accendi il motore se la porta è chiusa <i>e</i> il pulsante è premuto <i>ma non</i> se è scattato l’allarme. Serve un’algebra per scrivere e manipolare frasi di questo tipo, e serve che a ogni operazione dell’algebra corrisponda un pezzo di circuito. L’algebra di Boole è esattamente questo: una matematica con due soli valori, in cui ogni formula è un circuito e ogni circuito è una formula.</p>
+    <p><b>Le parole nuove.</b> Una <b>porta logica</b> è il circuito elementare che realizza un’operazione (AND, OR, NOT…). Una <b>tabella di verità</b> elenca l’uscita per <i>tutte</i> le combinazioni degli ingressi: con n ingressi ha 2ⁿ righe, e descrive la funzione senza ambiguità. Un <b>letterale</b> è una variabile o la sua negazione (A oppure Ā). Un <b>mintermine</b> è un prodotto che vale 1 su <b>una sola</b> riga della tabella. <b>SOP</b> significa somma di prodotti (OR di AND), <b>POS</b> prodotto di somme (AND di OR).</p>
     <h4>Le porte fondamentali</h4>
     <p>Su due ingressi <code>A</code> e <code>B</code> le uscite valgono, nell'ordine 00, 01, 10, 11:</p>
     <pre>AND  (A∧B)   0 0 0 1      NAND   1 1 1 0

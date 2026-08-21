@@ -28,6 +28,10 @@ export const bin: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> nulla. Questo è il primo modulo, e tutto il resto del corso vi poggia sopra. Basta saper contare e fare divisioni con il resto.</p>
+    <p><b>Che problema risolve.</b> Un calcolatore è fatto di interruttori: ogni filo può essere solo alto o basso, acceso o spento, 1 o 0. Non esiste un filo «che vale 7». Se vogliamo che una macchina fatta così maneggi numeri, dobbiamo decidere <b>come scrivere un numero usando solo due simboli</b> — e come scrivere anche i numeri <b>negativi</b>, visto che non abbiamo un filo per il segno «−». Questo modulo risponde a entrambe le domande.</p>
+    <p><b>Le parole nuove.</b> Un <b>bit</b> è una cifra binaria, cioè una casella che vale 0 o 1. Un <b>byte</b> sono otto bit. Il bit <b>più significativo</b> (MSB) è quello più a sinistra, quello che pesa di più; il <b>meno significativo</b> (LSB) è quello più a destra. Una <b>rappresentazione</b> è un accordo su come interpretare una sequenza di bit: gli stessi otto bit possono voler dire 200 oppure −56, a seconda dell’accordo che abbiamo scelto. Non c’è nulla nei bit che lo dica: lo sa il programma.</p>
     <h4>Basi e conversioni</h4>
     <p>Un numero in base <code>b</code> è una somma di cifre pesate: <code>1011₂ = 1·2³ + 0·2² + 1·2¹ + 1·2⁰ = 11</code>. Per convertire da decimale a binario si divide ripetutamente per 2 e si leggono i resti <b>dal basso verso l'alto</b>.</p>
     <p>Esadecimale e ottale servono solo ad accorciare la scrittura: una cifra hex vale <b>4 bit</b>, una ottale <b>3 bit</b>. Si converte raggruppando, senza passare dal decimale:</p>

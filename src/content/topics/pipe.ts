@@ -31,6 +31,10 @@ export const pipe: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> il ciclo di esecuzione di un’istruzione (<a href="#/study/cpu">processore</a>) e i tipi di istruzioni (<a href="#/study/isa">repertorio</a>).</p>
+    <p><b>Che problema risolve.</b> Eseguire un’istruzione richiede diverse fasi: prelevarla, decodificarla, calcolare, accedere alla memoria, scrivere il risultato. Se si aspetta che una finisca prima di iniziare la successiva, in ogni istante <b>quasi tutto il processore è fermo</b>: mentre la ALU lavora, l’unità di prelievo non fa nulla. L’idea della pipeline è la stessa della catena di montaggio: far entrare l’istruzione successiva appena la prima ha liberato il primo stadio. In teoria si va k volte più veloci con k stadi; in pratica ci si mette in mezzo tutto ciò che questo modulo racconta.</p>
+    <p><b>Le parole nuove.</b> Uno <b>stadio</b> è una delle fasi in cui si spezza l’esecuzione; fra due stadi c’è sempre un registro che «congela» i risultati intermedi. Un <b>hazard</b> (alea) è una situazione in cui la sovrapposizione non funzionerebbe e va corretta. Uno <b>stallo</b> (bolla) è un ciclo di attesa inserito per aspettare. Il <b>forwarding</b> è la scorciatoia che porta un risultato dove serve prima che sia stato ufficialmente scritto. Il <b>CPI</b> è il numero medio di cicli per istruzione.</p>
     <h4>L'equazione delle prestazioni</h4>
     <p>Il tempo di esecuzione di un programma si scompone in tre fattori:</p>
     <pre>T = (N × S) / R
@@ -73,6 +77,33 @@ Sub R5, R3, R4      <span class="cm">; ma serve gia allo stadio E</span></pre>
 
     <h4>Oltre una istruzione per ciclo</h4>
     <p>Un processore <b>superscalare</b> replica le unità funzionali e avvia più istruzioni per ciclo, portando il CPI sotto 1. Richiede però di individuare a runtime le istruzioni indipendenti, quindi hardware di controllo notevolmente più complesso.</p>
+    <h4>Perché proprio cinque stadi</h4>
+    <p>Gli stadi non sono una convenzione arbitraria: corrispondono alle fasi che un’istruzione attraversa comunque, anche senza pipeline.</p>
+    <pre>F  Fetch      preleva l'istruzione dalla memoria, incrementa il PC
+D  Decode     interpreta il codice operativo, legge i registri sorgente
+E  Execute    la ALU calcola: operazione, o indirizzo per load/store
+M  Memory     accede alla memoria dati (solo load e store)
+W  Write back scrive il risultato nel registro destinazione</pre>
+    <p>Spezzare in più stadi permette un clock più veloce, perché ogni stadio contiene meno logica. Ma non si può esagerare: ogni confine costa un registro, con il suo tempo di propagazione e di setup, e questi tempi <b>non si spezzano</b>. Oltre una certa profondità il guadagno si annulla, e in più cresce la penalità dei salti — che è proporzionale al numero di stadi attraversati prima di scoprire l’esito. È la ragione per cui le pipeline profondissime di inizio anni 2000 sono state abbandonate.</p>
+
+    <h4>Hazard strutturali</h4>
+    <p>Sono i conflitti su una <b>risorsa fisica</b> che due stadi vorrebbero usare nello stesso ciclo. Il caso classico: con una memoria unica per istruzioni e dati, lo stadio F di un’istruzione e lo stadio M di un’altra chiedono la memoria nello stesso ciclo.</p>
+    <p>Le soluzioni sono tutte «più risorse»: memorie o cache <b>separate</b> per istruzioni e dati (organizzazione Harvard, adottata al primo livello da tutti i processori moderni), banchi di registri con più porte di lettura e scrittura, unità funzionali duplicate. Dove non si duplica, si stalla — ed è la ragione per cui le unità in virgola mobile, costose, spesso non sono replicate e possono creare code.</p>
+
+    <h4>Predizione dei salti</h4>
+    <p>Un salto blocca la pipeline perché fino a quando non se ne conosce l’esito non si sa quale istruzione prelevare. Invece di aspettare, si <b>indovina</b> e si prosegue; se l’ipotesi era sbagliata si annullano le istruzioni entrate e si riparte dal punto giusto.</p>
+    <ul>
+      <li><b>Predizione statica</b>: sempre la stessa scelta. La regola «i salti all’indietro si prendono, quelli in avanti no» azzecca molto, perché i salti all’indietro sono in genere cicli — e un ciclo si ripete.</li>
+      <li><b>Predizione dinamica a 1 bit</b>: si ricorda l’esito dell’ultima volta e si ripete. Sbaglia due volte per ogni ciclo (all’ingresso e all’uscita).</li>
+      <li><b>Predizione dinamica a 2 bit</b>: serve <b>sbagliare due volte di fila</b> per cambiare idea. Su un ciclo che si ripete cento volte sbaglia una volta sola, ed è lo schema di base dei predittori reali.</li>
+    </ul>
+    <p>Con predittori che superano il 90 % di successo la penalità media dei salti crolla, ed è questo che rende praticabili le pipeline profonde. L’alternativa storica è il <b>delay slot</b>: l’istruzione subito dopo il salto viene eseguita comunque, e sta al compilatore metterci qualcosa di utile.</p>
+
+    <h4>Le altre due dipendenze</h4>
+    <p>Il modulo ha trattato la dipendenza <b>RAW</b> (leggo dopo che qualcuno ha scritto), l’unica che sia una dipendenza vera sui dati. Ne esistono altre due, che nascono dal <b>riuso dei nomi dei registri</b> e non dal flusso dei valori:</p>
+    <pre>WAR  (write after read)   B scrive un registro che A deve ancora leggere
+WAW  (write after write)  A e B scrivono lo stesso registro</pre>
+    <p>In una pipeline semplice, con istruzioni che si concludono in ordine, non danno problemi. Diventano rilevanti nei processori che eseguono <b>fuori ordine</b>, e si risolvono con la <b>ridenominazione dei registri</b>: l’hardware assegna registri fisici diversi a scritture diverse, eliminando il conflitto sul nome.</p>
     <h4>Esempio svolto</h4>
     <p><b>Quattro istruzioni con una dipendenza:</b> la seconda usa il risultato della prima.</p>
     <pre>I1: Add  R3, R1, R2

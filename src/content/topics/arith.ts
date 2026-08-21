@@ -31,6 +31,10 @@ export const arith: Topic = {
       },
     ],
   body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> il complemento a 2 dal modulo sui <a href="#/study/bin">numeri binari</a>, e le porte logiche di base dal modulo su <a href="#/study/bool">algebra di Boole</a>.</p>
+    <p><b>Che problema risolve.</b> Sappiamo <i>rappresentare</i> i numeri, ma un calcolatore deve anche <i>calcolare</i>. Qui si costruisce il circuito che somma davvero — a partire da porte AND, OR e XOR — e si scopre che sommare è facile, mentre <b>sommare in fretta</b> è il vero problema di progetto: il riporto deve attraversare tutti i bit, e questo mette un limite alla frequenza dell’intero processore.</p>
+    <p><b>Le parole nuove.</b> Il <b>riporto</b> (carry) è il «me ne porto uno» della somma in colonna. Un <b>semisommatore</b> somma due bit; un <b>sommatore completo</b> ne somma due più il riporto entrante, ed è il mattone da cui si costruisce tutto. <b>Ripple-carry</b> vuol dire «a propagazione di riporto»: i sommatori in fila, ognuno che aspetta il precedente. <b>Carry-lookahead</b> significa «riporto anticipato»: calcolarlo in parallelo invece di aspettarlo.</p>
     <h4>Semisommatore (half adder)</h4>
     <p>Somma <b>due</b> bit e produce somma e riporto. Non accetta un riporto entrante, ed è per
     questo che si chiama «mezzo»:</p>

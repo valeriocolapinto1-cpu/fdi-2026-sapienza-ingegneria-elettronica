@@ -30,6 +30,10 @@ export const comb: Topic = {
       },
     ],
   body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> le porte logiche e le tabelle di verità, dal modulo su <a href="#/study/bool">algebra di Boole</a>.</p>
+    <p><b>Che problema risolve.</b> Con AND, OR e NOT si può costruire qualunque funzione, ma partire ogni volta dalle porte è come costruire una casa mattone per mattone senza usare porte e finestre già fatte. Certe funzioni ricorrono in continuazione — «attiva la riga numero k», «lascia passare uno di questi otto segnali», «questi due numeri sono uguali?» — e conviene averle pronte come <b>blocchi</b> con un nome. Sono i mattoni con cui si disegnano memorie, processori e bus.</p>
+    <p><b>Le parole nuove.</b> Una rete è <b>combinatoria</b> quando l’uscita dipende <i>solo</i> dagli ingressi presenti in questo istante: nessuna memoria, nessun passato (le reti con memoria arrivano nel modulo sui <a href="#/study/ff">flip-flop</a>). <b>Decodificare</b> significa trasformare un numero in «accendi la riga numero quel-numero»; <b>multiplare</b> significa scegliere uno fra più segnali. <b>Alta impedenza</b> è la terza condizione di un’uscita tri-state: non 0, non 1, ma «scollegato».</p>
     <h4>Perché esistono i blocchi standard</h4>
     <p>Ogni funzione si può sintetizzare da zero con la mappa di Karnaugh, ma alcune ricorrono
     così spesso da avere un nome e un simbolo propri. Riconoscerle fa risparmiare tempo: invece di
@@ -88,6 +92,29 @@ export const comb: Topic = {
     due dispositivi che pilotano lo stesso filo con valori opposti creerebbero un cortocircuito.
     È il motivo per cui, nello schema del processore, i registri si affacciano sul bus interno
     attraverso questi buffer.</p>
+    <h4>Demultiplexer: il decoder visto al contrario</h4>
+    <p>Il multiplexer sceglie uno fra molti ingressi e lo porta su un’unica uscita. Il <b>demultiplexer</b> fa l’opposto: prende un ingresso e lo instrada su una fra molte uscite, secondo i selettori.</p>
+    <p>La cosa interessante è che un demultiplexer <b>è</b> un decoder con l’abilitazione usata come ingresso dati: il decoder attiva l’uscita indirizzata, e se al posto della costante 1 gli si dà un segnale, quel segnale compare sull’uscita scelta e nient’altro. Un solo circuito, due usi.</p>
+    <p>La coppia MUX-DEMUX è ciò che permette di condividere un collegamento: si multipla da una parte, si trasmette su un solo filo, si demultipla dall’altra. È il principio della multiplazione a divisione di tempo, dai bus interni alle linee di comunicazione.</p>
+
+    <h4>Codificatore di priorità</h4>
+    <p>Un codificatore semplice presuppone che sia attivo <b>un solo</b> ingresso: se se ne attivano due l’uscita è priva di senso. È un’ipotesi irrealistica — pensa a otto dispositivi che possono chiedere attenzione insieme.</p>
+    <p>Il <b>codificatore di priorità</b> risolve stabilendo un ordine: se più ingressi sono attivi, l’uscita è l’indice del <b>più prioritario</b>. Ha inoltre un’uscita di validità che distingue «nessun ingresso attivo» da «è attivo l’ingresso 0», due situazioni che altrimenti darebbero lo stesso codice.</p>
+    <p>È esattamente il circuito che serve nella gestione delle interruzioni per decidere quale dispositivo servire quando ne chiamano più d’uno, e nell’arbitraggio di un bus quando più unità lo richiedono insieme.</p>
+
+    <h4>Una ROM è una tabella di verità</h4>
+    <p>Una memoria di sola lettura con n bit di indirizzo e m bit di dato contiene 2ⁿ parole da m bit. Ma se al posto di «indirizzo» si legge «combinazione degli ingressi» e al posto di «parola» si legge «valore delle uscite», quella memoria è <b>letteralmente</b> una tabella di verità di n ingressi e m uscite.</p>
+    <pre>indirizzo (ingressi)  →  contenuto (uscite)
+   000                     0 1
+   001                     1 1
+   010                     1 0
+   …</pre>
+    <p>Dentro, una ROM è fatta proprio così: un <b>decoder</b> n→2ⁿ che attiva una riga, e una matrice di collegamenti che determina i bit di uscita. Realizzare una funzione logica con una ROM significa scriverne la tabella di verità e basta — nessuna minimizzazione, nessun disegno di porte.</p>
+    <p>Il limite è la crescita esponenziale: con 8 ingressi bastano 256 parole, con 20 ne servirebbero un milione. Per questo le PLA fanno un passo indietro rispetto alla ROM: invece di generare <b>tutti</b> i mintermini, generano solo i termini prodotto che servono davvero — meno flessibilità, molta meno area.</p>
+
+    <h4>Perché due livelli</h4>
+    <p>Ogni funzione booleana si può scrivere in forma SOP, cioè come un livello di AND seguito da un livello di OR. Questo significa che, ignorando il fan-in, <b>qualunque</b> funzione è realizzabile con un ritardo di soli due livelli di porte — è il motivo per cui la forma a due livelli è il riferimento sia per il costo sia per la velocità, ed è la forma che PLA e mappe di Karnaugh producono.</p>
+    <p>Nella pratica il fan-in è limitato: una AND a 12 ingressi non esiste, e va costruita con più porte in cascata, aggiungendo livelli e quindi ritardo. Il progetto reale è sempre un compromesso fra il numero di livelli (velocità) e il fan-in delle singole porte (fattibilità).</p>
     <h4>Esempio svolto</h4>
     <p><b>Realizza la funzione maggioranza (Y = 1 con almeno due ingressi a 1) in due modi.</b></p>
     <p><b>Con un MUX 8→1.</b> I tre ingressi A, B, C vanno ai <b>selettori</b>; sugli otto ingressi dati si mettono le costanti della colonna d'uscita, nell'ordine dei mintermini:</p>

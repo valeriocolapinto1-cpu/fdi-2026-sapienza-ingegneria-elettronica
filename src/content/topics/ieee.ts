@@ -29,6 +29,10 @@ export const ieee: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> la numerazione binaria e il concetto di notazione posizionale, dal modulo sui <a href="#/study/bin">numeri binari</a>.</p>
+    <p><b>Che problema risolve.</b> Con il complemento a 2 sappiamo scrivere gli interi, ma un calcolatore deve maneggiare anche 3,14 e 6,02 × 10²³. Con un numero fisso di bit non si può avere tutto: o si riserva un numero fisso di cifre dopo la virgola — e allora i numeri molto grandi e molto piccoli non entrano — oppure si adotta la stessa idea della <b>notazione scientifica</b>, memorizzando separatamente le cifre significative e l’ordine di grandezza. La seconda strada è quella dello standard IEEE 754, ed è il motivo per cui la virgola si dice «mobile»: la sua posizione è decisa dall’esponente.</p>
+    <p><b>Le parole nuove.</b> La <b>mantissa</b> (o significando) contiene le cifre significative; l’<b>esponente</b> dice di quante posizioni spostare la virgola. <b>Normalizzare</b> significa scrivere il numero nella forma 1,xxx × 2ᵉ, con una sola cifra diversa da zero davanti alla virgola. Il <b>bias</b> è la costante che si somma all’esponente per renderlo un numero senza segno. <b>NaN</b> sta per «not a number» ed è il risultato di operazioni indefinite. Un numero <b>denormalizzato</b> è più piccolo del minimo normalizzato e rinuncia all’1 implicito per rappresentare valori vicinissimi a zero.</p>
     <h4>Perché serve</h4>
     <p>Con la virgola fissa il numero di cifre decimali è deciso una volta per tutte e l'intervallo è angusto. La virgola mobile spende i bit su una <b>notazione scientifica binaria</b>, <code>± mantissa × 2^esponente</code>, ottenendo un intervallo enormemente più ampio a parità di bit — al prezzo di una precisione <b>relativa</b> anziché assoluta.</p>
 
@@ -42,6 +46,36 @@ export const ieee: Topic = {
     </ul>
     <p>Valore = <code>(−1)ˢ · 1.M · 2^(E−127)</code></p>
 
+    <h4>Come ci si arriva: la notazione scientifica</h4>
+    <p>L'idea non è nuova: è quella con cui si scrive 6,02 × 10²³ invece di un numero con ventiquattro cifre. Si separano le <b>cifre significative</b> dall'<b>ordine di grandezza</b>, e si memorizzano due numeri piccoli invece di uno enorme. In binario diventa:</p>
+    <pre>valore = ± mantissa × 2^esponente</pre>
+    <p>Resta un’ambiguità: 1,5 × 2³ e 0,75 × 2⁴ e 3,0 × 2² sono lo stesso numero scritto in tre modi. Senza una regola, la stessa quantità avrebbe più codifiche — e il confronto fra due numeri diventerebbe complicato. Si impone allora la forma <b>normalizzata</b>: esattamente una cifra diversa da zero prima della virgola.</p>
+    <p>In binario c’è una sola cifra diversa da zero: l’1. Quindi <b>ogni</b> numero normalizzato comincia con «1,». E se comincia sempre con 1, memorizzarlo è uno spreco: lo si sottintende. È l’<b>1 implicito</b>, e regala un bit di precisione gratis — 24 bit di mantissa effettiva su 23 memorizzati.</p>
+
+    <h4>Perché il bias, e non il complemento a 2</h4>
+    <p>L’esponente deve poter essere negativo (per i numeri minori di 1). La scelta ovvia sarebbe il complemento a 2, che già conosciamo. Lo standard fa invece un’altra cosa: somma una costante, il <b>bias</b>, in modo che l’esponente memorizzato sia sempre positivo.</p>
+    <pre>singola precisione:  E_memorizzato = e + 127     (e va da −126 a +127)
+doppia precisione:   E_memorizzato = e + 1023</pre>
+    <p>Il motivo è il <b>confronto</b>. Mettendo in fila segno, esponente e mantissa, e usando per l’esponente una codifica senza segno crescente, due numeri positivi si confrontano <b>leggendo i loro bit come se fossero interi</b>: chi ha il pattern più grande è il numero più grande. Il circuito di confronto in virgola mobile diventa lo stesso degli interi.</p>
+    <p>Con il complemento a 2 la proprietà si perderebbe: un esponente negativo avrebbe il bit alto a 1 e risulterebbe «maggiore» di uno positivo, invertendo l’ordine. Il bias è una decisione di progetto presa per rendere veloce l’operazione più frequente.</p>
+
+    <h4>Arrotondamento</h4>
+    <p>La mantissa ha 23 bit: quasi ogni risultato va <b>arrotondato</b>. Lo standard definisce quattro modi, e quello predefinito è il più sottile:</p>
+    <ul>
+      <li><b>Al più vicino, con parità</b> (round to nearest, ties to even): si sceglie il valore rappresentabile più vicino; a parità esatta di distanza si prende quello con ultimo bit 0. Il vincolo sulla parità serve a evitare che una lunga catena di arrotondamenti sposti il risultato sempre nella stessa direzione, accumulando errore.</li>
+      <li><b>Verso zero</b> (troncamento), <b>verso +∞</b>, <b>verso −∞</b>: usati soprattutto nel calcolo con intervalli, dove serve un limite garantito.</li>
+    </ul>
+    <p>Per arrotondare correttamente non basta guardare il primo bit scartato: l’hardware mantiene tre bit di lavoro in più — <b>guard</b>, <b>round</b> e <b>sticky</b> — dove il terzo ricorda «c’era ancora qualcosa oltre», che è ciò che distingue un pareggio esatto da un valore appena sopra.</p>
+
+    <h4>Intervallo e precisione</h4>
+    <p>In singola precisione l’esponente memorizzato va da 1 a 254 (0 e 255 sono riservati ai casi speciali), quindi e va da −126 a +127:</p>
+    <pre>numero normalizzato più piccolo ≈ 1,18 × 10⁻³⁸
+numero più grande               ≈ 3,40 × 10³⁸
+cifre decimali significative     ≈ 7
+
+doppia precisione:  ≈ 10⁻³⁰⁸ … 10³⁰⁸,  ≈ 16 cifre</pre>
+    <p>Il punto da capire è che la precisione è <b>relativa</b>, non assoluta: fra 1 e 2 i numeri rappresentabili distano circa 1,2 × 10⁻⁷; fra un milione e due milioni distano più di 0,06. Più il numero è grande, più i valori rappresentabili sono radi.</p>
+    <p>Due conseguenze che l’esame chiede spesso. Sommare un numero piccolissimo a uno grandissimo può non cambiare nulla (<b>assorbimento</b>): il risultato arrotondato torna al valore di partenza. E l’addizione in virgola mobile <b>non è associativa</b>: (a + b) + c può differire da a + (b + c), quindi cambiare l’ordine delle somme cambia il risultato — un fatto con cui devono convivere tutti i programmi di calcolo numerico.</p>
     <h4>Codificare un numero — esempio</h4>
     <p>Si voglia rappresentare <code>−6,5</code>:</p>
     <ol>
