@@ -30,6 +30,10 @@ export const ff: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> le porte logiche dal modulo su <a href="#/study/bool">algebra di Boole</a>. Aiuta aver visto le <a href="#/study/comb">reti combinatorie</a>, ma non è indispensabile.</p>
+    <p><b>Che problema risolve.</b> Finora ogni circuito visto dimentica tutto: cambia l’ingresso, cambia l’uscita, e del passato non resta traccia. Ma un calcolatore deve <b>ricordare</b>: il valore di un registro, il contenuto di una cella, il punto del programma a cui è arrivato. Serve un circuito che, tolto l’ingresso, <b>mantenga</b> il valore. Si ottiene con un’idea sola: prendere l’uscita e riportarla all’ingresso, creando un anello che si sostiene da sé. Da lì nascono latch, flip-flop, registri e contatori — e con essi la nozione di <b>stato</b>.</p>
+    <p><b>Le parole nuove.</b> Lo <b>stato</b> è ciò che il circuito ricorda. La <b>retroazione</b> è l’uscita riportata all’ingresso. Il <b>clock</b> è il segnale periodico che scandisce quando aggiornare lo stato; il <b>livello</b> è il suo valore (alto o basso), il <b>fronte</b> è l’istante in cui cambia. Un circuito <b>trasparente</b> lascia passare l’ingresso all’uscita mentre è abilitato; uno sensibile al fronte campiona solo nell’istante del cambiamento.</p>
     <h4>Combinatorio vs sequenziale</h4>
     <p>In una rete <b>combinatoria</b> l'uscita dipende solo dagli ingressi attuali. In una rete <b>sequenziale</b> dipende anche dallo <b>stato</b>, cioè dalla storia passata: serve un elemento di memoria, ottenuto con la <b>retroazione</b> (l'uscita rientra come ingresso).</p>
 

@@ -29,6 +29,10 @@ export const tech: Topic = {
       },
     ],
   body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> che cos’è una porta logica (<a href="#/study/bool">algebra di Boole</a>) e che i circuiti sequenziali sono scanditi da un clock (<a href="#/study/ff">flip-flop</a>).</p>
+    <p><b>Che problema risolve.</b> Finora le porte sono state trattate come oggetti ideali: metti gli ingressi, l’uscita appare. Nella realtà l’uscita appare <b>dopo</b>, perché i transistor devono caricare e scaricare delle capacità, e quel ritardo si accumula lungo la catena. È da qui che nasce il limite alla frequenza di clock: non da quanto è «potente» il processore, ma da quanto impiega il segnale più lento ad attraversare la logica fra due registri. Questo modulo spiega da dove viene quel numero, e come si costruiscono fisicamente le porte.</p>
+    <p><b>Le parole nuove.</b> Il <b>ritardo di propagazione</b> è il tempo fra la variazione dell’ingresso e quella dell’uscita. Il <b>cammino critico</b> è il percorso più lento fra due registri, e fissa il periodo minimo. Il <b>fan-in</b> è il numero di ingressi di una porta, il <b>fan-out</b> quante porte una singola uscita può pilotare. <b>CMOS</b> è la tecnologia con cui si costruiscono oggi quasi tutte le porte, fatta di transistor complementari.</p>
     <h4>Ritardo di propagazione</h4>
     <p>Una porta logica non commuta all'istante: il segnale impiega un tempo a farsi strada nei
     transistor. Il <b>ritardo di propagazione</b> è l'intervallo fra il momento in cui l'ingresso

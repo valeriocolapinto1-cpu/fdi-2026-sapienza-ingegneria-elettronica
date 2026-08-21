@@ -20,16 +20,27 @@ describe('content layer', () => {
     expect(links.length).toBeGreaterThanOrEqual(6);
   });
 
-  it('ogni modulo ha una teoria sostanziosa, non un abbozzo', () => {
-    // I moduli del prototipo stavano fra 390 e 1200 caratteri: troppo poco
-    // per studiarci sopra. Questa soglia impedisce di tornare indietro.
+  it('ogni modulo si può studiare da zero, non è un riassunto', () => {
+    // I moduli del prototipo stavano fra 390 e 1200 caratteri; le sintesi
+    // operative arrivavano a 3-6 mila. Per studiarci sopra senza il libro
+    // accanto ne servono almeno seimila di **prosa**, tag esclusi.
     for (const topic of topics) {
-      expect(topic.body.length, `modulo "${topic.id}" troppo scarno`).toBeGreaterThan(2000);
+      const prose = topic.body.replace(/<[^>]+>/g, ' ');
+      expect(prose.length, `modulo "${topic.id}" troppo scarno`).toBeGreaterThan(6000);
       // Almeno quattro sezioni: un modulo con un solo <h4> non è organizzato.
       expect(
         (topic.body.match(/<h4>/g) ?? []).length,
         `modulo "${topic.id}" con troppe poche sezioni`,
       ).toBeGreaterThanOrEqual(4);
+    }
+  });
+
+  it('ogni modulo comincia dalla rampa d’ingresso', () => {
+    // Chi parte da zero deve trovare, come PRIMA cosa, che cosa serve sapere
+    // prima, che problema si sta risolvendo e le parole nuove.
+    for (const topic of topics) {
+      const first = outline(topic.body)[0];
+      expect(first?.title, `modulo "${topic.id}"`).toBe('Da dove si parte');
     }
   });
 

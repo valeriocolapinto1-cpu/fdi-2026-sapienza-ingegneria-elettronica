@@ -31,6 +31,10 @@ export const io: Topic = {
       },
     ],
   body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> le interruzioni e le routine di servizio, dal modulo su <a href="#/study/irq">interruzioni ed eccezioni</a>.</p>
+    <p><b>Che problema risolve.</b> Un calcolatore che non comunica con l’esterno non serve a niente: deve leggere tastiere, scrivere su schermi, salvare su dischi, spedire in rete. Il guaio è che questi dispositivi sono <b>lentissimi</b> rispetto al processore — fra un tasto premuto e il successivo passano milioni di cicli — e ognuno funziona a modo suo. Serve quindi un modo uniforme di parlare con oggetti diversissimi, e una strategia per non sprecare tempo aspettandoli.</p>
+    <p><b>Le parole nuove.</b> Un’<b>interfaccia</b> (o controllore) è il circuito che sta fra il bus e il dispositivo e ne nasconde i dettagli, esponendo dei registri. <b>Memory-mapped</b> significa che quei registri hanno indirizzi di memoria come le celle normali. Il <b>DMA</b> (Direct Memory Access) è un componente che trasferisce dati fra dispositivo e memoria <i>senza</i> passare per il processore. L’<b>handshake</b> è il protocollo a due segnali con cui due parti si sincronizzano senza conoscere le rispettive velocità.</p>
     <h4>Il problema dell'I/O</h4>
     <p>Processore e memoria lavorano in nanosecondi, una tastiera in decimi di secondo, un disco
     in millisecondi. Tutta l'organizzazione dell'I/O nasce da questo <b>divario di velocità</b>:

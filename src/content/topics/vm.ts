@@ -30,6 +30,10 @@ export const vm: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> la gerarchia di memoria e il funzionamento della cache, dal modulo su <a href="#/study/mem">memoria e cache</a>. L’idea è la stessa, applicata un piano più in basso.</p>
+    <p><b>Che problema risolve.</b> Due problemi insieme. Il primo: i programmi vorrebbero più memoria di quella installata. Il secondo, più sottile: se più programmi girano insieme e usano indirizzi assoluti, si pestano i piedi — e uno può leggere o rovinare i dati dell’altro. La memoria virtuale risolve entrambi con una sola idea: <b>gli indirizzi che il programma usa non sono quelli fisici</b>. Fra i due c’è una traduzione, controllata dal sistema operativo, che può mandare una pagina su disco quando la memoria finisce e può negare l’accesso a ciò che non è tuo.</p>
+    <p><b>Le parole nuove.</b> Un <b>indirizzo virtuale</b> è quello che il programma produce; un <b>indirizzo fisico</b> è quello che arriva alla memoria. Una <b>pagina</b> è un blocco dello spazio virtuale, un <b>frame</b> il blocco fisico che la ospita: hanno la stessa dimensione. La <b>tabella delle pagine</b> è la mappa fra le due. Il <b>TLB</b> è una piccola cache delle traduzioni più recenti. Un <b>page fault</b> è l’eccezione che scatta quando la pagina richiesta non è in memoria.</p>
     <h4>Il problema</h4>
     <p>I programmi possono essere più grandi della memoria fisica, e più programmi devono coesistere senza pestarsi i piedi. La <b>memoria virtuale</b> risolve entrambe le cose: ogni processo lavora su uno spazio di indirizzi <b>logico</b> tutto suo, che il sistema mappa sulla memoria <b>fisica</b> disponibile, appoggiandosi al disco per ciò che non ci sta.</p>
 
@@ -59,6 +63,35 @@ export const vm: Topic = {
 
     <h4>Rapporto con la cache</h4>
     <p>Sono due meccanismi distinti che si sommano: il TLB accelera la <b>traduzione</b> degli indirizzi, la cache accelera l'<b>accesso ai dati</b>. Un accesso può quindi fare TLB hit e cache miss, o viceversa. Da tenere separati anche a parole: la cache sta fra CPU e memoria principale, la memoria virtuale fra memoria principale e disco.</p>
+    <h4>Tabelle a più livelli</h4>
+    <p>Una tabella con una voce per ogni pagina dello spazio virtuale è impraticabile: con indirizzi a 32 bit e pagine da 4 KiB servono 2²⁰ voci per processo, cioè megabyte di tabella — quasi tutti riferiti a pagine mai usate, perché nessun programma occupa davvero tutto lo spazio.</p>
+    <p>La soluzione è spezzare la traduzione in due (o più) passaggi. Il numero di pagina si divide in due campi: il primo indicizza una <b>directory</b>, che punta a una tabella di secondo livello; il secondo indicizza quella tabella, che contiene il frame.</p>
+    <pre>indirizzo virtuale a 32 bit, pagine da 4 KiB:
+
+┌──────────┬──────────┬────────────┐
+│ dir 10   │ tab 10   │ offset 12  │
+└──────────┴──────────┴────────────┘
+
+directory (1024 voci) → tabella (1024 voci) → frame</pre>
+    <p>Il guadagno: le tabelle di secondo livello si allocano <b>solo per le zone davvero usate</b>. Un processo che usa qualche megabyte ha una directory e due o tre tabelle, cioè poche decine di kilobyte invece di megabyte. Il prezzo è un accesso in memoria in più per ogni traduzione non presente nel TLB — motivo per cui il TLB, con i suoi tassi di successo del 99 %, diventa ancora più importante.</p>
+
+    <h4>Sostituzione delle pagine</h4>
+    <p>Quando la memoria fisica è piena e serve caricare una pagina, bisogna sfrattarne una. La scelta conta molto, perché ogni errore costa un accesso al disco:</p>
+    <ul>
+      <li><b>Ottimale</b>: sfratta la pagina che verrà usata più tardi nel futuro. Non è realizzabile — richiede di conoscere il futuro — ma serve da termine di paragone teorico.</li>
+      <li><b>LRU</b> (meno recentemente usata): approssima l’ottimale scommettendo sulla località temporale. Realizzarla in modo esatto richiederebbe di aggiornare un ordinamento a ogni accesso, troppo costoso.</li>
+      <li><b>Clock</b> (o seconda chance): l’approssimazione usata davvero. Ogni pagina ha un <b>bit di uso</b> che l’hardware mette a 1 a ogni accesso; il sistema operativo scorre le pagine in circolo, azzerando i bit che trova a 1 e sfrattando la prima che trova già a 0.</li>
+      <li><b>FIFO</b>: sfratta la più vecchia. Semplice ma cieca, può buttare fuori una pagina usatissima.</li>
+    </ul>
+    <p>Se la pagina sfrattata è stata modificata (bit <i>dirty</i> a 1) va prima riscritta su disco, quindi il fault costa il doppio. Per questo, a parità di condizioni, conviene sfrattare pagine pulite.</p>
+
+    <h4>Thrashing e insieme di lavoro</h4>
+    <p>Se i processi attivi richiedono complessivamente più pagine di quante ce ne stiano in memoria, il sistema entra in <b>thrashing</b>: ogni pagina caricata ne sfratta un’altra che serve subito dopo, e la macchina passa il tempo a spostare pagine invece di calcolare. Il sintomo è inconfondibile — disco al massimo, processore quasi fermo.</p>
+    <p>La difesa si basa sulla nozione di <b>insieme di lavoro</b> (working set): l’insieme delle pagine che un processo ha usato nell’ultimo intervallo di tempo. Se il sistema riesce a tenere in memoria l’insieme di lavoro di ogni processo attivo, i fault restano rari; quando non ci riesce, la contromisura è ridurre il numero di processi attivi, sospendendone alcuni per intero.</p>
+
+    <h4>Segmentazione, in breve</h4>
+    <p>La paginazione divide lo spazio in blocchi tutti uguali, senza guardare che cosa contengono. La <b>segmentazione</b> lo divide invece in parti di dimensione variabile che corrispondono a unità logiche: il codice, i dati, la pila. Il vantaggio è che i permessi si applicano a entità con un senso — il segmento di codice è di sola lettura ed eseguibile, quello dei dati scrivibile e non eseguibile.</p>
+    <p>Lo svantaggio è la <b>frammentazione esterna</b>: segmenti di dimensioni diverse lasciano buchi inutilizzabili. I sistemi reali combinano le due cose — segmenti divisi in pagine — prendendo la protezione dall’una e la gestione semplice della memoria dall’altra.</p>
     <h4>Esempio svolto</h4>
     <p><b>Traduci l'indirizzo virtuale <code>0x00403ABC</code>,</b> con pagine da 4 KiB, e sapendo che la pagina cercata sta nel frame <code>0x25</code>.</p>
     <pre>pagine da 4 KiB = 2¹² byte      →  offset = 12 bit = 3 cifre esadecimali

@@ -31,6 +31,10 @@ export const mem: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> che il processore legge istruzioni e dati dalla memoria tramite MAR e MDR, dal modulo sul <a href="#/study/cpu">processore</a>.</p>
+    <p><b>Che problema risolve.</b> Il processore vorrebbe una memoria enorme, velocissima ed economica. Non esiste: le memorie veloci sono piccole e costose, quelle capienti sono lente. Il divario è drammatico — un accesso alla memoria centrale costa decine o centinaia di cicli, durante i quali il processore non fa nulla. La soluzione non è un componente ma un’<b>organizzazione</b>: più livelli di memoria, dal piccolissimo e istantaneo all’enorme e lento, gestiti in modo che il dato che serve si trovi quasi sempre vicino. Funziona per una ragione statistica, non magica: i programmi non accedono alla memoria a caso.</p>
+    <p><b>Le parole nuove.</b> La <b>cache</b> è la memoria piccola e veloce interposta fra processore e memoria centrale. Un <b>hit</b> è quando il dato cercato c’è, un <b>miss</b> quando manca; il <b>miss penalty</b> è il tempo perso in quel caso. Un <b>blocco</b> (o linea) è l’unità di trasferimento fra i livelli, tipicamente qualche decina di byte. La <b>località</b> è la tendenza dei programmi a riusare gli stessi dati (temporale) e quelli vicini (spaziale).</p>
     <h4>La gerarchia</h4>
     <p>Scendendo dai registri alla memoria secondaria la capacità cresce e il costo per bit cala, ma il tempo di accesso peggiora di ordini di grandezza:</p>
     <pre>registri  →  cache L1  →  cache L2  →  memoria principale  →  disco

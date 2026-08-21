@@ -16,6 +16,10 @@ export const perf: Topic = {
     'Il parallelismo ha tre livelli: fra <b>istruzioni</b> (pipeline, superscalare), fra <b>dati</b> (SIMD), fra <b>processi</b> (multicore) — e i core condividono la memoria, da cui il problema della <b>coerenza delle cache</b>.',
   ],
   body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> il CPI e l’effetto degli stalli (<a href="#/study/pipe">pipeline</a>) e il costo dei miss di cache (<a href="#/study/mem">memoria</a>).</p>
+    <p><b>Che problema risolve.</b> Tutto il corso è pieno di scelte progettuali — più stadi o meno, cache più grande, istruzioni più semplici — e ognuna viene giustificata dicendo «così è più veloce». Ma più veloce di quanto, e misurato come? Serve una definizione precisa di prestazione, altrimenti si finisce a confrontare processori con la frequenza di clock, che è l’errore più comune e quasi sempre sbagliato. Questo modulo dà lo strumento per rispondere con i numeri, e la legge che dice fin dove può arrivare qualunque ottimizzazione.</p>
+    <p><b>Le parole nuove.</b> Il <b>tempo di CPU</b> è il tempo di esecuzione di un programma, e si scompone in tre fattori. I <b>MIPS</b> sono milioni di istruzioni al secondo — una misura ingannevole, e il modulo spiega perché. Un <b>benchmark</b> è un programma reale usato come metro di paragone. Lo <b>speedup</b> è il rapporto fra il tempo prima e dopo un miglioramento. <b>SIMD</b> significa una sola istruzione applicata a molti dati insieme.</p>
     <h4>Che cosa vuol dire «veloce»</h4>
     <p>Il tempo di esecuzione di un programma è il solo indicatore che conti davvero, e si scompone in tre fattori:</p>
     <pre>T = (N × S) / R
@@ -25,6 +29,37 @@ S = cicli di clock per istruzione      (organizzazione: pipeline, cache)
 R = frequenza di clock                 (tecnologia)</pre>
     <p>Ogni miglioramento agisce su uno dei tre. Il punto è che <b>non sono indipendenti</b>: un repertorio che riduce N con istruzioni più complesse tende ad aumentare S; alzare R accorcia il periodo e costringe a spezzare il lavoro in più stadi, il che aumenta gli stalli. Per questo la sola frequenza non dice nulla: due processori a 3 GHz possono differire del doppio.</p>
 
+    <h4>Quale tempo si misura</h4>
+    <p>Prima di calcolare bisogna decidere che cosa si sta contando, perché i numeri sono diversi:</p>
+    <ul>
+      <li><b>Tempo di risposta</b> (wall clock): quanto passa dall’avvio alla fine, orologio alla mano. Comprende l’attesa del disco, il tempo dato ad altri processi, tutto.</li>
+      <li><b>Tempo di CPU dell’utente</b>: i soli cicli spesi a eseguire il programma. È quello che compare nell’equazione delle prestazioni.</li>
+      <li><b>Tempo di CPU di sistema</b>: i cicli spesi dal sistema operativo per conto del programma (chiamate di sistema, gestione dell’I/O).</li>
+    </ul>
+    <p>Su una macchina scarica i tre valori sono vicini; su una macchina carica il tempo di risposta può essere molto maggiore senza che il programma sia peggiorato. Confrontare due processori con il tempo di risposta misurato in condizioni diverse è uno degli errori metodologici più comuni.</p>
+
+    <h4>Dove finiscono i cicli</h4>
+    <p>Il numero medio di cicli per istruzione non è una proprietà del processore ma del <b>processore più il programma</b>, e si scompone:</p>
+    <pre>S = S_ideale + stalli_memoria + stalli_pipeline + …
+
+esempio:  S = 1,0 + (0,3 accessi/istr × 5 % miss × 100 cicli)
+            + (0,2 salti/istr × 60 % presi × 2 cicli)
+          = 1,0 + 1,5 + 0,24 = 2,74</pre>
+    <p>Il conto mostra dove sta il problema: qui gli stalli di memoria pesano sei volte più di quelli sui salti, quindi lavorare sulla cache rende molto di più che raffinare la predizione. È lo stesso ragionamento di Amdahl applicato ai cicli invece che al tempo.</p>
+
+    <h4>I due muri</h4>
+    <p>Due limiti fisici spiegano l’evoluzione dei processori degli ultimi vent’anni.</p>
+    <p>Il <b>muro della memoria</b>: la velocità dei processori è cresciuta molto più in fretta di quella delle memorie, quindi il costo relativo di un miss è aumentato di continuo. Un accesso in memoria centrale, che una volta costava pochi cicli, oggi ne costa centinaia — ed è il motivo per cui le gerarchie di cache si sono fatte così profonde.</p>
+    <p>Il <b>muro della potenza</b>: il consumo dinamico cresce con f·C·V², e salire di frequenza richiede anche più tensione. Verso i 4 GHz il calore da smaltire è diventato ingestibile per un chip raffreddato ad aria. Da lì la svolta: invece di un core più veloce, <b>più core</b> alla stessa frequenza — che però sposta il problema sul software, perché il parallelismo va scritto, e Amdahl mette il tetto.</p>
+
+    <h4>Speedup su n core</h4>
+    <p>La formula di Amdahl applicata al parallelismo, con f la frazione parallelizzabile e n il numero di core:</p>
+    <pre>speedup(n) = 1 / ( (1 − f) + f/n )</pre>
+    <p>Qualche valore, per farsi un’idea di quanto sia severa:</p>
+    <pre>f = 0,50    n = 4 → 1,60×     n = 16 → 1,88×     n → ∞ →  2×
+f = 0,90    n = 4 → 3,08×     n = 16 → 6,40×     n → ∞ → 10×
+f = 0,99    n = 4 → 3,88×     n = 16 → 13,9×     n → ∞ → 100×</pre>
+    <p>Con metà del programma sequenziale, sedici core danno meno del doppio. Il calcolo parallelo diventa interessante solo quando f è vicinissimo a 1 — ed è per questo che le applicazioni che ne beneficiano davvero (grafica, simulazioni, reti neurali) sono quelle in cui lo stesso calcolo si ripete su molti dati indipendenti.</p>
     <h4>Un esempio numerico</h4>
     <p>Un programma esegue 10⁹ istruzioni su una macchina a 2 GHz con S = 1,5:</p>
     <pre>T = (10⁹ × 1,5) / (2 × 10⁹) = 0,75 s</pre>

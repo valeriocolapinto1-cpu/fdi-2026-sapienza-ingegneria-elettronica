@@ -29,6 +29,10 @@ export const irq: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> il ciclo prelievo-decodifica-esecuzione (<a href="#/study/cpu">processore</a>) e le chiamate di procedura con la pila (<a href="#/study/isa">repertorio di istruzioni</a>).</p>
+    <p><b>Che problema risolve.</b> Il processore esegue un’istruzione dopo l’altra e non guarda mai fuori. Ma il mondo esterno non aspetta: un tasto viene premuto, un pacchetto arriva, un timer scade. Come fa il processore ad accorgersene senza passare la vita a controllare? La risposta è ribaltare la direzione: non è il processore a chiedere, è il dispositivo a <b>chiamare</b>. Da qui nascono le interruzioni — e con lo stesso meccanismo si gestiscono anche gli errori che un’istruzione può provocare.</p>
+    <p><b>Le parole nuove.</b> Una <b>ISR</b> (Interrupt Service Routine) è la procedura che risponde a una richiesta. <b>Mascherare</b> un’interruzione significa dire temporaneamente «non ora». Un <b>vettore</b> di interruzione è l’indirizzo della routine da eseguire, fornito dal dispositivo stesso. <b>Asincrono</b> vuol dire «non legato all’istruzione in corso», <b>sincrono</b> il contrario. Il <b>contesto</b> è l’insieme di PC, stato e registri che permette di riprendere il programma interrotto come se nulla fosse.</p>
     <h4>Interruzioni</h4>
     <p>Segnali <b>hardware asincroni</b> che viaggiano sulle <b>linee di controllo</b> del bus, generati da dispositivi esterni. Sono asincroni nel senso che arrivano in un istante scorrelato dal programma in esecuzione.</p>
 

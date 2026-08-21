@@ -30,6 +30,10 @@ export const cpu: Topic = {
       },
     ],
     body: `
+    <h4>Da dove si parte</h4>
+    <p><b>Cosa serve sapere prima:</b> i <a href="#/study/ff">flip-flop e i registri</a> (per capire cosa «trattiene» un valore) e le <a href="#/study/comb">reti combinatorie</a>, in particolare i multiplexer.</p>
+    <p><b>Che problema risolve.</b> Abbiamo mattoni che calcolano e mattoni che ricordano. Ora si mettono insieme per costruire la macchina che <b>esegue programmi</b>: un circuito che prende dalla memoria una sequenza di istruzioni e le realizza una dopo l’altra, senza sapere nulla di che cosa quel programma faccia. Il modulo risponde a due domande: che pezzi ci sono dentro (il percorso dei dati) e chi decide in che ordine muoverli (l’unità di controllo).</p>
+    <p><b>Le parole nuove.</b> Il <b>datapath</b> (percorso dei dati) è l’insieme di registri, ALU e collegamenti su cui i dati viaggiano; l’<b>unità di controllo</b> è ciò che, istante per istante, apre e chiude i passaggi giusti. La <b>ALU</b> è l’unità aritmetico-logica, cioè il pezzo che calcola. Un <b>bus</b> è un fascio di fili condiviso su cui viaggia un dato per volta. L’<b>RTN</b> (Register Transfer Notation) è la notazione con cui si scrivono quei trasferimenti: <code>R1 ← [R2] + [R3]</code> si legge «in R1 va la somma dei contenuti di R2 e R3».</p>
     <h4>I registri che devi saper nominare</h4>
     <ul>
       <li><b>PC</b> (Program Counter): indirizzo della <b>prossima</b> istruzione.</li>
@@ -68,6 +72,30 @@ export const cpu: Topic = {
 
     <h4>RTN, la notazione richiesta</h4>
     <p>Le parentesi quadre significano «contenuto di». <code>Add R1,R2,R3</code> si scrive <code>R1 ← [R2]+[R3]</code>. «Aumenta di LOC il valore in R1» diventa <code>R1 ← [LOC]+[R1]</code>. Scrivere <code>R1 ← R2 + R3</code> senza parentesi significa sommare i <i>numeri dei registri</i>, non i loro contenuti.</p>
+    <h4>Che cosa succede in un ciclo di clock</h4>
+    <p>Un «passo» delle sequenze RTN non è un’astrazione: è esattamente ciò che accade fra due fronti di clock consecutivi. Nell’ordine:</p>
+    <ol>
+      <li>Al fronte, i registri catturano ciò che avevano in ingresso: lo stato del processore avanza di un passo.</li>
+      <li>L’unità di controllo, in base all’istruzione e al passo corrente, attiva i segnali di controllo — quali registri mettono il loro contenuto sul bus, quali lo prelevano, quale operazione fa la ALU.</li>
+      <li>I dati attraversano il combinatorio: bus, multiplexer, ALU. È qui che si consuma il tempo, e il percorso più lento è il cammino critico.</li>
+      <li>Prima del fronte successivo tutto deve essersi stabilizzato, con il margine richiesto dal setup dei registri.</li>
+    </ol>
+    <p>Da qui si vede perché il periodo di clock non può essere accorciato a piacere, e perché un datapath a bus singolo richiede più passi: non perché sia «lento», ma perché ogni passo può muovere un solo dato, quindi servono più passi per la stessa operazione.</p>
+
+    <h4>Il registro di stato</h4>
+    <p>Oltre a PC, IR, MAR e MDR c’è un registro che l’esame chiede spesso e che è facile dimenticare: il <b>registro di stato</b>, che raccoglie i bit di condizione prodotti dalla ALU:</p>
+    <pre>Z  (zero)      il risultato è 0
+N  (negative)  il risultato ha il bit di segno a 1
+V  (overflow)  overflow di complemento a 2
+C  (carry)     riporto uscente</pre>
+    <p>Servono ai <b>salti condizionati</b>: <code>Branch&gt;0</code> non riesamina il risultato, guarda i flag lasciati dall’operazione precedente. Il registro di stato contiene anche informazioni di sistema — la modalità (utente o supervisore) e il livello di mascheramento delle interruzioni — ed è per questo che va salvato insieme al PC quando arriva un’interruzione: senza, non si potrebbe riprendere il programma nelle stesse condizioni.</p>
+
+    <h4>Microprogrammazione, più da vicino</h4>
+    <p>In un’unità di controllo <b>microprogrammata</b> ogni passo delle sequenze RTN corrisponde a una <b>microistruzione</b> conservata in una memoria di controllo. Nella forma più semplice, ogni bit della microistruzione comanda direttamente un segnale di controllo:</p>
+    <pre>microistruzione = [ PC_out | MAR_in | Read | IR_in | R1_out | … | WMFC | End ]
+                    1        1        1      0       0            1      0</pre>
+    <p>Questa codifica si chiama <b>orizzontale</b>: massima libertà (si possono attivare più segnali insieme) ma microistruzioni larghissime. La codifica <b>verticale</b> comprime i segnali mutuamente esclusivi in campi codificati — meno bit, ma serve un decodificatore e si perde la possibilità di combinazioni arbitrarie.</p>
+    <p>L’esecuzione di un’istruzione macchina diventa allora l’esecuzione di un <b>microprogramma</b>: un contatore di microistruzioni scorre la sequenza, e il codice operativo dell’istruzione determina da quale indirizzo partire. È letteralmente un piccolo processore dentro il processore — e spiega sia la flessibilità dei CISC sia il loro costo in cicli.</p>
     <h4>Esempio svolto</h4>
     <p><b>Scrivi la sequenza di controllo completa di <code>Add R1, R2, R3</code> su un datapath a bus singolo</b> (R1 ← [R2] + [R3]).</p>
     <pre>1.  PC_out, MAR_in, Read, Select4, Add, Z_in     ; prelievo + PC ← [PC]+4
