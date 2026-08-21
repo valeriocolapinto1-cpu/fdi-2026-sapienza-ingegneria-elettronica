@@ -3,7 +3,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { topics, topicById, trapsForTopic, TOPIC_GROUPS } from '~/content';
 import { anchored, outline, readingMinutes } from '~/content/outline';
 import { diagramById } from '~/content/diagrams';
-import type { Topic, TopicCheck } from '~/content/types';
+import type { Topic, TopicCheck, TopicExercise } from '~/content/types';
 import { hrefFor, navigate } from '~/lib/router';
 import { markStudied, useProgress } from '~/store/progress';
 import { DiagramFigure } from '~/ui/components/DiagramFigure';
@@ -42,6 +42,51 @@ function CheckItem({ check, index }: { check: TopicCheck; index: number }): JSX.
         {open ? 'Nascondi la risposta' : 'Mostra la risposta'}
       </button>
       {open && <Rich class="chk-a" html={check.a} />}
+    </li>
+  );
+}
+
+/**
+ * Esercizio svolto.
+ *
+ * Suggerimento e svolgimento sono **due bottoni separati**: chiedere una
+ * spinta non deve costringere a vedere la soluzione, altrimenti l'esercizio
+ * si legge invece di farlo.
+ */
+function ExerciseItem({
+  exercise,
+  index,
+}: {
+  exercise: TopicExercise;
+  index: number;
+}): JSX.Element {
+  const [hint, setHint] = useState(false);
+  const [solution, setSolution] = useState(false);
+
+  return (
+    <li class="exr">
+      <div class="exr-top">
+        <span class="exr-n">{index + 1}</span>
+        <span class={`exr-lv ${exercise.level}`}>
+          {exercise.level === 'base' ? 'base' : "d'esame"}
+        </span>
+      </div>
+      <Rich class="exr-q" html={exercise.q} as="p" />
+      <div class="step-tools">
+        <button type="button" class="btn ghost mini" onClick={() => setHint((on) => !on)}>
+          {hint ? 'Nascondi il suggerimento' : 'Suggerimento'}
+        </button>
+        <button type="button" class="btn ghost mini" onClick={() => setSolution((on) => !on)}>
+          {solution ? 'Nascondi lo svolgimento' : 'Svolgimento'}
+        </button>
+      </div>
+      {hint && <Rich class="exr-h" html={exercise.hint} />}
+      {solution && (
+        <div class="exr-s">
+          <div class="exr-sl">Svolgimento</div>
+          <Rich html={exercise.solution} />
+        </div>
+      )}
     </li>
   );
 }
@@ -109,14 +154,21 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
         <nav class="toc" aria-label={`Indice di ${topic.title}`}>
           <p class="toc-t">In questo modulo</p>
           <ol>
-            {sections.map((section) => (
+            {[
+              ...sections,
+              { id: 'autoverifica', title: 'Autoverifica' },
+              { id: 'esercizi', title: `Esercizi (${topic.exercises.length})` },
+            ].map((section) => (
               <li key={section.id}>
-                <a href={`#/study/${topic.id}`} onClick={(event) => {
-                  // Il router vive nell'hash, quindi un `href="#ancora"`
-                  // cambierebbe rotta invece di scorrere: si scorre a mano.
-                  event.preventDefault();
-                  document.getElementById(section.id)?.scrollIntoView({ block: 'start' });
-                }}>
+                <a
+                  href={`#/study/${topic.id}`}
+                  onClick={(event) => {
+                    // Il router vive nell'hash, quindi un `href="#ancora"`
+                    // cambierebbe rotta invece di scorrere: si scorre a mano.
+                    event.preventDefault();
+                    document.getElementById(section.id)?.scrollIntoView({ block: 'start' });
+                  }}
+                >
                   {section.title}
                 </a>
               </li>
@@ -149,7 +201,9 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
         </>
       )}
 
-      <h2 class="sec">Autoverifica</h2>
+      <h2 class="sec" id="autoverifica">
+        Autoverifica
+      </h2>
       <p class="lead">
         Rispondi <b>prima</b> di scoprire la soluzione: riconoscere una risposta giusta è facile,
         produrla è un'altra cosa — ed è quella che serve sul foglio.
@@ -157,6 +211,20 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
       <ol class="checks">
         {topic.checks.map((check, index) => (
           <CheckItem key={index} check={check} index={index} />
+        ))}
+      </ol>
+
+      <h2 class="sec" id="esercizi">Esercizi</h2>
+      <p class="lead">
+        {topic.exercises.length} esercizi ·{' '}
+        {topic.exercises.filter((item) => item.level === 'base').length} di base,{' '}
+        {topic.exercises.filter((item) => item.level === 'esame').length} nel formato della prova.
+        Fai il conto <b>sul foglio</b>, poi confronta: il suggerimento è lì per rimetterti in
+        moto senza bruciare la soluzione.
+      </p>
+      <ol class="exrlist">
+        {topic.exercises.map((exercise, index) => (
+          <ExerciseItem key={exercise.id} exercise={exercise} index={index} />
         ))}
       </ol>
 

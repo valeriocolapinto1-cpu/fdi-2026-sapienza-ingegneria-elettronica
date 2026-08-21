@@ -116,4 +116,64 @@ A ⊕ B  (XOR)    differenza simmetrica   sta in uno solo dei due</pre>
       <li>Scambiare SOP e POS: la SOP guarda le righe a <b>1</b>, la POS quelle a <b>0</b> (e lì le variabili si scrivono negate).</li>
       <li>Dimenticare che <code>x + x = x</code>: è proprio ciò che permette di riusare un mintermine in più raccoglimenti.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-bool-1',
+        level: 'base',
+        q: 'Una funzione di tre variabili vale 1 sulle righe <code>000</code>, <code>010</code>, <code>101</code>, <code>111</code>. Scrivi la forma SOP e la forma POS, poi semplifica la SOP.',
+        hint: 'La SOP prende una riga a 1 per volta; la POS prende le righe a 0 e <b>nega</b> ogni variabile rispetto alla SOP. Per semplificare, raccogli guardando quali variabili restano costanti.',
+        solution: `<pre>A B C │ Y
+0 0 0 │ 1
+0 0 1 │ 0
+0 1 0 │ 1
+0 1 1 │ 0
+1 0 0 │ 0
+1 0 1 │ 1
+1 1 0 │ 0
+1 1 1 │ 1</pre><p><b>SOP</b> — un termine per ogni riga a 1, con la variabile negata dove vale 0:</p><pre>Y = Ā·B̄·C̄ + Ā·B·C̄ + A·B̄·C + A·B·C</pre><p><b>POS</b> — un termine somma per ogni riga a 0, con la variabile negata dove vale 1:</p><pre>Y = (A+B+C̄)·(A+B̄+C̄)·(Ā+B+C)·(Ā+B̄+C)</pre><p><b>Semplificazione</b>: nei primi due termini B compare una volta negata e una no, quindi sparisce; idem negli ultimi due.</p><pre>Y = Ā·C̄·(B̄ + B) + A·C·(B̄ + B) = Ā·C̄ + A·C</pre><p>Che è la funzione «A e C sono uguali», cioè lo <b>XNOR</b> di A e C: B non conta affatto.</p>`,
+      },
+      {
+        id: 'ex-bool-2',
+        level: 'base',
+        q: 'Dimostra che <code>A + Ā·B = A + B</code>.',
+        hint: 'Due strade: la tabella di verità (otto righe, quattro qui) oppure l’algebra, aggiungendo un termine che non cambia nulla.',
+        solution: `<p><b>Per tabella</b>:</p><pre>A B │ Ā·B │ A + Ā·B │ A + B
+0 0 │  0  │    0    │   0
+0 1 │  1  │    1    │   1
+1 0 │  0  │    1    │   1
+1 1 │  0  │    1    │   1</pre><p>Le due colonne coincidono. <b>Per algebra</b>, sfruttando A = A + A·B (assorbimento):</p><pre>A + Ā·B = A + A·B + Ā·B = A + B·(A + Ā) = A + B·1 = A + B</pre><p>Intuizione: se A vale 1 la somma vale 1 comunque; se A vale 0, allora Ā·B si riduce a B. In entrambi i casi il risultato è «A oppure B».</p>`,
+      },
+      {
+        id: 'ex-bool-3',
+        level: 'esame',
+        q: 'Nega l’espressione <code>Y = (A + B̄)·(C + D)</code> e portala in somma di prodotti.',
+        hint: 'De Morgan due volte: prima sul prodotto esterno, poi dentro ciascuna somma. Ricorda che cambia anche l’operatore, non solo le variabili.',
+        solution: `<pre>Ȳ = [ (A + B̄)·(C + D) ]̅
+
+primo De Morgan (il prodotto diventa somma):
+Ȳ = (A + B̄)̅ + (C + D)̅
+
+secondo De Morgan (dentro le parentesi):
+(A + B̄)̅ = Ā·B
+(C + D)̅ = C̄·D̄
+
+Ȳ = <b>Ā·B + C̄·D̄</b></pre><p>Controllo su un caso: con A=0, B=1, C=0, D=0 l’espressione di partenza vale (0+0)·(0+0) = 0, quindi Ȳ deve valere 1 — e infatti Ā·B = 1·1 = 1 ✓.</p>`,
+      },
+      {
+        id: 'ex-bool-4',
+        level: 'esame',
+        q: 'Realizza <code>Y = A·B + C</code> usando <b>solo porte NAND</b>. Quante ne servono?',
+        hint: 'Parti dalla forma negata due volte: <code>Y = (Ȳ)̅</code>. Una NAND con i due ingressi uniti è un NOT.',
+        solution: `<p>Si applica la doppia negazione e poi De Morgan:</p><pre>Y = A·B + C = [ (A·B)̅ · C̄ ]̅</pre><p>che è esattamente la NAND fra <code>(A·B)̅</code> e <code>C̄</code>. Servono <b>tre</b> NAND:</p><pre>N1 = A NAND B          → vale (A·B)̅
+N2 = C NAND C          → vale C̄  (NOT con ingressi uniti)
+Y  = N1 NAND N2        → vale A·B + C</pre><p>Verifica con A=1, B=1, C=0: N1 = 0, N2 = 1, Y = (0·1)̅ = 1 ✓. E con A=0, B=1, C=0: N1 = 1, N2 = 1, Y = (1·1)̅ = 0 ✓.</p>`,
+      },
+      {
+        id: 'ex-bool-5',
+        level: 'esame',
+        q: 'In un’aula, <b>A</b> è l’insieme di chi ha superato Analisi e <b>B</b> quello di chi ha superato Fisica. Traduci in algebra booleana: «ha superato <b>esattamente uno</b> dei due esami» e «non ne ha superato nessuno». Semplifica dove possibile.',
+        hint: 'Insiemi e algebra di Boole sono la stessa struttura: unione ↔ OR, intersezione ↔ AND, complemento ↔ NOT. Traduci la frase in insiemi e poi sostituisci gli operatori.',
+        solution: '<p><b>Esattamente uno</b> significa «A e non B, oppure B e non A»:</p><pre>(A ∩ B̄) ∪ (Ā ∩ B)   →   A·B̄ + Ā·B   =   A ⊕ B</pre><p>È la definizione stessa dello <b>XOR</b>, che infatti si chiama anche «somma disgiuntiva».</p><p><b>Nessuno dei due</b> è il complemento dell’unione:</p><pre>(A ∪ B)̅   →   (A + B)̅   =   Ā·B̄</pre><p>e il passaggio dall’una all’altra forma è <b>De Morgan</b>: il complemento di un’unione è l’intersezione dei complementi. È lo stesso teorema che si usa sui circuiti, scritto con simboli diversi.</p>',
+      },
+    ],
   };

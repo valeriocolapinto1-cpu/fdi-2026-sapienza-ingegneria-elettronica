@@ -92,4 +92,72 @@ t₅  ISR_disco finisce      → ripristina e torna al programma principale</pre
       <li>Dimenticare che l'ISR deve <b>salvare i registri che usa</b>: il programma interrotto non deve accorgersi di nulla.</li>
       <li>Confondere la priorità con l'ordine di arrivo: chi ha priorità maggiore passa avanti anche se ha chiesto dopo.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-irq-1',
+        level: 'base',
+        q: 'All’ingresso di una routine di servizio, che cosa va salvato e <b>chi</b> lo salva: l’hardware o il programmatore?',
+        hint: 'Alcune cose devono essere già al sicuro prima che parta la prima istruzione della routine; altre dipendono da quali registri la routine userà, e quello l’hardware non può saperlo.',
+        solution: `<pre>SALVA L'HARDWARE, automaticamente:
+  · il PC (l'indirizzo di ritorno)
+  · il registro di stato (i flag e il livello di priorità)
+
+SALVA LA ROUTINE, con istruzioni esplicite:
+  · tutti i registri generali che intende usare
+  · e li ripristina prima dell'istruzione di ritorno</pre><p>La divisione è obbligata: PC e stato vanno protetti <b>prima</b> che qualunque istruzione della routine possa alterarli, quindi ci pensa l’hardware. Quali registri generali servano dipende invece dal codice della routine, e solo chi lo scrive lo sa.</p><p>La regola che ne consegue: il programma interrotto <b>non deve accorgersi di nulla</b>. Se una routine dimentica di ripristinare un registro, il programma principale riprende con un valore alterato — e il difetto è quasi impossibile da riprodurre, perché dipende dall’istante in cui è arrivata l’interruzione.</p>`,
+      },
+      {
+        id: 'ex-irq-2',
+        level: 'base',
+        q: 'Classifica ciascun evento come <b>interruzione</b> o <b>eccezione</b>: tasto premuto · divisione per zero · pacchetto di rete arrivato · istruzione non riconosciuta · timer scaduto · accesso a una pagina non presente · overflow aritmetico · disco pronto.',
+        hint: 'La domanda decisiva è: l’evento è provocato dall’istruzione che si sta eseguendo, oppure sarebbe accaduto comunque?',
+        solution: `<pre>INTERRUZIONI (esterne, asincrone)     ECCEZIONI (interne, sincrone)
+  · tasto premuto                       · divisione per zero
+  · pacchetto di rete arrivato          · istruzione non riconosciuta
+  · timer scaduto                       · pagina non presente (page fault)
+  · disco pronto                        · overflow aritmetico</pre><p>Il criterio: le interruzioni della colonna di sinistra sarebbero arrivate lo stesso qualunque istruzione fosse in corso, e capitano <b>fra</b> due istruzioni. Le eccezioni di destra le provoca l’istruzione stessa, e rieseguendo lo stesso programma con gli stessi dati si ripresentano <b>nello stesso punto</b>.</p><p>Il page fault è il caso interessante: sembra un evento «di sistema», ma è un’eccezione a tutti gli effetti — è l’accesso in memoria appena tentato a provocarlo, e dopo che il sistema operativo ha caricato la pagina l’istruzione viene <b>rieseguita</b>.</p>`,
+      },
+      {
+        id: 'ex-irq-3',
+        level: 'esame',
+        q: 'Il programma principale è in esecuzione. Arriva una richiesta dal disco (priorità 2); mentre la sua routine è in corso arrivano, nell’ordine, il timer (priorità 5) e la stampante (priorità 1). Scrivi l’ordine in cui vengono servite e disegna l’annidamento.',
+        hint: 'Una richiesta interrompe la routine in corso solo se ha priorità <b>maggiore</b>. Le altre restano in attesa, non vengono perse.',
+        solution: `<pre>t₀  programma principale
+t₁  disco (p2)      → accolta: maschera portata a 2
+t₂    ISR disco
+t₃    timer (p5)    → 5 &gt; 2, accolta: interrompe l'ISR disco
+t₄      ISR timer
+t₅      stampante (p1) → 1 &lt; 5, NON accolta: resta in attesa
+t₆      ISR timer finisce → si torna dentro ISR disco
+t₇    ISR disco finisce → maschera torna a 0, e ora la
+                          stampante può essere servita
+t₈  ISR stampante
+t₉  programma principale</pre><p>Ordine di servizio: <b>disco → timer → (ripresa disco) → stampante → programma</b>.</p><p>Due punti che l’esame verifica: la richiesta della stampante <b>non si perde</b>, resta pendente finché la maschera scende sotto la sua priorità; e l’annidamento è ammesso solo verso l’alto, altrimenti una catena di richieste di pari livello riempirebbe la pila senza fine.</p>`,
+      },
+      {
+        id: 'ex-irq-4',
+        level: 'esame',
+        q: 'Un sistema ha 20 dispositivi. Con il <b>polling</b> ogni interrogazione costa 2 μs; con le interruzioni <b>vettorizzate</b> l’individuazione costa 0,5 μs indipendentemente dal numero. Calcola il tempo di individuazione medio e nel caso peggiore, e commenta.',
+        hint: 'Col polling si interrogano i dispositivi in sequenza finché non si trova quello che ha chiamato: la posizione nella lista determina il costo.',
+        solution: `<pre>POLLING
+  caso migliore  (1º della lista):  1 × 2 μs =  2 μs
+  caso medio     (10,5º):        10,5 × 2 μs = 21 μs
+  caso peggiore  (20º):            20 × 2 μs = 40 μs
+
+VETTORIZZATE
+  sempre:                                     0,5 μs</pre><p>Con le vettorizzate il costo è <b>costante</b> perché è il dispositivo a fornire l’indirizzo della propria routine: non c’è nessuna ricerca da fare. Col polling il costo cresce linearmente con il numero di dispositivi, e nel caso peggiore qui è ottanta volte tanto.</p><p>Il polling conserva però un vantaggio: l’ordine di interrogazione <b>è</b> una priorità, decisa dal software e modificabile senza toccare l’hardware. Nei sistemi con pochi dispositivi resta una scelta legittima proprio per la sua semplicità.</p>`,
+      },
+      {
+        id: 'ex-irq-5',
+        level: 'esame',
+        q: 'Clock a 500 MHz. L’istruzione più lunga dura 12 cicli, il salvataggio automatico dello stato 8 cicli, il corpo della routine 40 cicli, il ripristino 8 cicli. Qual è la <b>latenza massima</b> fra la richiesta e l’inizio effettivo del servizio? E il tempo totale di gestione?',
+        hint: 'La latenza è l’attesa <b>prima</b> di iniziare a servire: nel caso peggiore la richiesta arriva subito dopo l’inizio dell’istruzione più lunga.',
+        solution: `<pre>periodo di clock = 1 / 500 MHz = 2 ns
+
+LATENZA MASSIMA = fine istruzione in corso + salvataggio
+                = (12 + 8) cicli × 2 ns = <b>40 ns</b>
+
+TEMPO TOTALE    = 12 + 8 + 40 + 8 = 68 cicli × 2 ns = <b>136 ns</b></pre><p>Perché la latenza conta: in un sistema di controllo in tempo reale è il ritardo massimo con cui si può reagire a un evento fisico, e va confrontato con la scadenza imposta dal processo controllato.</p><p>Come si riduce: accorciando l’istruzione più lunga (i RISC nascono anche per questo, con istruzioni di durata uniforme), oppure rendendo <b>interrompibili</b> le istruzioni lunghe — cosa che complica il ripristino, perché bisogna poter riprendere l’istruzione a metà.</p>`,
+      },
+    ],
   };

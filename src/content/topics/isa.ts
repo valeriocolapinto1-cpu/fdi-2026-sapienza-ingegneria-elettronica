@@ -112,4 +112,79 @@ CICLO: Add   R1, (R2)      ; <b>indiretto</b>: R1 ← [R1] + contenuto puntato d
       <li>Avanzare il puntatore di 1 invece che della dimensione della parola (4 byte se le parole sono a 32 bit e la memoria è indirizzata al byte).</li>
       <li>Dimenticare di inizializzare l'accumulatore, o mettere il salto <b>prima</b> dell'aggiornamento del contatore.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-isa-1',
+        level: 'base',
+        q: 'Per ciascuna istruzione, di’ quale <b>modo di indirizzamento</b> usa e che cosa finisce in R1: <code>Move R1,#5</code> · <code>Move R1,5</code> · <code>Move R1,(R2)</code> · <code>Move R1,20(R2)</code> · <code>Move R1,(R2)+</code>.',
+        hint: 'La domanda da farsi ogni volta è: il campo scritto nell’istruzione è il <b>dato</b>, l’<b>indirizzo del dato</b>, o l’indirizzo di dove sta l’indirizzo?',
+        solution: `<pre>Move R1, #5       <b>immediato</b>   → R1 = 5 (la costante è nell'istruzione)
+Move R1, 5        <b>diretto</b>      → R1 = contenuto della cella 5
+Move R1, (R2)     <b>indiretto</b>    → R1 = contenuto della cella il cui
+                                 indirizzo sta in R2
+Move R1, 20(R2)   <b>base+spiazz.</b> → R1 = contenuto della cella [R2]+20;
+                                 R2 non cambia
+Move R1, (R2)+    <b>autoincremento</b> → come l'indiretto, ma dopo l'accesso
+                                 R2 avanza alla parola successiva</pre><p>Il cancelletto è la differenza fra <i>il numero 5</i> e <i>quello che c’è nella casella 5</i>. L’autoincremento esiste perché scorrere un vettore è l’operazione più frequente in assoluto: risparmia un’istruzione di somma a ogni giro.</p>`,
+      },
+      {
+        id: 'ex-isa-2',
+        level: 'base',
+        q: 'Traduci in assembly questo ciclo: <code>somma = 0; for (i = 0; i &lt; 10; i++) somma += i;</code>',
+        hint: 'Servono due registri (accumulatore e contatore) e un salto condizionato in coda. Occhio a dove metti il confronto.',
+        solution: `<pre>      Clear  R1              ; R1 = somma
+      Clear  R2              ; R2 = i
+CICLO: Add    R1, R1, R2      ; somma += i
+      Add    R2, R2, #1      ; i++
+      Cmp    R2, #10
+      Branch&lt;  CICLO         ; se i &lt; 10 ripeti
+      Move   SOMMA, R1</pre><p>Il salto è <b>in coda</b>, quindi il corpo viene eseguito almeno una volta: qui va bene perché il ciclo parte da i = 0 e deve girare di sicuro. Se il numero di iterazioni potesse essere zero, servirebbe un controllo anche <b>prima</b> del corpo.</p><p>Il risultato è 0+1+…+9 = 45. Un modo per verificare a mente una traduzione è sempre questo: eseguirla su un caso piccolo e confrontare con la formula.</p>`,
+      },
+      {
+        id: 'ex-isa-3',
+        level: 'esame',
+        q: 'Scrivi un programma che trova il <b>valore massimo</b> in un vettore di N interi che comincia all’indirizzo <code>VETT</code>.',
+        hint: 'Un registro tiene il massimo provvisorio, inizializzato al primo elemento; poi si scorre confrontando. Ricorda di avanzare il puntatore della dimensione della parola.',
+        solution: `<pre>      Move   R2, #VETT       ; puntatore al vettore
+      Move   R3, N           ; quanti elementi
+      Move   R1, (R2)        ; massimo provvisorio = primo elemento
+      Add    R2, R2, #4      ; passa al secondo
+      Sub    R3, R3, #1      ; ne resta uno in meno da esaminare
+
+CICLO: Move   R4, (R2)        ; elemento corrente
+      Cmp    R4, R1
+      Branch≤ AVANTI         ; se non è maggiore, lascia stare
+      Move   R1, R4          ; nuovo massimo
+AVANTI: Add    R2, R2, #4
+      Sub    R3, R3, #1
+      Branch&gt;0 CICLO
+
+      Move   MAX, R1</pre><p>Tre punti che l’esame guarda: il massimo è inizializzato al <b>primo elemento</b> e non a zero (altrimenti su un vettore tutto negativo la risposta sarebbe sbagliata); il puntatore avanza di <b>4</b> perché le parole sono a 32 bit su memoria indirizzata al byte; il contatore parte da N−1 perché il primo elemento è già stato consumato.</p>`,
+      },
+      {
+        id: 'ex-isa-4',
+        level: 'esame',
+        q: 'Il programma A chiama la procedura B, che a sua volta chiama C. Mostra come cambia la <b>pila</b> e spiega perché non basterebbe un registro per l’indirizzo di ritorno.',
+        hint: 'Ogni chiamata deposita qualcosa e ogni ritorno lo toglie, nell’ordine inverso. Prova a immaginare cosa accadrebbe con un solo registro.',
+        solution: `<pre>A chiama B →  pila:  [ ritorno in A ]                 ← SP
+
+B chiama C →  pila:  [ ritorno in A ]
+                     [ ritorno in B ]                 ← SP
+
+C ritorna  →  si estrae «ritorno in B», si salta lì
+              pila:  [ ritorno in A ]                 ← SP
+
+B ritorna  →  si estrae «ritorno in A», si salta lì
+              pila:  vuota</pre><p>Con un <b>solo registro</b> di ritorno, la chiamata da B a C lo sovrascriverebbe: al momento di tornare da C si tornerebbe correttamente in B, ma l’indirizzo di rientro in A sarebbe perduto e il programma non saprebbe più dove andare.</p><p>La pila risolve perché è <b>LIFO</b>, e le chiamate sono per natura annidate: l’ultima aperta è la prima a chiudersi. Oltre all’indirizzo di ritorno, sulla pila viaggiano i parametri, le variabili locali e i registri che la procedura deve preservare — l’insieme si chiama <b>record di attivazione</b>.</p>`,
+      },
+      {
+        id: 'ex-isa-5',
+        level: 'esame',
+        q: 'La parola <code>0x12345678</code> viene scritta a partire dall’indirizzo 100. Mostra il contenuto dei byte 100-103 in <b>big-endian</b> e in <b>little-endian</b>. Poi: leggendo un solo byte all’indirizzo 100, che cosa si ottiene nei due casi?',
+        hint: 'Big-endian mette per primo il byte «grande», cioè il più significativo. Little-endian fa il contrario. L’indirizzo della parola resta 100 in entrambi i casi.',
+        solution: `<pre>            100   101   102   103
+big-endian   12    34    56    78
+little-endian 78    56    34    12</pre><p>Leggendo un byte all’indirizzo 100 si ottiene <code>0x12</code> in big-endian e <code>0x78</code> in little-endian: lo <b>stesso indirizzo</b> restituisce dati diversi.</p><p>Perché conta: finché i dati restano nella stessa macchina la convenzione è invisibile. Diventa un problema quando si scambiano dati binari — un file, un pacchetto di rete, un dispositivo — fra macchine con convenzioni opposte. Per questo i protocolli di rete fissano un ordine (il <i>network byte order</i>, big-endian) e le macchine little-endian convertono in ingresso e in uscita.</p>`,
+      },
+    ],
   };

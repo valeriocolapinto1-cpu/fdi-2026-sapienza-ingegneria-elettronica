@@ -112,4 +112,53 @@ f_max = 1 / 10 ns = <b>100 MHz</b></pre>
       <li>Confondere il ritardo di propagazione (fra i 50 % di ingresso e uscita) con il tempo di <b>transizione</b> (dal 10 % al 90 % dell'uscita).</li>
       <li>Dimenticare setup e propagazione del flip-flop nel calcolo del periodo: il combinatorio non è tutto il tempo disponibile.</li>
     </ul>`,
+  exercises: [
+    {
+      id: 'ex-tech-1',
+      level: 'base',
+      q: 'Tre porte hanno ritardo 3 ns, 2 ns e 4 ns. Qual è il ritardo totale se sono <b>in cascata</b>? E se le prime due lavorano <b>in parallelo</b> e la terza riceve entrambe le uscite?',
+      hint: 'In cascata i ritardi si sommano perché il segnale le attraversa una dopo l’altra. In parallelo no: il risultato è pronto quando è pronto il <b>più lento</b> dei due rami.',
+      solution: `<pre>in cascata:   3 + 2 + 4 = <b>9 ns</b>
+
+in parallelo: max(3, 2) + 4 = 3 + 4 = <b>7 ns</b></pre><p>È l’errore più comune dell’argomento: sommare anche i rami paralleli, ottenendo 9 ns anche nel secondo caso. Il ritardo di una rete è quello del suo <b>cammino critico</b>, cioè il percorso ingresso→uscita più lento, non la somma di tutti i ritardi presenti.</p>`,
+    },
+    {
+      id: 'ex-tech-2',
+      level: 'base',
+      q: 'Una porta ha ritardo 1,5 ns quando pilota un solo ingresso, e ogni carico aggiuntivo aggiunge 0,2 ns. Quanto ritarda se pilota <b>otto</b> ingressi?',
+      hint: 'Il carico è capacitivo: ogni ingresso collegato è una capacità in più da caricare, e caricare più capacità richiede più tempo.',
+      solution: '<pre>t = 1,5 + (8 − 1) × 0,2 = 1,5 + 1,4 = <b>2,9 ns</b></pre><p>Quasi il doppio. Quando il fan-out è alto conviene inserire un <b>buffer</b>: paradossalmente si aggiunge un ritardo (quello del buffer) ma se ne toglie di più, perché la porta originale si trova a pilotare un solo ingresso e il buffer è progettato per erogare più corrente.</p><p>È lo stesso ragionamento per cui i segnali di clock, che devono raggiungere migliaia di flip-flop, viaggiano su un <i>albero</i> di buffer e non su un filo unico.</p>',
+    },
+    {
+      id: 'ex-tech-3',
+      level: 'esame',
+      q: 'Un sommatore a 16 bit va inserito fra due registri. Con il <b>ripple-carry</b> ogni stadio costa 2 ns; con il <b>carry-lookahead</b> l’intera somma costa 6 ns. Il resto dello stadio (propagazione del flip-flop più setup) costa 3 ns. Calcola la frequenza massima nei due casi.',
+      hint: 'Il periodo minimo è la somma di tutto ciò che deve accadere fra due fronti di clock consecutivi.',
+      solution: `<pre>RIPPLE-CARRY
+T ≥ 3 + (16 × 2) = 3 + 32 = 35 ns
+f_max = 1 / 35 ns ≈ <b>28,6 MHz</b>
+
+CARRY-LOOKAHEAD
+T ≥ 3 + 6 = 9 ns
+f_max = 1 / 9 ns ≈ <b>111 MHz</b></pre><p>Quasi quattro volte tanto. Il prezzo è in <b>area</b>: la logica di lookahead richiede molte più porte, e cresce rapidamente con il numero di bit — per questo nei sommatori larghi si usano blocchi di lookahead a 4 bit messi in cascata, che è un compromesso fra le due soluzioni.</p><p>Nota che il termine fisso di 3 ns non sparisce mai: è il motivo per cui, oltre un certo punto, accorciare il combinatorio smette di pagare.</p>`,
+    },
+    {
+      id: 'ex-tech-4',
+      level: 'esame',
+      q: 'Un circuito CMOS consuma 4 W a 1 GHz con alimentazione 1,0 V. Quanto consumerà a <b>2 GHz</b> a parità di tensione? E a 2 GHz con la tensione alzata a <b>1,2 V</b>?',
+      hint: 'Il consumo dinamico è proporzionale a f·C·V². La capacità non cambia: cambiano frequenza e tensione, e la tensione pesa al quadrato.',
+      solution: `<pre>P ∝ f · C · V²
+
+a 2 GHz, 1,0 V:   P = 4 × (2/1) = <b>8 W</b>
+
+a 2 GHz, 1,2 V:   P = 8 × (1,2/1,0)² = 8 × 1,44 = <b>11,5 W</b></pre><p>Raddoppiare la frequenza raddoppia il consumo; alzare la tensione del 20 % lo aumenta di un altro 44 %. E in pratica salire di frequenza <b>richiede</b> più tensione, perché i transistor devono commutare più in fretta: le due cose vanno insieme, e il consumo cresce quasi con il cubo.</p><p>È esattamente questa curva ad aver fermato la corsa ai gigahertz e spostato l’industria sul <b>multicore</b>: due core a 1 GHz consumano circa quanto uno a 1 GHz raddoppiato in area, ma molto meno di uno a 2 GHz.</p>`,
+    },
+    {
+      id: 'ex-tech-5',
+      level: 'esame',
+      q: 'Devi realizzare quattro funzioni logiche di otto variabili in un <b>prototipo</b> che verrà modificato più volte prima di essere definitivo. Scegli fra PLA, CPLD e FPGA, motivando.',
+      hint: 'La domanda non è quale sia il più potente, ma quale costi meno <b>modificare</b>.',
+      solution: '<p>La scelta è la <b>FPGA</b>. Le ragioni, nell’ordine che conta:</p><ul><li><b>Riconfigurabile</b> quante volte si vuole: una modifica costa una nuova programmazione, non un nuovo dispositivo. In un prototipo che cambia, è il criterio decisivo.</li><li><b>Capienza</b>: quattro funzioni di otto variabili stanno comodamente in una FPGA anche piccola, mentre una PLA con otto ingressi ha un numero limitato di termini prodotto e potrebbe non bastare.</li><li>Le <b>PLA/PAL</b> hanno piani AND-OR di dimensione fissa e, nelle versioni a fusibili, si programmano <b>una volta sola</b>: perfette per la produzione di una versione definitiva, non per un prototipo.</li><li>Il <b>CPLD</b> è la via di mezzo: riconfigurabile e con ritardi molto prevedibili, ma con meno risorse di una FPGA.</li></ul><p>Se la domanda fosse stata «grande volume di produzione, progetto congelato», la risposta sarebbe l’opposta: lì il costo unitario premia le soluzioni fisse, fino ad arrivare al circuito integrato dedicato.</p>',
+    },
+  ],
 };

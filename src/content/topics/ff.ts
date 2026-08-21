@@ -89,4 +89,51 @@ FF-D ↑  0  1 1 1   1     ← campiona SOLO sul fronte di salita</pre>
       <li>Dimenticare che nel JK la combinazione J = K = 1 <b>commuta</b> lo stato invece di essere proibita: è il motivo per cui esiste.</li>
       <li>Costruire un contatore asincrono (ogni flip-flop pilotato dall'uscita del precedente) e stupirsi dei <b>glitch</b>: i ritardi si sommano e le uscite non cambiano tutte insieme.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-ff-1',
+        level: 'base',
+        q: 'Come si ottiene un flip-flop <b>D</b> partendo da uno <b>SR</b>? Che cosa si guadagna?',
+        hint: 'Il problema dello SR è la combinazione S = R = 1. Basta rendere impossibile che i due ingressi valgano lo stesso valore.',
+        solution: `<pre>D ──┬────────── S
+    └──▷o────── R        (un solo invertitore)</pre><p>Con S = D e R = D̄ gli ingressi sono sempre opposti: le combinazioni possibili diventano due — S=1,R=0 (imposta) e S=0,R=1 (azzera) — e la combinazione proibita <b>non è più raggiungibile</b>.</p><p>Il guadagno è che il componente diventa utilizzabile senza precauzioni: qualunque valore di D produce un comportamento definito, cioè «al prossimo fronte l’uscita diventa D». È il motivo per cui i registri si costruiscono con flip-flop D e non con SR.</p>`,
+      },
+      {
+        id: 'ex-ff-2',
+        level: 'base',
+        q: 'Un flip-flop <b>JK</b> ha J = K = 1 in modo permanente e riceve un clock a 100 MHz. Che segnale esce da Q?',
+        hint: 'Guarda che cosa fa il JK con quella combinazione, e conta quanti fronti servono perché l’uscita torni al valore di partenza.',
+        solution: `<p>Con J = K = 1 il JK <b>commuta</b> a ogni fronte attivo: 0 → 1 → 0 → 1…</p><pre>clock  ↑    ↑    ↑    ↑    ↑    ↑
+Q      1    0    1    0    1    0</pre><p>Servono <b>due</b> fronti perché Q completi un periodo, quindi l’uscita è un’onda quadra a <b>50 MHz</b>: il flip-flop funziona da <b>divisore di frequenza per 2</b>.</p><p>Mettendone n in cascata si divide per 2ⁿ — ed è esattamente la struttura di un contatore asincrono, dove ogni stadio è pilotato dall’uscita del precedente.</p>`,
+      },
+      {
+        id: 'ex-ff-3',
+        level: 'esame',
+        q: 'Progetta un <b>contatore modulo 6</b> sincrono (conta 0…5 e riparte) a partire da un contatore binario a 3 bit.',
+        hint: 'Tre bit contano fino a 7. Serve rilevare il primo valore <b>di troppo</b> e usarlo per riportare il contatore a zero.',
+        solution: "<p>Il conteggio deve essere 000, 001, 010, 011, 100, 101 e poi tornare a 000. Il primo valore da non raggiungere è <b>6 = 110</b>.</p><pre>RESET = Q₂ · Q₁ · Q̄₀        (vale 1 quando l'uscita è 110)</pre><p>Il segnale RESET va all’ingresso di azzeramento <b>sincrono</b> del contatore: al fronte successivo l’uscita torna a 000.</p><p>Nota da esame: se l’azzeramento fosse <b>asincrono</b>, il valore 110 comparirebbe per un istante brevissimo prima di sparire — un <i>glitch</i> che può ingannare la logica a valle. Con l’azzeramento sincrono lo stato 110 non viene mai raggiunto. Lo stesso schema con <code>Q₃·Q₁</code> (cioè 1010) dà il contatore modulo 10, quello dei display decimali.</p>",
+      },
+      {
+        id: 'ex-ff-4',
+        level: 'esame',
+        q: 'Un registro a scorrimento a 4 bit contiene <code>1011</code> e scorre <b>a destra</b>. Entrano in serie, un bit per colpo di clock, i valori 1, 0, 1. Scrivi il contenuto dopo ogni colpo.',
+        hint: 'A ogni colpo tutti i bit si spostano di una posizione: il nuovo bit entra dalla parte opposta a quella in cui esce l’ultimo.',
+        solution: `<pre>partenza          1 0 1 1
+
+colpo 1, entra 1  1 1 0 1     (esce 1)
+colpo 2, entra 0  0 1 1 0     (esce 1)
+colpo 3, entra 1  1 0 1 1     (esce 0)</pre><p>Dopo tre colpi il contenuto è tornato a 1011 per pura coincidenza dei bit immessi — non c’è nessun ciclo automatico, a meno che l’uscita non venga <b>riportata all’ingresso</b>: in quel caso si ottiene un registro circolare, che ripete il contenuto ogni 4 colpi.</p><p>Da ricordare: con accesso <b>seriale</b> servono n colpi per caricare n bit, con accesso <b>parallelo</b> uno solo. La conversione fra i due è proprio ciò che fa un registro a scorrimento a caricamento parallelo, usato in ogni interfaccia seriale.</p>`,
+      },
+      {
+        id: 'ex-ff-5',
+        level: 'esame',
+        q: 'In uno stadio sincrono: ritardo di propagazione del flip-flop 2 ns, rete combinatoria 7 ns nel cammino più lungo e 1 ns in quello più corto, setup 1,5 ns, hold 0,5 ns. Qual è la <b>frequenza massima</b>? Il vincolo di hold è rispettato?',
+        hint: 'Due vincoli distinti: il periodo dipende dal cammino <b>più lungo</b>, il vincolo di hold dal <b>più corto</b> — e non dipende dal periodo.',
+        solution: `<p><b>Frequenza massima</b>, dal cammino lungo:</p><pre>T ≥ t_propagazione + t_combinatorio_max + t_setup
+  ≥ 2 + 7 + 1,5 = 10,5 ns
+
+f_max = 1 / 10,5 ns ≈ <b>95 MHz</b></pre><p><b>Vincolo di hold</b>, dal cammino corto: il dato nuovo non deve arrivare al flip-flop successivo prima che sia passato il tempo di hold dal fronte.</p><pre>t_propagazione + t_combinatorio_min ≥ t_hold
+2 + 1 = 3 ns  ≥  0,5 ns   ✓ rispettato</pre><p>Attenzione: rallentare il clock <b>non</b> risolve una violazione di hold, perché il vincolo non contiene il periodo. Si corregge solo allungando il cammino corto (per esempio inserendo dei buffer) — ed è per questo che le violazioni di hold sono considerate più gravi di quelle di setup.</p>`,
+      },
+    ],
   };

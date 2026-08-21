@@ -76,4 +76,58 @@ AB 00 | m0  m1  m3  m2
       <li>Coprire un gruppo di sole indifferenze: non serve a nulla, perché nessun 1 viene coperto.</li>
       <li>Dimenticare gli implicanti <b>essenziali</b>: vanno presi per primi, e spesso da soli chiudono quasi tutta la copertura.</li>
     </ul>`,
+    exercises: [
+      {
+        id: 'ex-kar-1',
+        level: 'base',
+        q: 'Minimizza con la mappa di Karnaugh <code>Y(A,B,C) = Σm(1,2,3,6)</code>.',
+        hint: 'Disegna la mappa con le colonne in ordine 00, 01, 11, 10. Poi cerca i gruppi più grandi possibile, ricordando che possono sovrapporsi.',
+        solution: `<pre>        BC
+      00  01  11  10
+A 0 │  0   1   1   1
+  1 │  0   0   0   1</pre><p>Gruppi individuabili: <code>m1,m3</code> (riga A=0, colonne con C=1) → <b>Ā·C</b>; <code>m2,m3</code> (riga A=0, colonne con B=1) → <b>Ā·B</b>; <code>m2,m6</code> (colonna BC=10, entrambe le righe) → <b>B·C̄</b>.</p><p>Quali sono <b>essenziali</b>? m1 è coperto solo da Ā·C, m6 solo da B·C̄: entrambi obbligatori. Presi quei due, restano coperti anche m3 e m2, quindi Ā·B non serve.</p><pre>Y = <b>Ā·C + B·C̄</b>      (2 termini, 4 letterali)</pre>`,
+      },
+      {
+        id: 'ex-kar-2',
+        level: 'base',
+        q: 'Minimizza <code>Y(A,B,C,D) = Σm(0,2,8,10)</code>.',
+        hint: 'Segna i quattro mintermini sulla mappa a 4 variabili e guarda <b>dove finiscono</b>. L’adiacenza è circolare: i bordi opposti si toccano.',
+        solution: `<pre>          CD
+       00  01  11  10
+AB 00 │  1   0   0   1
+   01 │  0   0   0   0
+   11 │  0   0   0   0
+   10 │  1   0   0   1</pre><p>I quattro 1 stanno nei <b>quattro angoli</b>. Non è un caso: prima e ultima riga sono adiacenti (AB = 00 e 10 differiscono di un bit), e così prima e ultima colonna. I quattro angoli formano quindi un gruppo di 4 celle valido.</p><p>Dentro il gruppo A cambia (0 e 1) e C cambia (0 e 1); restano costanti B = 0 e D = 0:</p><pre>Y = <b>B̄·D̄</b>      (1 termine, 2 letterali)</pre><p>Chi non usa il wrap-around scrive quattro termini di quattro letterali invece di uno di due.</p>`,
+      },
+      {
+        id: 'ex-kar-3',
+        level: 'esame',
+        q: 'Minimizza <code>Y(A,B,C,D) = Σm(1,3,7,11,15) + d(0,2,5)</code>, dove <code>d</code> sono le <b>indifferenze</b>.',
+        hint: 'Le indifferenze si prendono come 1 <b>solo se allargano un gruppo</b>. Valutale una per una: quelle che non servono restano 0.',
+        solution: `<pre>          CD
+       00  01  11  10
+AB 00 │  x   1   1   x
+   01 │  0   x   1   0
+   11 │  0   0   1   0
+   10 │  0   0   1   0</pre><p>Primo gruppo evidente: la colonna <code>CD = 11</code> per intero — m3, m7, m15, m11 — dove restano costanti C = 1 e D = 1:</p><pre>C·D</pre><p>Resta scoperto m1. Da solo darebbe Ā·B̄·C̄·D, quattro letterali. Ma prendendo le indifferenze m0 e m2 (più m3, già a 1) si forma il quadrato della riga AB = 00:</p><pre>Ā·B̄        ← copre m0, m1, m2, m3</pre><p>L’indifferenza m5 invece non aiuta nessun gruppo e resta a 0.</p><pre>Y = <b>C·D + Ā·B̄</b>      (2 termini, 4 letterali)</pre><p>Senza sfruttare le indifferenze si sarebbe ottenuto <code>C·D + Ā·B̄·C̄·D</code>: corretto, ma con due letterali in più — cioè meno punti.</p>`,
+      },
+      {
+        id: 'ex-kar-4',
+        level: 'esame',
+        q: 'Minimizza <code>Y(A,B,C) = Σm(0,1,2,5,6,7)</code>. Quanti implicanti <b>essenziali</b> ci sono?',
+        hint: 'Elenca tutti gli implicanti primi e, per ogni mintermine, conta da quanti è coperto. Un mintermine coperto da un solo primo rende quel primo essenziale.',
+        solution: `<pre>        BC
+      00  01  11  10
+A 0 │  1   1   0   1
+  1 │  0   1   1   1</pre><p>Implicanti primi (tutte coppie, nessun gruppo di 4 è possibile):</p><pre>Ā·B̄ (m0,m1)   Ā·C̄ (m0,m2)   B̄·C (m1,m5)
+B·C̄ (m2,m6)   A·C  (m5,m7)   A·B  (m6,m7)</pre><p>Ogni mintermine è coperto da <b>esattamente due</b> primi: m0 da Ā·B̄ e Ā·C̄, m1 da Ā·B̄ e B̄·C, e così via. Quindi <b>nessun implicante è essenziale</b>: la mappa è <i>ciclica</i>, ed è il caso in cui la regola «prendi gli essenziali» non basta.</p><p>Si sceglie allora una copertura minima per tentativi: servono tre termini, e ce ne sono due possibili, entrambe accettabili.</p><pre>Y = Ā·B̄ + B·C̄ + A·C      oppure      Y = Ā·C̄ + B̄·C + A·B</pre>`,
+      },
+      {
+        id: 'ex-kar-5',
+        level: 'esame',
+        q: 'Per la stessa funzione dell’esercizio precedente — <code>Y(A,B,C) = Σm(0,1,2,5,6,7)</code> — ricava la forma <b>POS</b> raggruppando gli zeri. È più corta della SOP?',
+        hint: 'Raggruppando gli zeri si minimizza Ȳ. Poi si nega il risultato con De Morgan per tornare a Y.',
+        solution: '<p>Gli zeri sono due soli: m3 (011) e m4 (100). Non sono adiacenti — differiscono in tutti e tre i bit — quindi restano due termini isolati:</p><pre>Ȳ = Ā·B·C + A·B̄·C̄</pre><p>Negando con De Morgan (il complemento di una somma di prodotti è un prodotto di somme, con ogni letterale invertito):</p><pre>Y = (A + B̄ + C̄) · (Ā + B + C)      (2 termini, 6 letterali)</pre><p>Confronto con la SOP minima trovata prima (3 termini, 6 letterali): la POS usa <b>un termine in meno</b> a parità di letterali. Con pochi zeri conviene quasi sempre provarla, ed è per questo che il raggruppamento degli zeri va sempre tentato prima di consegnare.</p>',
+      },
+    ],
   };

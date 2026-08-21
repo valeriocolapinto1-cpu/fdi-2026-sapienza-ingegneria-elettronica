@@ -71,6 +71,34 @@ describe('content layer', () => {
     }
   });
 
+  it('ogni modulo ha cinque esercizi, con suggerimento e svolgimento', () => {
+    const ids = new Set<string>();
+    for (const topic of topics) {
+      expect(topic.exercises.length, `modulo "${topic.id}"`).toBeGreaterThanOrEqual(5);
+      // Se sono tutti «base» non si sta preparando un esame; se sono tutti
+      // «esame» non si impara il meccanismo.
+      const esame = topic.exercises.filter((item) => item.level === 'esame').length;
+      expect(esame, `modulo "${topic.id}": pochi esercizi d'esame`).toBeGreaterThanOrEqual(2);
+      expect(
+        topic.exercises.filter((item) => item.level === 'base').length,
+        `modulo "${topic.id}": nessun esercizio di base`,
+      ).toBeGreaterThanOrEqual(1);
+
+      for (const exercise of topic.exercises) {
+        expect(ids.has(exercise.id), `id duplicato: ${exercise.id}`).toBe(false);
+        ids.add(exercise.id);
+        expect(exercise.q.trim().length, exercise.id).toBeGreaterThan(40);
+        expect(exercise.hint.trim().length, `${exercise.id}: suggerimento`).toBeGreaterThan(40);
+        // Uno svolgimento più corto della traccia non è uno svolgimento.
+        expect(
+          exercise.solution.length,
+          `${exercise.id}: soluzione più corta della traccia`,
+        ).toBeGreaterThan(exercise.q.length);
+        expect(exercise.solution.length, `${exercise.id}: soluzione`).toBeGreaterThan(200);
+      }
+    }
+  });
+
   it('ogni modulo ha un esempio svolto e gli errori tipici', () => {
     // Un esame è fatto di esercizi: la teoria senza un esempio con i numeri
     // non insegna a farli, e l'elenco degli errori tipici è ciò che separa

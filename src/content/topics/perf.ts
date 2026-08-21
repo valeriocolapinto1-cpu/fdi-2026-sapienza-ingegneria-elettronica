@@ -75,4 +75,60 @@ R = frequenza di clock                 (tecnologia)</pre>
       a: 'Perché i punteggi sono <b>rapporti</b> rispetto a una macchina di riferimento: la media geometrica di rapporti dà lo stesso ordinamento qualunque sia il riferimento scelto, mentre la media aritmetica cambia risultato al cambiare della macchina di base.',
     },
   ],
+  exercises: [
+    {
+      id: 'ex-perf-1',
+      level: 'base',
+      q: 'Un programma esegue <b>2 × 10⁹</b> istruzioni con un numero medio di cicli per istruzione pari a <b>1,8</b>, su un processore a <b>3 GHz</b>. Quanto dura?',
+      hint: 'Applica direttamente l’equazione delle prestazioni, badando alle unità di misura.',
+      solution: `<pre>T = (N × S) / R
+  = (2×10⁹ × 1,8) / (3×10⁹ Hz)
+  = 3,6×10⁹ cicli / 3×10⁹ cicli al secondo
+  = <b>1,2 s</b></pre><p>Da qui si legge subito quanto vale ogni miglioramento. Portare S da 1,8 a 1,5 (cache migliore) darebbe 1,0 s; portare la frequenza da 3 a 3,6 GHz darebbe la stessa cosa. Le due strade sono equivalenti sul risultato ma non sul costo: la prima è organizzazione, la seconda è consumo e calore.</p>`,
+    },
+    {
+      id: 'ex-perf-2',
+      level: 'base',
+      q: 'La macchina A ha clock 2,5 GHz e S = 1,2. La macchina B ha clock 3 GHz e S = 1,8. Sullo stesso programma, quale è più veloce e di quanto?',
+      hint: 'A parità di programma N è lo stesso, quindi si può confrontare direttamente S/R.',
+      solution: `<pre>T_A = N × 1,2 / 2,5×10⁹ = N × 0,48 ns
+T_B = N × 1,8 / 3,0×10⁹ = N × 0,60 ns
+
+T_B / T_A = 0,60 / 0,48 = 1,25</pre><p>La macchina <b>A è il 25 % più veloce</b>, pur avendo la frequenza più bassa: il suo vantaggio su S (1,2 contro 1,8) più che compensa i 500 MHz in meno.</p><p>È la risposta alla domanda-trappola «un processore a frequenza più alta è più veloce?». No: la frequenza è un fattore su tre, e da sola non dice niente. Il confronto ha senso solo <b>a parità di programma</b>, perché anche N cambia da macchina a macchina.</p>`,
+    },
+    {
+      id: 'ex-perf-3',
+      level: 'esame',
+      q: 'Un programma spende il <b>25 %</b> del tempo in una funzione che riscrivi rendendola <b>8 volte</b> più veloce. Qual è il guadagno complessivo? E se la rendessi infinitamente veloce?',
+      hint: 'Legge di Amdahl. Attenzione: <i>f</i> è la frazione di <b>tempo</b> occupata dalla parte migliorata, non la sua dimensione nel codice.',
+      solution: `<pre>speedup = 1 / ( (1 − f) + f/k )
+        = 1 / ( 0,75 + 0,25/8 )
+        = 1 / ( 0,75 + 0,03125 )
+        = 1 / 0,78125 = <b>1,28×</b>
+
+limite con k → ∞:
+        = 1 / 0,75 = <b>1,33×</b></pre><p>Otto volte più veloce su un quarto del tempo produce appena il 28 % di guadagno; e anche azzerando del tutto quella parte non si supera il 33 %. Il collo di bottiglia è il 75 % non toccato.</p><p>Conseguenza operativa: <b>misurare prima di ottimizzare</b>. Investire settimane su una funzione che pesa il 25 % ha un tetto del 33 %; la stessa fatica su una che pesa il 70 % ne vale molto di più. È il motivo per cui i profiler esistono.</p>`,
+    },
+    {
+      id: 'ex-perf-4',
+      level: 'esame',
+      q: 'Un programma è parallelizzabile all’<b>80 %</b>. Quanti core servono per dimezzare il tempo di esecuzione? E qual è il massimo guadagno raggiungibile con infiniti core?',
+      hint: 'Amdahl con k = numero di core sulla parte parallela. Imposta lo speedup a 2 e risolvi.',
+      solution: `<pre>speedup = 1 / ( 0,20 + 0,80/k ) = 2
+
+0,20 + 0,80/k = 0,5
+0,80/k = 0,3
+k = 0,80 / 0,3 ≈ <b>2,7 → 3 core</b>
+
+limite con k → ∞:  1 / 0,20 = <b>5×</b></pre><p>Tre core bastano per raddoppiare la velocità, ma per triplicarla ne servirebbero 8, e oltre 5× non si va <b>mai</b>, nemmeno con mille core. Il 20 % sequenziale è un muro.</p><p>E il conto è ancora ottimistico: non tiene conto del costo di <b>sincronizzazione</b>, che cresce con il numero di core e a un certo punto può far <i>peggiorare</i> le prestazioni aggiungendo processori. È la ragione per cui il parallelismo non è una soluzione universale.</p>`,
+    },
+    {
+      id: 'ex-perf-5',
+      level: 'esame',
+      q: 'Due benchmark: sul primo la macchina X è <b>10 volte</b> più veloce del riferimento, sul secondo è <b>0,1 volte</b> (cioè dieci volte più lenta). Calcola il punteggio con la media <b>aritmetica</b> e con la <b>geometrica</b>, e di’ quale è corretta.',
+      hint: 'La media giusta è quella che non cambia se si sceglie una macchina di riferimento diversa. Prova a immaginare di invertire i ruoli.',
+      solution: `<pre>media aritmetica = (10 + 0,1) / 2 = <b>5,05</b>
+media geometrica = √(10 × 0,1) = √1 = <b>1,0</b></pre><p>L’aritmetica dice che X è cinque volte più veloce del riferimento: assurdo, visto che su un benchmark vince di dieci e sull’altro perde di dieci. La geometrica dice <b>1,0</b>, cioè pari — che è la lettura sensata.</p><p>Il motivo formale: i punteggi sono <b>rapporti</b>. La media geometrica di rapporti gode della proprietà che, invertendo il riferimento, il risultato si inverte coerentemente e l’<b>ordinamento fra le macchine non cambia</b>. La media aritmetica no: cambiando macchina di riferimento può cambiare persino chi vince, il che la rende inutilizzabile per un confronto.</p><p>È per questo che le suite SPEC pubblicano medie geometriche, e la ragione per cui un punteggio sintetico va sempre letto sapendo <b>come</b> è stato aggregato.</p>`,
+    },
+  ],
 };
