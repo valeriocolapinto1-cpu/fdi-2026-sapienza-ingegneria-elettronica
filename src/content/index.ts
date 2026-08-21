@@ -17,7 +17,7 @@ const MINIMUMS = {
   open: 12,
   asmWrite: 2,
   topics: 17,
-  figures: 9,
+  figures: 150,
   traps: 5,
   links: 6,
 } as const;

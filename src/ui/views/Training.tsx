@@ -109,18 +109,32 @@ function DiagramGym({ initial }: { initial: string | null }): JSX.Element {
         nessuna parte. Qui è lo stesso, e la correzione è immediata.
       </p>
 
-      <div class="def-filters" role="group" aria-label="Scegli lo schema">
-        {diagrams.map((diagram) => (
-          <button
-            key={diagram.id}
-            type="button"
-            class={`def-chip${diagram.id === current.id ? ' on' : ''}`}
-            aria-pressed={diagram.id === current.id}
-            onClick={() => restart(diagram)}
-          >
-            {diagram.title}
-          </button>
-        ))}
+      {/* Gli schemi sono quarantacinque: una tendina, non una fila di bottoni. */}
+      <div class="field">
+        <label for="dg-pick">Schema</label>
+        <select
+          id="dg-pick"
+          style="max-width:min(420px,100%)"
+          value={current.id}
+          onChange={(event) => {
+            const chosen = diagramById((event.target as HTMLSelectElement).value);
+            if (chosen) restart(chosen);
+          }}
+        >
+          {diagrams.map((diagram) => (
+            <option key={diagram.id} value={diagram.id}>
+              {diagram.title}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          class="btn ghost mini"
+          onClick={() => restart(diagrams[Math.floor(Math.random() * diagrams.length)] as Diagram)}
+        >
+          A caso ↻
+        </button>
+        <span class="fn">{diagrams.length} schemi</span>
       </div>
 
       <DiagramQuiz
