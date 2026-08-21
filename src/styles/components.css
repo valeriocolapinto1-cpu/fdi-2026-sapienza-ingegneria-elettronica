@@ -1542,3 +1542,13 @@
     color: var(--color-code);
   }
 }
+
+@layer components {
+  /* ═══════════ catalogo delle figure ═══════════ */
+
+  /* Una figura ridisegnata occupa spazio: le voci solo elencate restano
+     nella griglia compatta, queste hanno il loro respiro. */
+  .figdraw {
+    margin-bottom: 26px;
+  }
+}

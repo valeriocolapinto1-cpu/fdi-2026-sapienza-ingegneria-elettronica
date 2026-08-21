@@ -33,7 +33,10 @@ del browser.
 - **Allenamento** — quattro palestre che fanno fare il procedimento e correggono ogni passaggio:
   binario a mano, schemi da completare, verità e Karnaugh, assembly da eseguire a mente. In
   fondo restano i convertitori, come banco di verifica.
-- **Riferimenti** — gli schemi ridisegnati da saper completare, le trappole, testi e link.
+- **Riferimenti** — il **catalogo completo delle figure del testo**, 156 tavole capitolo per
+  capitolo, con filtro per capitolo e per «solo schemi da completare». 45 sono **ridisegnate in
+  SVG originale** e si possono completare come all'esame; le altre restano in elenco, per sapere
+  cosa saper disegnare e dove ritrovarle sul libro. Più le trappole, i testi e i link.
 
 Nessun backend: nessun account, nessun dato inviato da nessuna parte. I progressi restano nel
 browser.
@@ -49,9 +52,9 @@ browser.
 | `asmWrite.ts` | Esercizi «scrivi un programma» |
 | `topics/` | Moduli di studio, uno per file; `index.ts` fissa l'ordine e i gruppi |
 | `definitions.ts` | I termini da saper enunciare |
-| `diagrams.ts` | Schemi ridisegnati, con gli slot da completare |
+| `diagrams.ts` | I 45 schemi ridisegnati, con gli slot da completare |
 | `traps.ts` | Trappole del docente |
-| `figures.ts` | Figure di Hamacher da saper completare |
+| `figures.ts` | Catalogo delle figure del testo, con capitolo e argomento |
 | `links.ts` | Testi e risorse |
 
 Un modulo di studio porta con sé, oltre al corpo della teoria: `summary` (il ripasso «in due

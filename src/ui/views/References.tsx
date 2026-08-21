@@ -1,53 +1,127 @@
 import type { JSX } from 'preact';
+import { useMemo, useState } from 'preact/hooks';
 import { figures, links, traps } from '~/content';
+import { FIGURE_AREAS } from '~/content/figures';
 import { diagramById } from '~/content/diagrams';
+import type { Figure } from '~/content/types';
 import { hrefFor } from '~/lib/router';
 import { DiagramFigure } from '~/ui/components/DiagramFigure';
 import { TrapNote } from '~/ui/components/TrapNote';
 
+/** Una figura del catalogo: schema ridisegnato se c'è, altrimenti solo la voce. */
+function FigureEntry({ figure }: { figure: Figure }): JSX.Element {
+  const diagram = figure.diagramId ? diagramById(figure.diagramId) : undefined;
+
+  if (!diagram) {
+    return (
+      <div class="fig">
+        <div class="fn">{figure.code}</div>
+        <div class="fd">{figure.desc}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div class="figdraw">
+      <div class="fn" style="margin-bottom:2px">
+        {figure.code} · {figure.desc}
+      </div>
+      <DiagramFigure diagram={diagram} />
+      <a class="btn ghost mini" href={hrefFor('train', diagram.id)}>
+        Esercitati a completarlo ▶
+      </a>
+    </div>
+  );
+}
+
 export function References(): JSX.Element {
-  const drawn = figures.filter((figure) => figure.diagramId);
-  const onlyListed = figures.filter((figure) => !figure.diagramId);
+  const [area, setArea] = useState<string | 'tutte'>('tutte');
+  const [soloSchemi, setSoloSchemi] = useState(false);
+
+  const shown = useMemo(
+    () =>
+      figures
+        .filter((figure) => (area === 'tutte' ? true : figure.area === area))
+        .filter((figure) => (soloSchemi ? Boolean(figure.diagramId) : true)),
+    [area, soloSchemi],
+  );
+
+  const drawn = figures.filter((figure) => figure.diagramId).length;
+  const areas = useMemo(
+    () => FIGURE_AREAS.filter((name) => shown.some((figure) => figure.area === name)),
+    [shown],
+  );
 
   return (
     <section class="view">
       <p class="eyebrow">Cassetta degli attrezzi</p>
       <h1 class="h">Riferimenti &amp; trappole</h1>
-
-      <h2 class="sec">Schemi da saper completare</h2>
       <p class="lead">
-        All'esame c'è sempre un «completare l'immagine»: si riceve il disegno con alcune etichette
-        mancanti e l'elenco di quelle da collocare. Questi sono ridisegnati: studiali finché li
-        rifai a memoria, poi mettiti alla prova.
+        Il catalogo completo delle figure del testo — <b>{figures.length} tavole</b>, capitolo per
+        capitolo — con <b>{drawn} schemi ridisegnati</b> su cui esercitarsi. All'esame c'è sempre un
+        «completare l'immagine»: si riceve il disegno con alcune etichette mancanti e l'elenco di
+        quelle da collocare, con qualche etichetta in più che non va da nessuna parte.
       </p>
-      <div style="margin-top:14px">
-        {drawn.map((figure) => {
-          const diagram = diagramById(figure.diagramId as string);
-          if (!diagram) return null;
-          return (
-            <div key={figure.id} style="margin-bottom:26px">
-              <div class="fn" style="margin-bottom:2px">
-                {figure.code} · {figure.desc}
-              </div>
-              <DiagramFigure diagram={diagram} />
-              <a class="btn ghost mini" href={hrefFor('train', diagram.id)}>
-                Esercitati a completarlo ▶
-              </a>
-            </div>
-          );
-        })}
+
+      <div class="panel" style="margin-top:14px">
+        <div class="def-filters" role="group" aria-label="Filtra per capitolo">
+          <button
+            type="button"
+            class={`def-chip${area === 'tutte' ? ' on' : ''}`}
+            aria-pressed={area === 'tutte'}
+            onClick={() => setArea('tutte')}
+          >
+            Tutti i capitoli
+          </button>
+          {FIGURE_AREAS.map((name) => (
+            <button
+              key={name}
+              type="button"
+              class={`def-chip${area === name ? ' on' : ''}`}
+              aria-pressed={area === name}
+              onClick={() => setArea(name)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+        <div class="def-filters" style="margin-top:10px">
+          <button
+            type="button"
+            class={`def-chip${soloSchemi ? ' on' : ''}`}
+            aria-pressed={soloSchemi}
+            onClick={() => setSoloSchemi((on) => !on)}
+          >
+            {soloSchemi ? '✓ Solo schemi da completare' : 'Solo schemi da completare'}
+          </button>
+        </div>
       </div>
 
-      <h2 class="sec">Altre figure da studiare sul testo</h2>
-      <p class="lead">Non ancora ridisegnate qui: guardale su Hamacher.</p>
-      <div class="figlist" style="margin-top:14px">
-        {onlyListed.map((figure) => (
-          <div class="fig" key={figure.id}>
-            <div class="fn">{figure.code}</div>
-            <div class="fd">{figure.desc}</div>
+      <p class="fn" style="margin-top:14px" aria-live="polite">
+        {shown.length} {shown.length === 1 ? 'figura' : 'figure'} ·{' '}
+        {shown.filter((figure) => figure.diagramId).length} ridisegnate
+      </p>
+
+      {areas.map((name) => {
+        const inArea = shown.filter((figure) => figure.area === name);
+        const disegnate = inArea.filter((figure) => figure.diagramId);
+        const elencate = inArea.filter((figure) => !figure.diagramId);
+        return (
+          <div key={name}>
+            <h2 class="sec">{name}</h2>
+            {disegnate.map((figure) => (
+              <FigureEntry key={figure.id} figure={figure} />
+            ))}
+            {elencate.length > 0 && (
+              <div class="figlist" style="margin-top:12px">
+                {elencate.map((figure) => (
+                  <FigureEntry key={figure.id} figure={figure} />
+                ))}
+              </div>
+            )}
           </div>
-        ))}
-      </div>
+        );
+      })}
 
       <h2 class="sec">Le «trappole» del docente</h2>
       <p class="lead">
@@ -81,8 +155,9 @@ export function References(): JSX.Element {
       </div>
 
       <div class="disclaim">
-        Fonti: catalogo Sapienza, sito del docente, dispensa studentesca «AE-[FIN]». Contenuti di
-        studio riscritti in forma originale; per i testi integrali consulta Hamacher.
+        Le tavole del testo non sono riprodotte: gli schemi di questa pagina sono <b>ridisegnati in
+        forma originale</b>, con la stessa struttura logica. Per le figure integrali, e per quelle
+        qui solo elencate, consulta Hamacher.
       </div>
     </section>
   );

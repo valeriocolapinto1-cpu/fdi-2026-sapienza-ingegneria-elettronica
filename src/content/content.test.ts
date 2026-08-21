@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { asmWrite, figures, links, mcq, open, topics, traps, validateContent } from './index';
+import { FIGURE_AREAS } from './figures';
 import { definitions } from './definitions';
 import { diagrams, diagramById } from './diagrams';
 import { outline } from './outline';
@@ -15,7 +16,7 @@ describe('content layer', () => {
     expect(open.length).toBeGreaterThanOrEqual(19);
     expect(asmWrite.length).toBeGreaterThanOrEqual(2);
     expect(topics.length).toBeGreaterThanOrEqual(17);
-    expect(figures.length).toBeGreaterThanOrEqual(9);
+    expect(figures.length).toBeGreaterThanOrEqual(150);
     expect(traps.length).toBeGreaterThanOrEqual(5);
     expect(links.length).toBeGreaterThanOrEqual(6);
   });
@@ -203,6 +204,39 @@ describe('content layer', () => {
       if (!figure.diagramId) continue;
       expect(diagramById(figure.diagramId), `figura ${figure.id}`).toBeDefined();
     }
+  });
+
+  it('il catalogo delle figure è completo e ben formato', () => {
+    // È la trascrizione dell'indice delle tavole del testo: se si accorcia,
+    // qualcosa è andato perso.
+    expect(figures.length).toBeGreaterThanOrEqual(150);
+    expect(new Set(figures.map((figure) => figure.id)).size).toBe(figures.length);
+
+    const titles = new Set(topics.map((topic) => topic.id));
+    for (const figure of figures) {
+      expect(figure.code.trim(), figure.id).not.toBe('');
+      expect(figure.desc.trim().length, `${figure.id}: descrizione troppo corta`).toBeGreaterThan(
+        15,
+      );
+      expect(figure.area.trim(), `${figure.id}: capitolo mancante`).not.toBe('');
+      expect(titles.has(figure.topic), `${figure.id}: argomento sconosciuto`).toBe(true);
+    }
+
+    // Ogni capitolo deve avere almeno una figura, altrimenti il filtro mostra
+    // una sezione vuota.
+    for (const area of FIGURE_AREAS) {
+      expect(figures.some((figure) => figure.area === area), area).toBe(true);
+    }
+  });
+
+  it('ogni schema ridisegnato è raggiungibile dal catalogo', () => {
+    // Uno schema che nessuna figura cita non compare in Riferimenti: sarebbe
+    // lavoro invisibile.
+    const citati = new Set(figures.map((figure) => figure.diagramId).filter(Boolean));
+    for (const diagram of diagrams) {
+      expect(citati.has(diagram.id), `schema orfano: ${diagram.id}`).toBe(true);
+    }
+    expect(diagrams.length).toBeGreaterThanOrEqual(40);
   });
 
   it('copre con le domande aperte tutti i moduli tranne IEEE 754', () => {

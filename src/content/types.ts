@@ -134,6 +134,13 @@ export interface Figure {
   /** Che cosa rappresenta. */
   desc: string;
   /**
+   * Capitolo di provenienza, usato per raggruppare l'elenco.
+   * Il catalogo è lungo: senza raggruppamento è illeggibile.
+   */
+  area: string;
+  /** Argomento del programma a cui la figura appartiene. */
+  topic: TopicId;
+  /**
    * Schema ridisegnato corrispondente, se esiste (`content/diagrams.ts`).
    * Quando c'è, i Riferimenti mostrano il disegno invece del solo codice e
    * offrono di esercitarsi a completarlo.
