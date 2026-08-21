@@ -75,8 +75,14 @@ export function Dashboard(): JSX.Element {
         <Stat
           value={String(stats.studiedCount)}
           unit={`/${topics.length}`}
-          label="Moduli letti"
+          label="Moduli studiati"
         />
+      </div>
+
+      <div class="btn-row" style="margin-top:14px">
+        <a class="btn ghost mini" href={hrefFor('carriera')}>
+          La tua carriera di studio ▶
+        </a>
       </div>
 
       {!storage.persistent && (

@@ -7,6 +7,7 @@ import { Simulator } from '~/ui/views/Simulator';
 import { Definitions } from '~/ui/views/Definitions';
 import { Training } from '~/ui/views/Training';
 import { References } from '~/ui/views/References';
+import { Career } from '~/ui/views/Career';
 
 const TAB_LABELS: Record<ViewId, string> = {
   dash: 'Dashboard',
@@ -15,6 +16,7 @@ const TAB_LABELS: Record<ViewId, string> = {
   exam: 'Simulatore',
   train: 'Allenamento',
   ref: 'Riferimenti',
+  carriera: 'Carriera',
 };
 
 function Header({ active }: { active: ViewId }): JSX.Element {
@@ -60,6 +62,7 @@ export function App(): JSX.Element {
         {route.view === 'def' && <Definitions />}
         {route.view === 'train' && <Training focus={route.param} />}
         {route.view === 'ref' && <References />}
+        {route.view === 'carriera' && <Career />}
       </main>
       <footer class="site-footer">
         AE·FIN — palestra d'esame · costruito per lo studio personale · non affiliato alla
