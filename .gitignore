@@ -7,3 +7,7 @@ dist-ssr/
 coverage/
 *.tsbuildinfo
 dev-dist/
+
+# Snapshot di pagina prodotti da playwright-cli a ogni comando: artefatti di
+# esecuzione, non sorgenti.
+.playwright-cli/
