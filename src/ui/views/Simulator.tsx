@@ -11,17 +11,73 @@ import {
 } from '~/engine/buildExam';
 import { gradeExam, verdictMessage } from '~/engine/grade';
 import type { Answer, Exam, ExamMode, ExamResult } from '~/engine/types';
-import { recordExam } from '~/store/progress';
+import { recordExam, useProgress, type ExamRecord } from '~/store/progress';
 import { QuestionCard } from '~/ui/components/QuestionCard';
+
+/** «17 ago» — sullo storico basta il giorno. */
+const SHORT_DATE = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
+
+/**
+ * Storico delle ultime prove.
+ *
+ * Sotto ai quattro formati la pagina finiva: un bottone e poi mezzo schermo
+ * di vuoto. Qui ci va la cosa che serve davvero prima di rigenerare — come
+ * sono andate le volte scorse — e finché non c'è, la riga che spiega come
+ * viene corretta la prova.
+ */
+function Recent({ exams }: { exams: ExamRecord[] }): JSX.Element {
+  const last = exams.slice(-6).reverse();
+
+  return (
+    <>
+      <h2 class="sec">{last.length > 0 ? 'Le tue ultime prove' : 'Come viene corretta'}</h2>
+      {last.length === 0 ? (
+        <div class="panel narrow">
+          <p class="lead">
+            Crocette, schemi da completare, tabelle di verità e assembly si correggono da soli.
+            Gli schemi valgono a <b>punteggio parziale</b>: metà etichette al posto giusto, metà
+            punto. Le due domande aperte le valuti tu confrontando con la traccia della risposta —
+            all'esame le legge una persona, e qui la persona sei tu.
+          </p>
+        </div>
+      ) : (
+        <ul class="runs">
+          {last.map((exam, index) => (
+            <li key={`${exam.at}-${index}`} class="run">
+              <span class="run-d">{SHORT_DATE.format(new Date(exam.at))}</span>
+              <span class="run-m">{MODE_LABELS[exam.mode]}</span>
+              <span class="run-s">
+                {exam.score30 !== undefined ? (
+                  <>
+                    <b class={exam.score30 >= 18 ? 'ok' : 'ko'}>{exam.score30}</b>
+                    <span class="run-den">/30</span>
+                    {exam.lode && <span class="run-lode">e lode</span>}
+                  </>
+                ) : (
+                  <>
+                    <b class={exam.percent >= 60 ? 'ok' : 'ko'}>{exam.percent}</b>
+                    <span class="run-den">%</span>
+                  </>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
 
 function Setup({
   mode,
   onMode,
   onStart,
+  exams,
 }: {
   mode: ExamMode;
   onMode: (mode: ExamMode) => void;
   onStart: () => void;
+  exams: ExamRecord[];
 }): JSX.Element {
   return (
     <>
@@ -55,6 +111,8 @@ function Setup({
           Genera la prova ▶
         </button>
       </div>
+
+      <Recent exams={exams} />
     </>
   );
 }
@@ -96,6 +154,7 @@ export function Simulator({ mode: routeMode }: { mode: string | null }): JSX.Ele
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<ExamResult | null>(null);
+  const progress = useProgress();
 
   const start = useCallback((next: ExamMode) => {
     setMode(next);
@@ -120,7 +179,12 @@ export function Simulator({ mode: routeMode }: { mode: string | null }): JSX.Ele
   if (!exam) {
     return (
       <section class="view">
-        <Setup mode={mode} onMode={setMode} onStart={() => start(mode)} />
+        <Setup
+          mode={mode}
+          onMode={setMode}
+          onStart={() => start(mode)}
+          exams={progress.exams}
+        />
       </section>
     );
   }

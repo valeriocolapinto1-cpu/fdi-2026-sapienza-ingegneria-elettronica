@@ -116,43 +116,14 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
       <div class="detail-head" style="margin-top:6px">
         <div>
           <p class="eyebrow">
-            Modulo {position + 1} di {topics.length} · {topic.ref} ·{' '}
-            {readingMinutes(topic.body)} min
+            Modulo {position + 1} di {topics.length} · {topic.ref}
           </p>
-          <h1 class="h" style="font-size:28px">
-            {topic.title}
-          </h1>
+          <h1 class="h" style="font-size:clamp(26px,3.4vw,34px)">{topic.title}</h1>
         </div>
         <a class="btn ghost mini" href={hrefFor('study')}>
           ← Tutti i moduli
         </a>
       </div>
-
-      <div class="btn-row" style="margin-top:10px">
-        <button
-          type="button"
-          class={`btn ${done ? 'ghost' : 'primary'} mini`}
-          aria-pressed={done}
-          onClick={() => toggleStudied(topic.id)}
-        >
-          {done ? '✓ Studiato — togli la spunta' : 'Segna come studiato'}
-        </button>
-        <a class="btn ghost mini" href={hrefFor('carriera')}>
-          La tua carriera
-        </a>
-      </div>
-
-      {prerequisites.length > 0 && (
-        <p class="fn" style="margin-top:8px">
-          Prima di questo conviene aver letto:{' '}
-          {prerequisites.map((item, index) => (
-            <span key={item.id}>
-              {index > 0 && ' · '}
-              <a href={hrefFor('study', item.id)}>{item.title}</a>
-            </span>
-          ))}
-        </p>
-      )}
 
       <div class="recap">
         <h2>In due minuti</h2>
@@ -168,109 +139,153 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
         </p>
       </div>
 
-      {sections.length >= 4 && (
-        <nav class="toc" aria-label={`Indice di ${topic.title}`}>
-          <p class="toc-t">In questo modulo</p>
-          <ol>
-            {[
-              ...sections,
-              { id: 'autoverifica', title: 'Autoverifica' },
-              { id: 'esercizi', title: `Esercizi (${topic.exercises.length})` },
-            ].map((section) => (
-              <li key={section.id}>
-                <a
-                  href={`#/study/${topic.id}`}
-                  onClick={(event) => {
-                    // Il router vive nell'hash, quindi un `href="#ancora"`
-                    // cambierebbe rotta invece di scorrere: si scorre a mano.
-                    event.preventDefault();
-                    document.getElementById(section.id)?.scrollIntoView({ block: 'start' });
-                  }}
-                >
-                  {section.title}
-                </a>
-              </li>
+      {/*
+        Due colonne sopra i 1080px: a sinistra si legge, a destra sta tutto il
+        contorno e resta agganciato allo scorrimento. Sotto, la griglia
+        collassa e la barra torna sopra il testo — nel DOM viene comunque
+        prima, quindi la sequenza è la stessa a qualunque larghezza.
+      */}
+      <div class="study-grid">
+        <aside class="study-rail">
+          <div class="rail-card">
+            <p class="rail-t">La tua carriera</p>
+            <button
+              type="button"
+              class={`btn ${done ? 'ghost' : 'primary'} mini`}
+              aria-pressed={done}
+              onClick={() => toggleStudied(topic.id)}
+            >
+              {done ? '✓ Studiato — togli la spunta' : 'Segna come studiato'}
+            </button>
+            <p class="fn" style="margin:9px 0 0">
+              {readingMinutes(topic.body)} min di lettura · {topic.exercises.length} esercizi ·{' '}
+              <a href={hrefFor('carriera')}>a che punto sei</a>
+            </p>
+          </div>
+
+          {prerequisites.length > 0 && (
+            <div class="rail-card">
+              <p class="rail-t">Prima di questo</p>
+              <div class="rail-links">
+                {prerequisites.map((item) => (
+                  <a key={item.id} href={hrefFor('study', item.id)}>
+                    {item.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {sections.length >= 4 && (
+            <nav class="toc" aria-label={`Indice di ${topic.title}`}>
+              <p class="toc-t">In questo modulo</p>
+              <ol>
+                {[
+                  ...sections,
+                  { id: 'autoverifica', title: 'Autoverifica' },
+                  { id: 'esercizi', title: `Esercizi (${topic.exercises.length})` },
+                ].map((section) => (
+                  <li key={section.id}>
+                    <a
+                      href={`#/study/${topic.id}`}
+                      onClick={(event) => {
+                        // Il router vive nell'hash, quindi un `href="#ancora"`
+                        // cambierebbe rotta invece di scorrere: si scorre a mano.
+                        event.preventDefault();
+                        document.getElementById(section.id)?.scrollIntoView({ block: 'start' });
+                      }}
+                    >
+                      {section.title}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
+        </aside>
+
+        <div class="study-col">
+          <article class="prose">
+            <Rich html={anchored(topic.body)} />
+            {linked.map((trap) => (
+              <TrapNote key={trap.id} trap={trap} />
+            ))}
+          </article>
+
+          {diagrams.length > 0 && (
+            <>
+              <h2 class="sec">Schemi di questo modulo</h2>
+              <p class="lead">
+                Studiali finché li rifai a memoria: all'esame uno schema da completare c'è
+                sempre.
+              </p>
+              {diagrams.map((diagram) => (
+                <div key={diagram.id} style="margin-bottom:22px">
+                  <DiagramFigure diagram={diagram} />
+                  <a class="btn ghost mini" href={hrefFor('train', diagram.id)}>
+                    Esercitati a completarlo ▶
+                  </a>
+                </div>
+              ))}
+            </>
+          )}
+
+          <h2 class="sec" id="autoverifica">
+            Autoverifica
+          </h2>
+          <p class="lead">
+            Rispondi <b>prima</b> di scoprire la soluzione: riconoscere una risposta giusta è
+            facile, produrla è un'altra cosa — ed è quella che serve sul foglio.
+          </p>
+          <ol class="checks">
+            {topic.checks.map((check, index) => (
+              <CheckItem key={index} check={check} index={index} />
             ))}
           </ol>
-        </nav>
-      )}
 
-      <div class="panel prose" style="margin-top:14px">
-        <Rich html={anchored(topic.body)} />
-        {linked.map((trap) => (
-          <TrapNote key={trap.id} trap={trap} />
-        ))}
-      </div>
-
-      {diagrams.length > 0 && (
-        <>
-          <h2 class="sec">Schemi di questo modulo</h2>
+          <h2 class="sec" id="esercizi">
+            Esercizi
+          </h2>
           <p class="lead">
-            Studiali finché li rifai a memoria: all'esame uno schema da completare c'è sempre.
+            {topic.exercises.length} esercizi ·{' '}
+            {topic.exercises.filter((item) => item.level === 'base').length} di base,{' '}
+            {topic.exercises.filter((item) => item.level === 'esame').length} nel formato della
+            prova. Fai il conto <b>sul foglio</b>, poi confronta: il suggerimento è lì per
+            rimetterti in moto senza bruciare la soluzione.
           </p>
-          {diagrams.map((diagram) => (
-            <div key={diagram.id} style="margin-bottom:22px">
-              <DiagramFigure diagram={diagram} />
-              <a class="btn ghost mini" href={hrefFor('train', diagram.id)}>
-                Esercitati a completarlo ▶
+          <ol class="exrlist">
+            {topic.exercises.map((exercise, index) => (
+              <ExerciseItem key={exercise.id} exercise={exercise} index={index} />
+            ))}
+          </ol>
+
+          <div class="btn-row">
+            <button type="button" class="btn primary" onClick={() => navigate('exam', 'quick')}>
+              Mettiti alla prova ▶
+            </button>
+            <a class="btn ghost" href={hrefFor('def')}>
+              Definizioni
+            </a>
+          </div>
+
+          <nav class="pager" aria-label="Moduli vicini">
+            {previous ? (
+              <a class="pg" href={hrefFor('study', previous.id)}>
+                <span class="pg-l">← Precedente</span>
+                <span class="pg-t">{previous.title}</span>
               </a>
-            </div>
-          ))}
-        </>
-      )}
-
-      <h2 class="sec" id="autoverifica">
-        Autoverifica
-      </h2>
-      <p class="lead">
-        Rispondi <b>prima</b> di scoprire la soluzione: riconoscere una risposta giusta è facile,
-        produrla è un'altra cosa — ed è quella che serve sul foglio.
-      </p>
-      <ol class="checks">
-        {topic.checks.map((check, index) => (
-          <CheckItem key={index} check={check} index={index} />
-        ))}
-      </ol>
-
-      <h2 class="sec" id="esercizi">Esercizi</h2>
-      <p class="lead">
-        {topic.exercises.length} esercizi ·{' '}
-        {topic.exercises.filter((item) => item.level === 'base').length} di base,{' '}
-        {topic.exercises.filter((item) => item.level === 'esame').length} nel formato della prova.
-        Fai il conto <b>sul foglio</b>, poi confronta: il suggerimento è lì per rimetterti in
-        moto senza bruciare la soluzione.
-      </p>
-      <ol class="exrlist">
-        {topic.exercises.map((exercise, index) => (
-          <ExerciseItem key={exercise.id} exercise={exercise} index={index} />
-        ))}
-      </ol>
-
-      <div class="btn-row">
-        <button type="button" class="btn primary" onClick={() => navigate('exam', 'quick')}>
-          Mettiti alla prova ▶
-        </button>
-        <a class="btn ghost" href={hrefFor('def')}>
-          Definizioni
-        </a>
+            ) : (
+              <span />
+            )}
+            {next && (
+              <a class="pg next" href={hrefFor('study', next.id)}>
+                <span class="pg-l">Successivo →</span>
+                <span class="pg-t">{next.title}</span>
+              </a>
+            )}
+          </nav>
+        </div>
       </div>
-
-      <nav class="pager" aria-label="Moduli vicini">
-        {previous ? (
-          <a class="pg" href={hrefFor('study', previous.id)}>
-            <span class="pg-l">← Precedente</span>
-            <span class="pg-t">{previous.title}</span>
-          </a>
-        ) : (
-          <span />
-        )}
-        {next && (
-          <a class="pg next" href={hrefFor('study', next.id)}>
-            <span class="pg-l">Successivo →</span>
-            <span class="pg-t">{next.title}</span>
-          </a>
-        )}
-      </nav>
     </>
   );
 }

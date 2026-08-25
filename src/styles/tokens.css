@@ -15,6 +15,12 @@
   /* — linee — */
   --color-line: #2a3542;
   --color-line-soft: #222c37;
+  /**
+   * Il reticolo di fondo ha un colore suo, più spento delle linee vere: prima
+   * usava `--color-line-soft` e la pagina sembrava carta millimetrata, con la
+   * griglia che gridava quanto il contenuto.
+   */
+  --color-grid: #1a222c;
 
   /* — testo — */
   --color-ink: #e7edf4;

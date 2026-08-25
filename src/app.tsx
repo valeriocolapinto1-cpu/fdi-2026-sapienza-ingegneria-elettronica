@@ -27,7 +27,7 @@ function Header({ active }: { active: ViewId }): JSX.Element {
           <span class="glyph" aria-hidden="true">
             AE
           </span>
-          <span>
+          <span class="brand-name">
             Palestra d'esame
             <small>Architettura degli Elaboratori</small>
           </span>
@@ -49,13 +49,51 @@ function Header({ active }: { active: ViewId }): JSX.Element {
   );
 }
 
+/**
+ * Chiusura del sito. Porta la mappa completa perché ogni vista è lunga: da
+ * fondo modulo si riparte da qui invece di risalire fino alla barra in cima.
+ */
+function Footer(): JSX.Element {
+  return (
+    <footer class="site-footer">
+      <div class="foot-inner">
+        <p class="foot-note" style="margin:0">
+          AE·FIN — palestra d'esame · costruito per lo studio personale · non affiliato alla
+          Sapienza
+        </p>
+        <nav class="foot-nav" aria-label={t('Mappa del sito')}>
+          {VIEWS.map((view) => (
+            <a key={view} href={hrefFor(view)}>
+              {TAB_LABELS[view]}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </footer>
+  );
+}
+
 export function App(): JSX.Element {
   const route = useRoute();
 
   return (
     <>
+      {/* Il router vive nell'hash: un `href="#contenuto"` cambierebbe rotta
+          invece di saltare, quindi il salto lo facciamo a mano. */}
+      <a
+        class="skip"
+        href="#contenuto"
+        onClick={(event) => {
+          event.preventDefault();
+          const target = document.getElementById('contenuto');
+          target?.focus({ preventScroll: true });
+          target?.scrollIntoView({ block: 'start' });
+        }}
+      >
+        Salta al contenuto
+      </a>
       <Header active={route.view} />
-      <main class="shell-main">
+      <main class="shell-main" id="contenuto" tabIndex={-1}>
         {route.view === 'dash' && <Dashboard />}
         {route.view === 'study' && <Study topicId={route.param} />}
         {route.view === 'exam' && <Simulator mode={route.param} />}
@@ -64,10 +102,7 @@ export function App(): JSX.Element {
         {route.view === 'ref' && <References />}
         {route.view === 'carriera' && <Career />}
       </main>
-      <footer class="site-footer">
-        AE·FIN — palestra d'esame · costruito per lo studio personale · non affiliato alla
-        Sapienza
-      </footer>
+      <Footer />
     </>
   );
 }

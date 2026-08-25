@@ -42,15 +42,21 @@ function Row({ topic, progress }: { topic: Topic; progress: ProgressData }): JSX
           <span class="car-n">{String(index + 1).padStart(2, '0')}</span>
           {topic.title}
         </a>
-        <div class="car-meta">
+      </div>
+      {/* Lo stato sta in fondo alla riga, non sotto al titolo: la riga è
+          larga più di mille pixel e sprecarne ottocento per poi andare a
+          capo era il modo più rumoroso di dire due parole. */}
+      <div class="car-meta">
+        <span class={`car-state${done ? ' on' : ''}`}>
           {done && at !== undefined
             ? `studiato il ${shortDate(at)}`
             : opened
-              ? 'aperto, non ancora segnato'
+              ? 'aperto, non segnato'
               : 'mai aperto'}
-          {' · '}
+        </span>
+        <span class="car-dim">
           {readingMinutes(topic.body)} min · {topic.exercises.length} esercizi
-        </div>
+        </span>
       </div>
     </li>
   );
@@ -112,7 +118,7 @@ export function Career(): JSX.Element {
           <div key={group.id}>
             <h2 class="sec">
               {group.title}
-              <span class="car-count">
+              <span class={`car-count${allDone ? ' full' : ''}`}>
                 {groupDone}/{inGroup.length}
               </span>
             </h2>
@@ -148,12 +154,16 @@ export function Career(): JSX.Element {
         >
           Segna tutto
         </button>
+      </div>
+
+      {/* L'azzeramento sta su una riga sua e in tono minore: è l'unica azione
+          della pagina che toglie qualcosa, e non va offerta come le altre. */}
+      <div class="btn-row" style="margin-top:14px;align-items:center">
         {confirming ? (
           <>
             <button
               type="button"
-              class="btn ghost"
-              style="border-color:var(--color-red);color:var(--color-red)"
+              class="btn danger"
               onClick={() => {
                 resetCareer();
                 setConfirming(false);
@@ -161,19 +171,19 @@ export function Career(): JSX.Element {
             >
               Confermi? Azzera la carriera
             </button>
-            <button type="button" class="btn ghost" onClick={() => setConfirming(false)}>
+            <button type="button" class="btn quiet" onClick={() => setConfirming(false)}>
               Annulla
             </button>
           </>
         ) : (
-          <button type="button" class="btn ghost" onClick={() => setConfirming(true)}>
+          <button type="button" class="btn quiet" onClick={() => setConfirming(true)}>
             Azzera la carriera
           </button>
         )}
+        <p class="fn" style="margin:0">
+          Toglie solo le spunte: lo storico delle prove d'esame resta.
+        </p>
       </div>
-      <p class="fn" style="margin-top:10px">
-        Azzerare la carriera toglie solo le spunte: lo storico delle prove d'esame resta.
-      </p>
     </section>
   );
 }
