@@ -74,13 +74,14 @@ function expandSlots(slots: readonly Slot[], rng: Rng): { gen: GeneratorId; poin
 /**
  * Struttura delle prove.
  *
- * `full` ricalca il formato reale, quesito per quesito: 4 crocette,
- * **2 «completare l'immagine»**, 2 «da tabella di verità a espressione», 1
- * sintesi di rete combinatoria, 2 domande aperte, 1 programma assembly.
+ * `full` segue il formato **ricostruito dagli appunti degli studenti**, non
+ * una fonte del corso: 4 crocette, 2 «completare l'immagine», 2 «da tabella di
+ * verità a espressione», 1 sintesi di rete combinatoria, 2 domande aperte, 1
+ * programma assembly.
  *
- * Punti uniformi: 12 × 2,5 = **30**. Sul testo della prova i punti per quesito
- * non sono indicati, quindi li tengo uguali; se il docente li pesa diversamente
- * si cambia qui e basta, perché la somma è verificata da un test.
+ * Punti uniformi: 12 × 2,5 = **30**. I pesi reali non ci sono noti, quindi
+ * dividere trenta per dodici è l'ipotesi più onesta; se salta fuori che sono
+ * diversi si cambia qui e basta, perché la somma è verificata da un test.
  */
 const BLUEPRINTS: Record<ExamMode, Slot[]> = {
   full: [

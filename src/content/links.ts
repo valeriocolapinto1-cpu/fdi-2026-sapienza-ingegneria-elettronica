@@ -13,18 +13,24 @@ export const links: LinkItem[] = [
     note: 'Testo integrativo',
     kind: 'testo',
   },
+  /**
+   * Le note di questi due dicono a che cosa servono, non che cosa contengono:
+   * sono le pagine ufficiali del corso e nessuno di noi può garantire in loro
+   * vece. Se dicono qualcosa di diverso da questo sito, vale quello che dicono
+   * loro.
+   */
   {
     id: 'link-napoli',
-    label: 'Sito del prof. Napoli',
+    label: 'Pagina del docente del corso',
     url: 'https://cnapoli.diag.uniroma1.it',
-    note: 'Teaching · Exams · Calendar',
+    note: 'La fonte ufficiale: parti da qui',
     kind: 'risorsa',
   },
   {
     id: 'link-regolamento',
-    label: 'Regolamento della prova scritta',
+    label: 'Regole della prova scritta',
     url: 'https://sites.google.com/diag.uniroma1.it/napoli/teaching/exams/em-fin',
-    note: 'Struttura e punteggi ufficiali',
+    note: 'Da verificare qui: in caso di differenze vale questa pagina',
     kind: 'regolamento',
   },
   {

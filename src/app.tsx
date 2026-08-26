@@ -57,9 +57,15 @@ function Footer(): JSX.Element {
   return (
     <footer class="site-footer">
       <div class="foot-inner">
+        {/*
+          La riserva sta qui e non solo in home: al Simulatore ci si arriva
+          per collegamento diretto, e chi entra da lì non vedrebbe mai
+          scritto che le domande non sono prove vere.
+        */}
         <p class="foot-note" style="margin:0">
-          AE·FIN — palestra d'esame · costruito per lo studio personale · non affiliato alla
-          Sapienza
+          AE·FIN — palestra d'esame · strumento <b>non ufficiale</b> scritto da uno studente,
+          non affiliato alla Sapienza né al corso · le domande sono inventate, non sono prove
+          d'esame reali · nessun dato esce dal tuo browser
         </p>
         <nav class="foot-nav" aria-label={t('Mappa del sito')}>
           {VIEWS.map((view) => (

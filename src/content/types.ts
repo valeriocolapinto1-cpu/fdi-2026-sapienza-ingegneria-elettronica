@@ -149,8 +149,9 @@ export interface Figure {
 }
 
 /**
- * «Trappola» del docente. Sono percezioni raccolte dagli studenti: `status`
- * tiene esplicito che vanno verificate, come chiede la specifica.
+ * Accortezza raccolta dagli appunti degli studenti. Non è la regola di
+ * nessuno: `status` tiene esplicito che va verificata, e il testo va scritto
+ * all'impersonale — vedi la nota in testa a `traps.ts`.
  */
 export interface Trap {
   id: string;

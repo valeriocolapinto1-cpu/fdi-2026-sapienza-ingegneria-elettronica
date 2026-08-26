@@ -55,12 +55,13 @@ export function References(): JSX.Element {
   return (
     <section class="view">
       <p class="eyebrow">Cassetta degli attrezzi</p>
-      <h1 class="h">Riferimenti &amp; trappole</h1>
+      <h1 class="h">Riferimenti &amp; accortezze</h1>
       <p class="lead">
         Il catalogo completo delle figure del testo — <b>{figures.length} tavole</b>, capitolo per
-        capitolo — con <b>{drawn} schemi ridisegnati</b> su cui esercitarsi. All'esame c'è sempre un
-        «completare l'immagine»: si riceve il disegno con alcune etichette mancanti e l'elenco di
-        quelle da collocare, con qualche etichetta in più che non va da nessuna parte.
+        capitolo — con <b>{drawn} schemi ridisegnati</b> su cui esercitarsi. Secondo gli appunti
+        degli studenti un «completare l'immagine» c'è a ogni appello: si riceve il disegno con
+        alcune etichette mancanti e l'elenco di quelle da collocare, con qualche etichetta in più
+        che non va da nessuna parte.
       </p>
 
       <div class="panel" style="margin-top:14px">
@@ -123,10 +124,11 @@ export function References(): JSX.Element {
         );
       })}
 
-      <h2 class="sec">Le «trappole» del docente</h2>
+      <h2 class="sec">Accortezze raccolte dagli studenti</h2>
       <p class="lead">
-        Percezioni raccolte dagli studenti — da verificare a lezione, ma utili in fase di
-        preparazione.
+        Impressioni di chi ha dato l'esame prima di te: <b>non sono regole di nessuno</b> e
+        nessuno le ha confermate. Trattale come consigli fra colleghi, verificali a lezione, e
+        se contraddicono la pagina del corso segui quella.
       </p>
       <div>
         {traps.map((trap) => (

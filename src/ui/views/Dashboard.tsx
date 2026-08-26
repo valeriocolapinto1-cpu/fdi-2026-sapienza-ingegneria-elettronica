@@ -76,9 +76,9 @@ export function Dashboard(): JSX.Element {
               non solo la teoria.
             </h1>
             <p class="lead">
-              Genera prove nel formato del prof. Napoli — 12 quesiti, voto su 30 con lode — con
-              complemento a 2, sintesi di reti combinatorie via Karnaugh e assembly, ogni item
-              ancorato a un capitolo di Hamacher.
+              Genera prove nel formato della scritta — 12 quesiti, voto su 30 — con complemento
+              a 2, sintesi di reti combinatorie via Karnaugh e assembly, ogni item ancorato a un
+              capitolo di Hamacher.
             </p>
             <div class="btn-row">
               <a class="btn primary" href={hrefFor('exam', 'full')}>
@@ -91,7 +91,7 @@ export function Dashboard(): JSX.Element {
           </div>
 
           <aside class="hero-card">
-            <p class="hero-card-t">La prova, quesito per quesito</p>
+            <p class="hero-card-t">Il formato che alleni</p>
             <ul class="qbreak">
               {EXAM_BREAKDOWN.map((row) => (
                 <li key={row.label}>
@@ -102,6 +102,10 @@ export function Dashboard(): JSX.Element {
             </ul>
             <p class="qb-foot">
               <b>12</b> quesiti · <b>1</b> ora · si passa da <b>18/30</b>
+              {/* La scomposizione è la cosa più «ufficiale» che il sito mostra,
+                  ed è la meno verificata: il chiarimento sta qui, addosso al
+                  numero, non tre schermate più in basso. */}
+              <span class="qb-warn">ricostruzione da appunti, non una fonte del corso</span>
             </p>
           </aside>
         </div>
@@ -135,18 +139,26 @@ export function Dashboard(): JSX.Element {
         </div>
       )}
 
-      <h2 class="sec">Come è fatto l'esame reale</h2>
+      <h2 class="sec">Come dovrebbe essere fatta la prova</h2>
       <div class="panel narrow">
         <p class="lead">
-          Dal regolamento del docente e dagli appelli 2024–2025: prova scritta in aula,{' '}
-          <b>un'ora</b>, solo documento e penna — nessun appunto. La scomposizione dei dodici
-          quesiti è quella qui sopra e vale a punteggio uguale: <b>2,5 punti</b> l'uno. Si supera
-          con <b>18/30</b>, la lode ai brillanti.
+          <b>Attenzione a come leggi questa pagina.</b> Quella qui sopra è una{' '}
+          <b>ricostruzione</b> messa insieme da appunti di studenti: non viene da una fonte del
+          corso e nessuno l'ha confermata. Serve ad allenarsi su un formato plausibile, non a
+          sapere che cosa troverai davvero sul foglio.
         </p>
         <p class="lead" style="margin-top:10px">
-          I due «completare l'immagine» ci sono <b>sempre</b>, e sono schemi delle figure di
-          Hamacher: sono la parte che si prepara disegnando, non rileggendo. Qui trovi gli stessi
-          schemi <a href={hrefFor('ref')}>ridisegnati</a> e da{' '}
+          Secondo quegli appunti la prova è scritta, dura <b>un'ora</b> e non ammette materiale
+          di consultazione. I <b>2,5 punti</b> per quesito sono invece una scelta{' '}
+          <em>di questo sito</em>: i pesi reali non li conosciamo, e dividere trenta per dodici
+          era l'ipotesi più onesta.{' '}
+          <a href={hrefFor('ref')}>Le regole vere stanno sulla pagina del corso</a>: prima
+          dell'appello controlla lì, e se dice altro vale quello che dice lei.
+        </p>
+        <p class="lead" style="margin-top:10px">
+          Gli schemi da completare sono figure del tipo di quelle di Hamacher: è la parte che si
+          prepara disegnando, non rileggendo. Qui li trovi{' '}
+          <a href={hrefFor('ref')}>ridisegnati da zero</a> e da{' '}
           <a href={hrefFor('train')}>completare a vuoto</a>.
         </p>
       </div>
@@ -159,11 +171,19 @@ export function Dashboard(): JSX.Element {
       </div>
 
       <div class="disclaim">
-        ⚠︎ Strumento di studio non ufficiale, costruito su appunti studenteschi e sul regolamento
-        pubblico del docente. Le domande sono nello <em>stile</em> dell'esame ma non sono prove
-        reali. Verifica sempre programma e regole aggiornate sul sito del prof. e sul catalogo
-        Sapienza. I riferimenti «Hamacher» rimandano ai capitoli/figure del testo — consultalo per
-        i contenuti integrali.
+        ⚠︎ <b>Strumento di studio non ufficiale</b>, scritto da uno studente e{' '}
+        <b>non affiliato alla Sapienza</b>, al corso o a chi lo tiene: nessuno di loro l'ha
+        rivisto o approvato. È costruito su appunti fra studenti, quindi può contenere errori e
+        parti sorpassate — programma, regole e date valgono solo se le leggi{' '}
+        <a href={hrefFor('ref')}>sulle pagine ufficiali del corso</a>.
+        <br />
+        Le domande sono <b>inventate qui</b>, nello <em>stile</em> della prova: non sono, e non
+        riproducono, prove d'esame reali. I riferimenti «Hamacher» sono rimandi a capitoli e
+        figure del testo, non citazioni: gli schemi del sito sono ridisegnati da zero. Per i
+        contenuti, il libro.
+        <br />
+        Nessun account e nessun server: quello che fai resta nel tuo browser e non viene inviato
+        a nessuno.
       </div>
     </section>
   );

@@ -1,16 +1,21 @@
 import type { Trap } from './types';
 
 /**
- * Le «trappole» del docente, raccolte dagli appunti studenteschi.
+ * Accortezze raccolte dagli appunti degli studenti.
  *
- * Sono marcate `da-verificare` di proposito: sono percezioni utili in fase di
- * preparazione, non regole confermate. La UI le mostra con il badge relativo.
+ * **Sono percezioni di chi ha dato l'esame, non regole di nessuno.** Per
+ * questo sono scritte all'impersonale e marcate `da-verificare`: attribuirle
+ * a una persona significherebbe metterle in bocca a qualcuno che non le ha
+ * dette qui, e nessuna di queste è confermata da una fonte del corso.
+ *
+ * Regola per chi ne aggiunge: descrivi **come conviene rispondere**, mai cosa
+ * qualcuno pensa, chiede, sbaglia o preferisce.
  */
 export const traps: Trap[] = [
   {
     id: 'trap-and-assoc',
-    title: 'AND «non associativo»',
-    body: 'Evita porte AND a 3+ ingressi nei disegni: scomponi in porte a 2 ingressi. Secondo gli appunti considera associativi solo OR e NOR.',
+    title: 'AND a più di due ingressi',
+    body: 'Nei disegni conviene scomporre le porte AND a 3+ ingressi in porte a 2 ingressi: è la forma che gli appunti riportano come attesa.',
     status: 'da-verificare',
   },
   {
@@ -22,7 +27,7 @@ export const traps: Trap[] = [
   {
     id: 'trap-simboli',
     title: 'Simboli logici',
-    body: 'Usa {∧, ∨} nelle risposte: nei quesiti non scrive «AND»/«OR» per esteso.',
+    body: 'Conviene usare {∧, ∨} invece di «AND»/«OR» per esteso: è la notazione usata a lezione secondo gli appunti.',
     status: 'da-verificare',
   },
   {
@@ -33,8 +38,8 @@ export const traps: Trap[] = [
   },
   {
     id: 'trap-rtn',
-    title: 'RTN richiesto',
-    body: 'Alcune risposte pronte dei quiz erano errate: scrivi tu la forma corretta, es. <code>Add R1,R2,R3</code> → <code>R1 ← [R2]+[R3]</code>.',
+    title: 'RTN, forma corretta',
+    body: 'Nelle risposte scrivi la notazione per esteso e con le parentesi solo sulle sorgenti: <code>Add R1,R2,R3</code> → <code>R1 ← [R2]+[R3]</code>.',
     status: 'da-verificare',
   },
 ];

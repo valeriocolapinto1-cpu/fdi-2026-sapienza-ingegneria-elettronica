@@ -3,9 +3,9 @@ import type { Trap } from '~/content/types';
 import { Rich } from './Rich';
 
 /**
- * Riquadro «trappola». Il badge di stato è deliberato: sono percezioni
- * raccolte dagli studenti, non regole confermate dal docente, e la specifica
- * chiede che questo resti esplicito.
+ * Riquadro «accortezza». Il badge di stato è deliberato: sono impressioni
+ * raccolte fra studenti, non regole di nessuno, e questo deve restare
+ * esplicito ovunque compaiano.
  */
 export function TrapNote({ trap }: { trap: Trap }): JSX.Element {
   return (

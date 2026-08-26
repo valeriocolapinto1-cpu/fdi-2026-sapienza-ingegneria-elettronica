@@ -3,19 +3,27 @@
 Sito di studio e **generatore di prove d'esame** per il modulo *Architettura degli Elaboratori*
 (6 CFU) del corso di Fondamenti di Informatica — Ingegneria Elettronica, Sapienza.
 
-Replica il formato della prova scritta: **12 quesiti, 1 ora, voto su 30 con lode**. Ogni quesito
-e ogni scheda di studio riportano il riferimento al testo di Hamacher.
+Si allena su un formato **ricostruito dagli appunti degli studenti** — 12 quesiti, un'ora, voto
+su 30 — non su una fonte del corso. Ogni quesito e ogni scheda di studio riportano il riferimento
+al testo di Hamacher.
 
 ### → **[Apri il sito](https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/)**
 
 Funziona anche da telefono e, dopo la prima visita, **offline**: si installa come app dal menu
 del browser.
 
-> ⚠︎ Strumento di studio **non ufficiale**, costruito su appunti studenteschi e sul regolamento
-> pubblico del docente. Le domande sono nello *stile* dell'esame, non sono prove reali. Le
-> «trappole» sono percezioni raccolte dagli studenti, marcate come *da verificare*. I contenuti
-> sono riscritti in forma originale: i riferimenti a Hamacher sono rimandi al testo, non
-> citazioni.
+> ⚠︎ **Strumento di studio non ufficiale**, scritto da uno studente e **non affiliato alla
+> Sapienza**, al corso o a chi lo tiene: nessuno di loro l'ha rivisto o approvato. È costruito su
+> appunti fra studenti, quindi può contenere errori e parti sorpassate — programma, regole,
+> punteggi e date valgono solo se li leggi sulle pagine ufficiali del corso.
+>
+> Le domande sono **inventate qui**, nello *stile* della prova: non sono, e non riproducono,
+> prove d'esame reali. Le «accortezze» sono impressioni raccolte fra studenti, scritte
+> all'impersonale e marcate *da verificare*: non sono regole di nessuno. I contenuti sono
+> riscritti in forma originale e gli schemi ridisegnati da zero; i riferimenti a Hamacher sono
+> rimandi a capitoli e figure, non citazioni.
+>
+> Nessun account e nessun server: quello che fai resta nel tuo browser.
 
 ## Cosa c'è dentro
 
@@ -56,7 +64,7 @@ browser.
 | `topics/` | Moduli di studio, uno per file; `index.ts` fissa l'ordine e i gruppi |
 | `definitions.ts` | I termini da saper enunciare |
 | `diagrams.ts` | I 45 schemi ridisegnati, con gli slot da completare |
-| `traps.ts` | Trappole del docente |
+| `traps.ts` | Accortezze raccolte dagli studenti — da scrivere **all'impersonale**, vedi la nota nel file |
 | `figures.ts` | Catalogo delle figure del testo, con capitolo e argomento |
 | `links.ts` | Testi e risorse |
 

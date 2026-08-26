@@ -33,8 +33,8 @@ const mono = (s: string): string => `<code>${s}</code>`;
 /**
  * Notazione RTN di un'istruzione.
  *
- * I distrattori non sono casuali: sono i tre errori che il docente segnala
- * (trappola `trap-rtn`) — parentesi quadre dimenticate sulle sorgenti,
+ * I distrattori non sono casuali: sono i tre errori tipici raccolti negli
+ * appunti (`trap-rtn`) — parentesi quadre dimenticate sulle sorgenti,
  * parentesi messe erroneamente sulla destinazione, destinazione scambiata.
  * Le parentesi significano «contenuto di», quindi vanno solo dove si legge.
  */
