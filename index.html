@@ -3,7 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      Content-Security-Policy come `meta`, non come intestazione HTTP: GitHub
+      Pages serve file statici e non permette di impostare intestazioni.
+
+      Il sito non ha bisogno di nulla dall'esterno — i caratteri sono ospitati
+      qui, non c'è analytics, non c'è un'API da chiamare — quindi la politica
+      può essere chiusa quasi del tutto. `connect-src 'self'` lascia passare
+      solo il service worker; `frame-ancestors` non funziona via meta, ma senza
+      niente da rubare (nessuna sessione, nessun cookie) il clickjacking qui
+      non ha bersaglio.
+
+      `style-src` deve ammettere 'unsafe-inline': il sito usa attributi
+      `style` per le poche misure calcolate a runtime, per esempio la
+      larghezza della barra della carriera.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self';
+               style-src 'self' 'unsafe-inline';
+               img-src 'self' data:;
+               font-src 'self';
+               connect-src 'self';
+               object-src 'none';
+               base-uri 'none';
+               form-action 'none';
+               upgrade-insecure-requests"
+    />
+
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
     <meta name="theme-color" content="#0E1116" />
     <title>AE·FIN — Palestra d'esame · Architettura degli Elaboratori</title>
     <!-- Niente nome del docente nella descrizione: è il testo che finisce nei
@@ -36,14 +67,79 @@
     />
     <meta
       property="og:image"
-      content="https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/social.png"
+      content="https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/social.jpg"
     />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="AE·FIN, palestra d'esame per Architettura degli Elaboratori: 17 moduli, 85 esercizi svolti, 156 figure catalogate."
+    />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!--
+      Il segnaposto vive nell'HTML e sparisce da solo quando Preact monta
+      sopra `#app`: senza, fra il primo byte e l'esecuzione del bundle si vede
+      una pagina vuota, che su una connessione lenta si legge come un sito
+      rotto. Sta qui in linea perché deve comparire *prima* del CSS.
+    -->
+    <style>
+      #boot {
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        gap: 14px;
+        align-content: center;
+        background: #0e1116;
+        color: #5e6b7a;
+        font: 400 12px/1 ui-monospace, 'IBM Plex Mono', monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      #boot .g {
+        width: 44px;
+        height: 44px;
+        border: 1.5px solid #c88a4e;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #c88a4e;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0;
+        box-shadow: inset 0 0 16px rgba(200, 138, 78, 0.18);
+        animation: boot-pulse 1.5s ease-in-out infinite;
+      }
+      @keyframes boot-pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.45;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #boot .g {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div id="boot">
+        <span class="g" aria-hidden="true">AE</span>
+        <span>Caricamento…</span>
+      </div>
+    </div>
+    <noscript>
+      <p style="padding: 28px 20px; color: #e7edf4; background: #0e1116; font-family: sans-serif">
+        Questo sito genera le prove nel browser, quindi ha bisogno di JavaScript attivo. I
+        contenuti dei moduli sono comunque leggibili nel codice sorgente del progetto.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

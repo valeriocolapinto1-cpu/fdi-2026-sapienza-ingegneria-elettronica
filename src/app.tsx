@@ -1,5 +1,7 @@
 import type { JSX } from 'preact';
-import { hrefFor, useRoute, VIEWS, type ViewId } from '~/lib/router';
+import { useEffect } from 'preact/hooks';
+import { topicById } from '~/content';
+import { hrefFor, NAV_VIEWS, useRoute, VIEWS, type Route, type ViewId } from '~/lib/router';
 import { t } from '~/lib/i18n';
 import { Dashboard } from '~/ui/views/Dashboard';
 import { Study } from '~/ui/views/Study';
@@ -8,6 +10,8 @@ import { Definitions } from '~/ui/views/Definitions';
 import { Training } from '~/ui/views/Training';
 import { References } from '~/ui/views/References';
 import { Career } from '~/ui/views/Career';
+import { Notes } from '~/ui/views/Notes';
+import { NotFound } from '~/ui/views/NotFound';
 
 const TAB_LABELS: Record<ViewId, string> = {
   dash: 'Dashboard',
@@ -17,9 +21,57 @@ const TAB_LABELS: Record<ViewId, string> = {
   train: 'Allenamento',
   ref: 'Riferimenti',
   carriera: 'Carriera',
+  note: 'Note & privacy',
 };
 
-function Header({ active }: { active: ViewId }): JSX.Element {
+const SITE = "AE·FIN — Palestra d'esame";
+
+/** Descrizione per vista: è quella che finisce nell'anteprima di un link. */
+const VIEW_DESCRIPTIONS: Record<ViewId, string> = {
+  dash: "Studio e simulatore d'esame non ufficiale per Architettura degli Elaboratori. Domande inventate nello stile della prova, con rimandi ai capitoli di Hamacher.",
+  study:
+    'Diciassette moduli in ordine di studio, pensati per partire da zero: rampa d’ingresso, teoria distesa, esempio svolto, autoverifica e cinque esercizi con svolgimento.',
+  def: "I termini che l'esame chiede di saper enunciare, una frase ciascuno, con filtro per testo e per argomento.",
+  exam: 'Genera prove nel formato della scritta: numeri, tabelle di verità, schemi e assembly cambiano a ogni generazione, e la correzione è automatica dove può esserlo.',
+  train:
+    'Quattro palestre che fanno fare il procedimento e correggono ogni passaggio: binario a mano, schemi da completare, verità e Karnaugh, assembly a mente.',
+  ref: 'Il catalogo completo delle figure del testo, capitolo per capitolo, con 45 schemi ridisegnati in SVG originale su cui esercitarsi.',
+  carriera:
+    'A che punto sei sul programma: una spunta per modulo, che metti tu quando lo hai capito davvero.',
+  note: 'Che cos’è questo sito e che cosa non è, che cosa salva nel browser (niente cookie, niente tracciamento, nessun server) e a chi appartengono i contenuti.',
+};
+
+/**
+ * Titolo e descrizione del documento, per vista.
+ *
+ * Il sito è una pagina sola: senza questo, ventiquattro schermate diverse
+ * finiscono nella cronologia e nei preferiti con la stessa identica etichetta,
+ * e chi tiene tre moduli aperti in tre schede non distingue quale sia quale.
+ */
+function useHead(route: Route): void {
+  useEffect(() => {
+    const topic =
+      route.view === 'study' && route.param ? topicById(route.param) : undefined;
+    const missingTopic = route.view === 'study' && route.param !== null && !topic;
+
+    const name = !route.known || missingTopic ? 'Pagina non trovata' : (topic?.title ?? null);
+    document.title =
+      name === null && route.view === 'dash'
+        ? SITE
+        : `${name ?? TAB_LABELS[route.view]} · ${SITE}`;
+
+    const description =
+      !route.known || missingTopic
+        ? "L'indirizzo non corrisponde a nessuna pagina del sito."
+        : topic
+          ? `${topic.blurb} · ${topic.ref}`
+          : VIEW_DESCRIPTIONS[route.view];
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+  }, [route.view, route.param, route.known]);
+}
+
+/** `active` è `null` sul 404: lì nessuna sezione è quella in cui ti trovi. */
+function Header({ active }: { active: ViewId | null }): JSX.Element {
   return (
     <header class="top">
       <div class="top-inner">
@@ -33,7 +85,7 @@ function Header({ active }: { active: ViewId }): JSX.Element {
           </span>
         </div>
         <nav class="tabs" aria-label={t('Sezioni del sito')}>
-          {VIEWS.map((view) => (
+          {NAV_VIEWS.map((view) => (
             <a
               key={view}
               class={`tab${view === active ? ' active' : ''}`}
@@ -81,6 +133,12 @@ function Footer(): JSX.Element {
 
 export function App(): JSX.Element {
   const route = useRoute();
+  useHead(route);
+
+  // Un modulo che non esiste è un 404 quanto una rotta che non esiste: prima
+  // ricadeva sull'elenco dei moduli senza dire niente.
+  const missingTopic =
+    route.view === 'study' && route.param !== null && !topicById(route.param);
 
   return (
     <>
@@ -98,15 +156,24 @@ export function App(): JSX.Element {
       >
         Salta al contenuto
       </a>
-      <Header active={route.view} />
+      <Header active={route.known && !missingTopic ? route.view : null} />
       <main class="shell-main" id="contenuto" tabIndex={-1}>
-        {route.view === 'dash' && <Dashboard />}
-        {route.view === 'study' && <Study topicId={route.param} />}
-        {route.view === 'exam' && <Simulator mode={route.param} />}
-        {route.view === 'def' && <Definitions />}
-        {route.view === 'train' && <Training focus={route.param} />}
-        {route.view === 'ref' && <References />}
-        {route.view === 'carriera' && <Career />}
+        {!route.known ? (
+          <NotFound />
+        ) : missingTopic ? (
+          <NotFound what={route.param ?? undefined} />
+        ) : (
+          <>
+            {route.view === 'dash' && <Dashboard />}
+            {route.view === 'study' && <Study topicId={route.param} />}
+            {route.view === 'exam' && <Simulator mode={route.param} />}
+            {route.view === 'def' && <Definitions />}
+            {route.view === 'train' && <Training focus={route.param} />}
+            {route.view === 'ref' && <References />}
+            {route.view === 'carriera' && <Career />}
+            {route.view === 'note' && <Notes />}
+          </>
+        )}
       </main>
       <Footer />
     </>

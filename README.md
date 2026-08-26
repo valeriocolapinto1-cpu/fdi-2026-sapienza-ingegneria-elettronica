@@ -49,8 +49,16 @@ del browser.
   SVG originale** e si possono completare come all'esame; le altre restano in elenco, per sapere
   cosa saper disegnare e dove ritrovarle sul libro. Più le trappole, i testi e i link.
 
-Nessun backend: nessun account, nessun dato inviato da nessuna parte. I progressi restano nel
-browser.
+- **Note & privacy** — che cos'è il sito e che cosa non è, che cosa salva nel browser, a chi
+  appartengono i contenuti e come segnalare un errore. Raggiungibile dal piè di pagina di ogni
+  vista.
+
+Nessun backend: nessun account, nessun cookie, nessuna statistica di traffico, nessun servizio
+esterno contattato a runtime. I progressi restano nel `localStorage` del browser.
+
+Un indirizzo sbagliato — una rotta che non esiste, un modulo che non esiste, un percorso fuori
+dall'app — porta a una **pagina 404 vera** che rimette in strada, invece di ricadere in silenzio
+sulla home.
 
 ## Come aggiungere domande
 

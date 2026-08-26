@@ -210,6 +210,17 @@
     margin: 0 0 4px;
     text-wrap: pretty;
   }
+  /* Il reset di Tailwind toglie i pallini a ogni `ul`: qui li rivogliamo,
+     altrimenti un elenco puntato si legge come una serie di frasi mozze. */
+  ul.lead {
+    list-style: disc;
+  }
+  ul.lead li {
+    margin: 5px 0;
+  }
+  ul.lead li::marker {
+    color: var(--color-copper-dim);
+  }
   /**
    * Cifre a larghezza fissa ovunque un numero sia grande o cambi da solo:
    * senza, il contatore della carriera e il voto in trentesimi ballano di
@@ -2143,6 +2154,44 @@
      nella griglia compatta, queste hanno il loro respiro. */
   .figdraw {
     margin-bottom: 26px;
+  }
+}
+
+@layer components {
+  /* ═══════════ pagina non trovata ═══════════ */
+
+  /* L'elenco dei moduli fa da mappa: chi è finito qui da un link sbagliato
+     trova subito dove voleva andare, invece di ricominciare dalla home. */
+  .nf-list {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+  }
+  .nf-list a {
+    display: block;
+    padding: 10px 14px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-chip);
+    color: var(--color-ink);
+    font-size: 14px;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .nf-list a:hover {
+    border-color: var(--color-copper);
+    color: var(--color-copper);
+    text-decoration: none;
+  }
+  .nf-n {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-faint);
+    margin-right: 9px;
   }
 }
 

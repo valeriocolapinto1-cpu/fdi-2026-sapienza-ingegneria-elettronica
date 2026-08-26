@@ -54,12 +54,15 @@ export default defineConfig(() => ({
         // I font self-hostati sono file locali: entrano nel precache come il resto.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         /**
-         * L'anteprima social pesa 200 KB e la scarica solo il crawler di
-         * WhatsApp o Telegram quando qualcuno incolla il link: metterla nel
-         * precache la farebbe scaricare a **ogni** studente alla prima
-         * visita, per una copia offline che nessuno aprirà mai.
+         * Fuori dal precache ciò che l'utente non apre mai:
+         *
+         * - `social.jpg` la scarica solo il crawler di WhatsApp o Telegram
+         *   quando qualcuno incolla il link;
+         * - `404.html` è una pagina autonoma servita da GitHub Pages per i
+         *   percorsi sbagliati, e precaricarla la farebbe pure comparire al
+         *   posto dell'app in certi scenari di navigazione offline.
          */
-        globIgnores: ['**/social.png'],
+        globIgnores: ['**/social.*', '**/404.html'],
       },
     }),
   ],
