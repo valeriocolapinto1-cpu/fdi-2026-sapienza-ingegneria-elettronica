@@ -2158,6 +2158,284 @@
 }
 
 @layer components {
+  /* ═══════════ calcolatore di preparazione ═══════════ */
+
+  .prep {
+    margin-top: 18px;
+    padding: 22px 24px;
+    background: linear-gradient(180deg, var(--color-panel-2), var(--color-panel));
+    border: 1px solid var(--color-copper-dim);
+    border-radius: var(--radius-panel);
+    box-shadow: 0 16px 46px -30px rgba(200, 138, 78, 0.5);
+  }
+  .prep-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px 26px;
+  }
+  /**
+   * Numerone di apertura. Cifre **proporzionali**, non tabulari: a corpo
+   * grande le tabulari danno a ogni cifra la larghezza dello zero e un «71»
+   * sembra slabbrato. Le tabulari restano dove i numeri si incolonnano.
+   */
+  .prep-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(48px, 8vw, 66px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+  }
+  .prep-score span {
+    font-size: 0.4em;
+    color: var(--color-faint);
+    margin-left: 2px;
+  }
+  .prep-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-copper);
+    margin: 0 0 6px;
+  }
+  .prep-verdict {
+    max-width: 46ch;
+    color: var(--color-muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin: 10px 0 0;
+    text-wrap: pretty;
+  }
+
+  /* — conto alla rovescia e scelta della data — */
+  .prep-when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+  }
+  .prep-days {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--color-copper);
+  }
+  .prep-days small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+    margin-top: 5px;
+  }
+  .prep-date {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .prep-date input {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    background: var(--color-well);
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+    border-radius: 8px;
+    padding: 8px 11px;
+    color-scheme: dark;
+  }
+  .prep-date input:hover {
+    border-color: var(--color-copper-dim);
+  }
+  .prep-date label {
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  /* — le gambe del punteggio — */
+  .prep-legs {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 18px 0 0;
+    border-top: 1px solid var(--color-line);
+    display: grid;
+    gap: 12px;
+  }
+  .leg {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 14px;
+    font-size: 13.5px;
+  }
+  .leg-l {
+    color: var(--color-ink);
+  }
+  .leg-w {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    color: var(--color-faint);
+    white-space: nowrap;
+  }
+  /* La pista è lo stesso colore smorzato, non un grigio neutro: lo stato si
+     legge sull'intera barra, non solo sul pieno. */
+  .leg-bar {
+    grid-column: 1 / -1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(200, 138, 78, 0.16);
+    overflow: hidden;
+  }
+  .leg-bar span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-copper);
+    transition: width 0.35s ease;
+  }
+  .leg.na .leg-bar span {
+    background: var(--color-faint);
+  }
+  .leg.na .leg-l {
+    color: var(--color-muted);
+  }
+  .leg-na {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+  }
+
+  /* — il ritmo da tenere — */
+  .prep-pace {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .pace-box {
+    background: var(--color-well);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-chip);
+    padding: 12px 14px;
+  }
+  .pace-box.tight {
+    border-color: var(--color-amber);
+  }
+  .pace-n {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 1;
+    color: var(--color-ink);
+  }
+  .pace-n small {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-faint);
+    margin-left: 3px;
+  }
+  .pace-l {
+    font-size: 12.5px;
+    color: var(--color-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ═══════════ ciambelle di avanzamento ═══════════ */
+
+  .gauges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .gauge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+  }
+  .gauge-svg {
+    flex: none;
+    width: 92px;
+    height: 92px;
+    overflow: visible;
+  }
+  .gauge-track,
+  .gauge-arc {
+    fill: none;
+    /* Tratto sottile: un anello spesso diventa un blocco di colore e smette
+       di leggersi come misura. */
+    stroke-width: 5;
+  }
+  .gauge-arc {
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.4s ease;
+  }
+  .gauge.copper .gauge-track {
+    stroke: rgba(200, 138, 78, 0.18);
+  }
+  .gauge.copper .gauge-arc {
+    stroke: var(--color-copper);
+  }
+  .gauge.cyan .gauge-track {
+    stroke: rgba(55, 194, 214, 0.16);
+  }
+  .gauge.cyan .gauge-arc {
+    stroke: var(--color-cyan);
+  }
+  .gauge-value {
+    fill: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 10px;
+    text-anchor: middle;
+  }
+  .gauge-unit {
+    font-size: 0.5em;
+    fill: var(--color-faint);
+  }
+  .gauge figcaption {
+    min-width: 0;
+  }
+  .gauge-label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-ink);
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .gauge-detail {
+    display: block;
+    margin-top: 5px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    color: var(--color-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gauge-arc,
+    .leg-bar span {
+      transition: none;
+    }
+  }
+}
+
+@layer components {
   /* ═══════════ pagina non trovata ═══════════ */
 
   /* L'elenco dei moduli fa da mappa: chi è finito qui da un link sbagliato

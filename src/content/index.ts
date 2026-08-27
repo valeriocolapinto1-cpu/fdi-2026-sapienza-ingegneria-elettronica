@@ -1,6 +1,7 @@
 import { mcq } from './mcq';
 import { open } from './open';
 import { asmWrite } from './asmWrite';
+import { diagrams } from './diagrams';
 import { topics, TOPIC_GROUPS } from './topics';
 import { figures } from './figures';
 import { traps } from './traps';
@@ -10,6 +11,24 @@ import type { Topic, TopicId, Trap } from './types';
 export { mcq, open, asmWrite, topics, TOPIC_GROUPS, figures, traps, links };
 export type { TopicGroup } from './topics';
 export type * from './types';
+
+/**
+ * Le voci che il motore può pescare e che, una volta viste in una prova,
+ * finiscono nello storico per `bankId`.
+ *
+ * Serve un denominatore onesto per «quanta parte della banca hai già
+ * affrontato»: contarlo qui, dalle stesse liste che il motore usa, evita che
+ * il numero resti indietro quando si aggiungono domande. Le domande
+ * *generate* — Karnaugh, tabella di verità → espressione — non ci sono: non
+ * hanno un `bankId` perché ogni volta sono diverse, quindi non sono
+ * «affrontabili» una volta per tutte.
+ */
+export const BANK_IDS: ReadonlySet<string> = new Set([
+  ...mcq.map((item) => item.id),
+  ...open.map((item) => item.id),
+  ...asmWrite.map((item) => item.id),
+  ...diagrams.map((item) => item.id),
+]);
 
 /** Soglie minime richieste dalla specifica dei contenuti. */
 const MINIMUMS = {

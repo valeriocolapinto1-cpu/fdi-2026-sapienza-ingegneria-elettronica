@@ -39,9 +39,22 @@ export interface ProgressData {
   /** Moduli dichiarati studiati, con l'istante in cui li hai segnati. */
   done: Partial<Record<TopicId, number>>;
   bank: BankOutcomes;
+  /**
+   * Data dell'appello, in formato `AAAA-MM-GG`.
+   *
+   * Campo **aggiunto** alla versione 2, non una versione nuova: è opzionale e
+   * additivo, quindi dati salvati prima si leggono senza migrazione (esce
+   * `undefined`) e una versione vecchia dell'app li rileggerebbe ignorandolo.
+   * Bump della versione e migrazione servono quando cambia il *significato* di
+   * un campo, come è stato per `studied` → `visited`.
+   */
+  examDate?: string;
 }
 
 const EMPTY: ProgressData = { version: 2, exams: [], visited: [], done: {}, bank: {} };
+
+/** `AAAA-MM-GG`, la forma che `<input type="date">` legge e scrive. */
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Non lasciamo crescere lo storico all'infinito. */
 const MAX_EXAMS = 200;
@@ -79,6 +92,11 @@ function read(store: KeyValueStore): ProgressData {
     visited: Array.isArray(data.visited) ? data.visited : [],
     done: typeof data.done === 'object' && data.done !== null ? data.done : {},
     bank: typeof data.bank === 'object' && data.bank !== null ? data.bank : {},
+    // Una data storpiata a mano nello storage non deve arrivare ai conti:
+    // si scarta qui, e il sito si comporta come se non fosse mai stata messa.
+    ...(typeof data.examDate === 'string' && ISO_DAY.test(data.examDate)
+      ? { examDate: data.examDate }
+      : {}),
   };
 }
 
@@ -161,6 +179,23 @@ export function setStudiedMany(ids: readonly TopicId[], studied: boolean): void 
 
 export function isStudied(data: ProgressData, topicId: TopicId): boolean {
   return data.done[topicId] !== undefined;
+}
+
+/**
+ * Fissa (o toglie) la data dell'appello.
+ *
+ * `null` la rimuove: chi cambia idea o sposta l'appello non deve restare con
+ * un conto alla rovescia sbagliato addosso.
+ */
+export function setExamDate(date: string | null): void {
+  const data = getProgress();
+  if (date === null) {
+    const { examDate: _removed, ...rest } = data;
+    write(rest);
+    return;
+  }
+  if (!ISO_DAY.test(date)) return;
+  write({ ...data, examDate: date });
 }
 
 /** Azzera solo la carriera di studio, lasciando intatto lo storico delle prove. */

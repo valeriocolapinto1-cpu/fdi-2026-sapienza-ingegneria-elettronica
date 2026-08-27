@@ -4,6 +4,7 @@ import { hrefFor } from '~/lib/router';
 import { computeStats, useProgress } from '~/store/progress';
 import { storage } from '~/store/storage';
 import { DatapathHero } from '~/ui/components/DatapathHero';
+import { Preparation } from '~/ui/components/Preparation';
 import { TopicCard } from './Study';
 
 /**
@@ -110,6 +111,8 @@ export function Dashboard(): JSX.Element {
           </aside>
         </div>
       </div>
+
+      <Preparation />
 
       <div class="stats">
         <Stat value={String(stats.examsTaken)} label="Esami svolti" />

@@ -122,6 +122,59 @@ describe('carriera di studio', () => {
     expect(stats.visitedCount).toBe(2);
   });
 
+  it('la data dell’appello si mette, si legge e si toglie', async () => {
+    withStorage();
+    const { setExamDate, getProgress } = await load();
+
+    expect(getProgress().examDate, 'di partenza non c’è').toBeUndefined();
+
+    setExamDate('2026-09-14');
+    expect(getProgress().examDate).toBe('2026-09-14');
+
+    setExamDate(null);
+    expect(getProgress().examDate, 'togliere la data la rimuove davvero').toBeUndefined();
+  });
+
+  it('una data malformata non entra nell’archivio', async () => {
+    withStorage();
+    const { setExamDate, getProgress } = await load();
+
+    setExamDate('2026-09-14');
+    for (const junk of ['14/09/2026', 'domani', '', '2026-9-4']) {
+      setExamDate(junk);
+      expect(getProgress().examDate, `"${junk}" non deve passare`).toBe('2026-09-14');
+    }
+  });
+
+  it('una data storpiata già in archivio viene ignorata alla lettura', async () => {
+    // Chi mette le mani nel localStorage non deve poter far comparire
+    // «NaN giorni all'appello» in pagina.
+    withStorage({ version: 2, exams: [], visited: [], done: {}, bank: {}, examDate: 'pippo' });
+    const { getProgress } = await load();
+    expect(getProgress().examDate).toBeUndefined();
+  });
+
+  it('la data sopravvive alle altre scritture', async () => {
+    withStorage();
+    const { setExamDate, setStudied, recordExam, getProgress } = await load();
+
+    setExamDate('2026-09-14');
+    setStudied('bin', true);
+    recordExam({
+      examId: 'x',
+      mode: 'full',
+      finishedAt: 1,
+      results: [],
+      earned: 20,
+      total: 30,
+      score30: 20,
+      lode: false,
+      percent: 67,
+    });
+
+    expect(getProgress().examDate, 'segnare e consegnare non la cancellano').toBe('2026-09-14');
+  });
+
   it('dati di una versione sconosciuta non fanno esplodere nulla', async () => {
     withStorage({ version: 99, garbage: true });
     const { getProgress } = await load();

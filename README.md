@@ -27,7 +27,10 @@ del browser.
 
 ## Cosa c'è dentro
 
-- **Dashboard** — statistiche (esami svolti, miglior voto, media, moduli studiati) e avvio rapido.
+- **Dashboard** — il **calcolatore di preparazione**: metti la data del tuo appello e il sito
+  ricava a che punto sei e a che ritmo devi andare — minuti di lettura al giorno, moduli a
+  settimana, prove complete da qui alla data. Con due ciambelle di avanzamento (argomenti
+  studiati, banca domande affrontata), le statistiche delle prove e l'avvio rapido.
 - **Carriera** — l'elenco dei 17 moduli con una spunta per ciascuno: lo segni **tu** quando l'hai
   studiato davvero, con barra di avanzamento, minuti che restano e data di completamento. Aprire
   un modulo è automatico e non conta.

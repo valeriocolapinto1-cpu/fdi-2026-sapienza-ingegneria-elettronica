@@ -147,6 +147,9 @@ export function Career(): JSX.Element {
         <a class="btn ghost" href={hrefFor('study')}>
           Torna ai moduli
         </a>
+        <a class="btn ghost" href={hrefFor('dash')}>
+          Quanto sei pronto ▸
+        </a>
         <button
           type="button"
           class="btn ghost"
