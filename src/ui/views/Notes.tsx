@@ -1,17 +1,21 @@
 import type { JSX } from 'preact';
 import { hrefFor } from '~/lib/router';
+import { OWNER, REPO_URL, hasOwnerContact } from '~/lib/site';
 import { storage } from '~/store/storage';
-
-const REPO = 'https://github.com/valeriocolapinto1-cpu/fdi-2026-sapienza-ingegneria-elettronica';
 
 /**
  * Note, privacy e licenza.
  *
  * Una pagina sola al posto di «privacy policy» e «termini di servizio», che
- * qui sarebbero due moduli vuoti: non c'è un servizio da regolare, non c'è
- * un account da chiudere, non c'è un dato da chiedere indietro. Quello che
- * serve davvero è dire con precisione che cosa il sito **non** fa — e da chi
- * non è approvato.
+ * qui sarebbero due moduli vuoti: non c'è un servizio da regolare, non c'è un
+ * account da chiudere, non c'è un dato da chiedere indietro. Quello che serve
+ * davvero è dire con precisione che cosa il sito **non** fa, da chi non è
+ * approvato, e a chi si scrive se qualcosa non va.
+ *
+ * Quando arriverà la pubblicità questa pagina va riscritta, non ritoccata:
+ * «nessun cookie, nessun servizio esterno» diventerà falso, e un'informativa
+ * che promette il contrario di quel che succede è peggio di nessuna
+ * informativa.
  */
 export function Notes(): JSX.Element {
   return (
@@ -24,23 +28,24 @@ export function Notes(): JSX.Element {
         server e non sa chi sei.
       </p>
 
-      <h2 class="sec">Non è un sito ufficiale</h2>
+      <h2 class="sec">Non è il sito di nessun corso</h2>
       <div class="panel narrow">
         <p class="lead">
-          È scritto da uno studente per prepararsi, e <b>non è affiliato</b> alla Sapienza, al
-          corso di Fondamenti di Informatica o a chi lo tiene: nessuno di loro l'ha commissionato,
-          rivisto o approvato, e il fatto che ne parli non implica nessun legame.
+          È scritto da uno studente per studiare, ed è <b>indipendente</b>: non appartiene a
+          nessuna università, a nessun corso e a nessun docente, nessuno di loro l'ha
+          commissionato, rivisto o approvato, e non c'è nessun legame da nessuna parte.
         </p>
         <p class="lead" style="margin-top:10px">
-          I contenuti vengono da appunti fra studenti, quindi <b>possono contenere errori</b> ed
-          essere sorpassati da un cambio di programma. Programma, regole della prova, punteggi e
-          date valgono solo se li leggi sulle{' '}
-          <a href={hrefFor('ref')}>pagine ufficiali del corso</a>. In caso di differenza, ha
-          ragione la pagina ufficiale — sempre.
+          Copre il programma standard di Architettura degli Elaboratori, che è più o meno lo
+          stesso in tutte le facoltà di ingegneria e informatica — ma «più o meno» non basta a
+          preparare un esame: <b>programma, regole della prova, punteggi e date valgono solo
+          quelli del tuo corso</b>. Verificali sulle sue pagine ufficiali, e in caso di
+          differenza ha ragione lui.
         </p>
         <p class="lead" style="margin-top:10px">
-          Le domande del simulatore sono <b>inventate qui</b>, nello stile della prova: non sono
-          e non riproducono testi d'esame reali.
+          La prova che il simulatore genera — 12 quesiti, un'ora, punteggio su 30 — è una{' '}
+          <b>struttura scelta da questo sito</b> perché è una misura utile per capire a che punto
+          sei: non è, e non riproduce, il formato dell'esame di nessuno.
         </p>
       </div>
 
@@ -76,46 +81,77 @@ export function Notes(): JSX.Element {
         )}
       </div>
 
-      <h2 class="sec">Testi, figure e diritti</h2>
+      <h2 class="sec">Da dove vengono i contenuti</h2>
       <div class="panel narrow">
         <p class="lead">
-          Le spiegazioni, le domande e gli esercizi sono <b>scritti da zero</b>. I rimandi tipo
-          «Hamacher cap. 8» sono riferimenti bibliografici a capitoli e figure del libro di testo,
-          non citazioni del suo contenuto: il libro non è riprodotto qui, né in parte.
+          Spiegazioni, domande, definizioni ed esercizi sono <b>scritti per questo sito</b>, e i{' '}
+          <a href={hrefFor('ref')}>45 schemi</a> disegnati da zero in SVG. Non c'è materiale
+          copiato da un libro, da una dispensa o da una prova d'esame: né testo, né immagini, né
+          la struttura di un indice altrui.
         </p>
         <p class="lead" style="margin-top:10px">
-          I <b>45 schemi</b> del sito sono <b>disegnati da zero</b> in SVG. Hanno la stessa
-          struttura logica delle figure del testo — che è informazione tecnica, non espressione
-          protetta — ma nessuna immagine del libro è stata copiata o ripubblicata. Il catalogo
-          delle altre figure è un elenco di riferimenti per ritrovarle sul libro, non una loro
-          riproduzione.
+          Gli schemi rappresentano strutture standard — un multiplexer, una cache a mappatura
+          diretta, una pipeline a cinque stadi — che qualunque testo descrive allo stesso modo
+          perché sono <b>informazione tecnica</b>, non l'invenzione di qualcuno. Il criterio con
+          cui sono stati verificati uno per uno è scritto per esteso in{' '}
+          <a href={`${REPO_URL}/blob/main/COMPLIANCE.md`} target="_blank" rel="noopener noreferrer">
+            COMPLIANCE.md
+          </a>
+          .
         </p>
         <p class="lead" style="margin-top:10px">
-          Se possiedi diritti su qualcosa che compare qui e ritieni che non debba esserci,{' '}
-          <a href={`${REPO}/issues`} target="_blank" rel="noopener noreferrer">
-            aprine una segnalazione
-          </a>{' '}
-          e la tolgo.
+          I libri consigliati stanno <a href={hrefFor('ref')}>in bibliografia</a> come letture: è
+          un elenco di titoli, non un rimando a contenuti riprodotti qui.
         </p>
+      </div>
+
+      <h2 class="sec">Se qualcosa non deve stare qui</h2>
+      <div class="panel narrow">
+        <p class="lead">
+          Se possiedi diritti su qualcosa che compare in questo sito e ritieni che non debba
+          esserci, scrivilo: <b>viene rimosso senza discutere</b>, e la verifica viene fatta
+          dopo, non prima. Lo stesso vale se ti sembra che il sito dica qualcosa di inesatto su
+          una persona, un corso o un'istituzione.
+        </p>
+        <div class="btn-row" style="margin-top:14px">
+          <a
+            class="btn primary"
+            href={`${REPO_URL}/issues/new`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Apri una segnalazione ▶
+          </a>
+          {hasOwnerContact() && (
+            <a class="btn ghost" href={`mailto:${OWNER.email}`}>
+              Scrivi in privato
+            </a>
+          )}
+        </div>
+        {hasOwnerContact() && (
+          <p class="fn" style="margin-top:12px">
+            Responsabile del sito: {OWNER.name} · {OWNER.email}
+          </p>
+        )}
       </div>
 
       <h2 class="sec">Hai trovato un errore?</h2>
       <div class="panel narrow">
         <p class="lead">
-          Probabile: è materiale di studio, non un libro. Se una risposta è sbagliata, una
-          definizione è imprecisa o uno schema non torna, segnalalo — è il modo in cui questo sito
-          migliora.
+          Probabile: è materiale di studio scritto da una persona sola, non un libro passato per
+          una revisione. Se una risposta è sbagliata, una definizione è imprecisa o uno schema
+          non torna, segnalalo — è il modo in cui questo sito migliora.
         </p>
         <div class="btn-row" style="margin-top:14px">
           <a
             class="btn primary"
-            href={`${REPO}/issues/new`}
+            href={`${REPO_URL}/issues/new`}
             target="_blank"
             rel="noopener noreferrer"
           >
             Segnala un errore ▶
           </a>
-          <a class="btn ghost" href={REPO} target="_blank" rel="noopener noreferrer">
+          <a class="btn ghost" href={REPO_URL} target="_blank" rel="noopener noreferrer">
             Il codice sorgente
           </a>
         </div>

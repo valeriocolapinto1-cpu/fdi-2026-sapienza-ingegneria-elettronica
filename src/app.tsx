@@ -3,6 +3,7 @@ import { useEffect } from 'preact/hooks';
 import { topicById } from '~/content';
 import { hrefFor, NAV_VIEWS, useRoute, VIEWS, type Route, type ViewId } from '~/lib/router';
 import { t } from '~/lib/i18n';
+import { SITE_TITLE } from '~/lib/site';
 import { Dashboard } from '~/ui/views/Dashboard';
 import { Study } from '~/ui/views/Study';
 import { Simulator } from '~/ui/views/Simulator';
@@ -24,14 +25,12 @@ const TAB_LABELS: Record<ViewId, string> = {
   note: 'Note & privacy',
 };
 
-const SITE = 'AE·FIN — Palestra di Architettura degli Elaboratori';
-
 /** Descrizione per vista: è quella che finisce nell'anteprima di un link. */
 const VIEW_DESCRIPTIONS: Record<ViewId, string> = {
   dash: 'Palestra di Architettura degli Elaboratori: diciassette moduli di teoria, ottantacinque esercizi svolti e un generatore di prove di autovalutazione che si correggono da sole.',
   study:
     'Diciassette moduli in ordine di studio, pensati per partire da zero: rampa d’ingresso, teoria distesa, esempio svolto, autoverifica e cinque esercizi con svolgimento.',
-  def: "I termini che l'esame chiede di saper enunciare, una frase ciascuno, con filtro per testo e per argomento.",
+  def: 'I termini da saper enunciare, una frase ciascuno, con filtro per testo e per argomento.',
   exam: 'Genera una prova di autovalutazione: numeri, tabelle di verità, schemi e assembly cambiano a ogni generazione, e la correzione è automatica dove può esserlo.',
   train:
     'Quattro palestre che fanno fare il procedimento e correggono ogni passaggio: binario a mano, schemi da completare, verità e Karnaugh, assembly a mente.',
@@ -57,8 +56,8 @@ function useHead(route: Route): void {
     const name = !route.known || missingTopic ? 'Pagina non trovata' : (topic?.title ?? null);
     document.title =
       name === null && route.view === 'dash'
-        ? SITE
-        : `${name ?? TAB_LABELS[route.view]} · ${SITE}`;
+        ? SITE_TITLE
+        : `${name ?? TAB_LABELS[route.view]} · ${SITE_TITLE}`;
 
     const description =
       !route.known || missingTopic
