@@ -68,9 +68,9 @@ export function Definitions(): JSX.Element {
       <p class="eyebrow">Formulario</p>
       <h1 class="h">Definizioni</h1>
       <p class="lead">
-        Solo i termini che l'esame chiede di saper enunciare. La prima frase è la definizione da
-        scrivere sul foglio; il resto è la precisazione che separa una risposta sufficiente da una
-        giusta. {definitions.length} voci.
+        I termini che conviene saper enunciare senza pensarci. La prima frase è la definizione
+        da scrivere sul foglio; il resto è la precisazione che separa una risposta sufficiente da
+        una giusta. {definitions.length} voci.
       </p>
 
       <div class="panel" style="margin-top:14px">

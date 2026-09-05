@@ -104,9 +104,10 @@ function DiagramGym({ initial }: { initial: string | null }): JSX.Element {
   return (
     <div class="gym">
       <p class="lead">
-        All'esame c'è sempre un «completa l'immagine»: ricevi il disegno con alcune etichette
-        mancanti e l'elenco di quelle da collocare — con qualche etichetta in più che non va da
-        nessuna parte. Qui è lo stesso, e la correzione è immediata.
+        Ricevi il disegno con alcune etichette mancanti e l'elenco di quelle da collocare — con
+        qualche etichetta in più che non va da nessuna parte. Riconoscere un blocco fuori
+        contesto è diverso dal riconoscerlo mentre lo leggi in un capitolo: la correzione è
+        immediata.
       </p>
 
       {/* Gli schemi sono quarantacinque: una tendina, non una fila di bottoni. */}

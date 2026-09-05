@@ -36,8 +36,8 @@ function Recent({ exams }: { exams: ExamRecord[] }): JSX.Element {
           <p class="lead">
             Crocette, schemi da completare, tabelle di verità e assembly si correggono da soli.
             Gli schemi valgono a <b>punteggio parziale</b>: metà etichette al posto giusto, metà
-            punto. Le due domande aperte le valuti tu confrontando con la traccia della risposta —
-            all'esame le legge una persona, e qui la persona sei tu.
+            punto. Le due domande aperte le valuti tu confrontando con la traccia della risposta:
+            una risposta aperta la legge una persona, e qui la persona sei tu.
           </p>
         </div>
       ) : (
