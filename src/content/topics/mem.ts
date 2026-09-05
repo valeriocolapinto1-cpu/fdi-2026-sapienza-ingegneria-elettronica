@@ -4,7 +4,6 @@ export const mem: Topic = {
     id: 'mem',
     title: 'Gerarchia di memoria & cache',
     blurb: 'SRAM/DRAM, località, mappature, politiche di scrittura, tempo medio di accesso.',
-    ref: 'Hamacher cap. 8',
     trapIds: ['trap-ram'],
     prereq: ['cpu'],
     diagramIds: ['gerarchia-memoria', 'cache-set-associativa'],

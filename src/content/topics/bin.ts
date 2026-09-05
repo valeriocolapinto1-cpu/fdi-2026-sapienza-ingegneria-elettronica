@@ -4,7 +4,6 @@ export const bin: Topic = {
     id: 'bin',
     title: 'Numeri binari & complemento a 2',
     blurb: "Basi, rappresentazioni con segno, range, overflow. La parte più «spremuta» all'esame.",
-    ref: 'Hamacher cap. 1',
     trapIds: ['trap-ram'],
     summary: [
       'Una notazione è <b>posizionale</b> quando il valore di una cifra dipende dalla posizione: il numero vale Σ cifra × base^posizione. Cambiare base è cambiare quel <i>peso</i>, non le regole.',

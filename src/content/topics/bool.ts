@@ -5,7 +5,6 @@ export const bool: Topic = {
     id: 'bool',
     title: 'Algebra di Boole & porte logiche',
     blurb: 'Assiomi, De Morgan, SOP e POS, insiemi funzionalmente completi.',
-    ref: 'Hamacher — Appendice A',
     trapIds: ['trap-and-assoc', 'trap-simboli', 'trap-demorgan'],
     summary: [
       'Sei porte da riconoscere <b>a memoria</b> dalla tabella di verità: AND, OR, NOT, NAND, NOR, XOR.',

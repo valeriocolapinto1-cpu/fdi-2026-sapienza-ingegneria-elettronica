@@ -5,7 +5,6 @@ export const karnaugh: Topic = {
     id: 'karnaugh',
     title: 'Sintesi & mappe di Karnaugh',
     blurb: 'Dalla tabella di verità al circuito minimo. Esce quasi sempre.',
-    ref: 'Hamacher — Appendice A',
     trapIds: ['trap-and-assoc'],
     prereq: ['bool'],
     summary: [

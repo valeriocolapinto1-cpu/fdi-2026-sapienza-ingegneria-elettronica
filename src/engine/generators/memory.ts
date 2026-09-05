@@ -29,7 +29,6 @@ function physicalAddressVariant(ctx: GenCtx): FillQuestion {
       `<code>0x${toHex(virtual)}</code> cade nella pagina <b>${page}</b>, mappata sul frame ` +
       `<b>${frame}</b>. Qual è l'indirizzo fisico, in esadecimale?`,
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
     answer: toHex(physical),
     normalize: 'hex',
     placeholder: 'es. 1F40',
@@ -52,7 +51,6 @@ function offsetBitsVariant(ctx: GenCtx): FillQuestion {
     points: ctx.points,
     q: `Con pagine da <b>${kib} KiB</b>, quanti bit dell'indirizzo virtuale formano l'<b>offset</b>?`,
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
     answer: String(bits),
     normalize: 'dec',
     placeholder: 'numero di bit',
@@ -114,7 +112,6 @@ export function genCacheFields(ctx: GenCtx): McQuestion {
       `(${totalBytes / 1024 >= 1 ? `${totalBytes / 1024} KiB` : `${totalBytes} byte`} in totale), ` +
       `su indirizzi da <b>${addressBits} bit</b>. Quanti bit occupa il campo <b>${field.name}</b>?`,
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     options,
     correct,
     hint:

@@ -4,7 +4,6 @@ export const ff: Topic = {
     id: 'ff',
     title: 'Circuiti sequenziali & flip-flop',
     blurb: 'Latch, flip-flop D/JK/T, master-slave, registri e contatori.',
-    ref: 'Hamacher — Appendice A',
     trapIds: [],
     prereq: ['bool'],
     summary: [

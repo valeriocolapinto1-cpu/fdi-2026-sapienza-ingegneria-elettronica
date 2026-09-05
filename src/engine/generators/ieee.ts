@@ -43,7 +43,6 @@ function encodeVariant(ctx: GenCtx): FillQuestion {
       `Codifica <b>${fmtDecimal(value)}</b> in IEEE 754 singola precisione. ` +
       'Qual è il campo <b>esponente</b> (8 bit)?',
     topic: 'ieee',
-    ref: 'Hamacher cap. 1',
     answer: toBin(fields.exponent, 8),
     normalize: 'bin',
     placeholder: '8 bit',
@@ -81,7 +80,6 @@ function decodeVariant(ctx: GenCtx): McQuestion {
       'Un numero in IEEE 754 singola precisione ha questa configurazione di bit. Quale valore rappresenta?' +
       `<br><span class="mono">${fieldsToGroupedBits(fields)}</span>`,
     topic: 'ieee',
-    ref: 'Hamacher cap. 1',
     options,
     correct,
     hint:

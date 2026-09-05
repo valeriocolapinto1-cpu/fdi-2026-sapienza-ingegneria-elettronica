@@ -1,4 +1,4 @@
-import type { HamacherRef, TopicId } from './types';
+import type { TopicId } from './types';
 
 /**
  * Schemi da completare.
@@ -25,7 +25,6 @@ export interface Diagram {
   id: string;
   title: string;
   topic: TopicId;
-  ref: HamacherRef;
   width: number;
   height: number;
   /** Disegno di base, senza le etichette da indovinare. */
@@ -49,7 +48,6 @@ export const diagrams: Diagram[] = [
     id: 'unita-funzionali',
     title: 'Unità funzionali di un calcolatore',
     topic: 'cpu',
-    ref: 'Hamacher cap. 1',
     width: 620,
     height: 330,
     slots: [
@@ -88,7 +86,6 @@ export const diagrams: Diagram[] = [
     id: 'processore-3bus',
     title: 'Processore CISC a tre bus',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     width: 620,
     height: 400,
     slots: [
@@ -129,7 +126,6 @@ export const diagrams: Diagram[] = [
     id: 'cache-set-associativa',
     title: 'Cache a corrispondenza associativa a gruppi',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     width: 640,
     height: 420,
     slots: [
@@ -176,7 +172,6 @@ export const diagrams: Diagram[] = [
     id: 'gerarchia-memoria',
     title: 'Gerarchia di memoria',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     width: 560,
     height: 350,
     slots: [
@@ -204,7 +199,6 @@ export const diagrams: Diagram[] = [
     id: 'memoria-virtuale-tlb',
     title: 'Traduzione dell’indirizzo virtuale',
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
     width: 620,
     height: 320,
     slots: [
@@ -242,7 +236,6 @@ export const diagrams: Diagram[] = [
     id: 'pipeline-5-stadi',
     title: 'Percorso dati a pipeline di cinque stadi',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
     width: 660,
     height: 220,
     slots: [
@@ -275,7 +268,6 @@ export const diagrams: Diagram[] = [
     id: 'interfaccia-io',
     title: 'Interfaccia di un dispositivo di I/O',
     topic: 'io',
-    ref: 'Hamacher cap. 3',
     width: 620,
     height: 300,
     slots: [
@@ -316,7 +308,6 @@ export const diagrams: Diagram[] = [
     id: 'sommatore-ripple',
     title: 'Sommatore a propagazione di riporto',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
     width: 740,
     height: 240,
     slots: [
@@ -359,7 +350,6 @@ export const diagrams: Diagram[] = [
     id: 'processore-memoria',
     title: 'Processore e memoria principale',
     topic: 'cpu',
-    ref: 'Hamacher cap. 1',
     width: 620,
     height: 360,
     slots: [
@@ -389,7 +379,6 @@ export const diagrams: Diagram[] = [
     id: 'sistema-calcolo',
     title: 'Un sistema di calcolo',
     topic: 'io',
-    ref: 'Hamacher cap. 3',
     width: 620,
     height: 300,
     slots: [
@@ -417,7 +406,6 @@ export const diagrams: Diagram[] = [
     id: 'registri-controllo',
     title: 'Registri di controllo del processore',
     topic: 'irq',
-    ref: 'Hamacher cap. 3',
     width: 640,
     height: 290,
     slots: [
@@ -445,7 +433,6 @@ export const diagrams: Diagram[] = [
     id: 'catena-software',
     title: 'Dal sorgente al programma oggetto',
     topic: 'sw',
-    ref: 'Hamacher cap. 4',
     width: 620,
     height: 470,
     slots: [
@@ -481,7 +468,6 @@ export const diagrams: Diagram[] = [
     id: 'componenti-processore',
     title: 'Componenti principali di un processore',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     width: 620,
     height: 360,
     slots: [
@@ -511,7 +497,6 @@ export const diagrams: Diagram[] = [
     id: 'cinque-stadi',
     title: 'Organizzazione a cinque stadi',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     width: 480,
     height: 420,
     slots: [
@@ -548,7 +533,6 @@ export const diagrams: Diagram[] = [
     id: 'datapath',
     title: 'Percorso dei dati di un processore',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     width: 560,
     height: 470,
     slots: [
@@ -592,7 +576,6 @@ export const diagrams: Diagram[] = [
     id: 'controllo-cablato',
     title: 'Generazione dei segnali di controllo',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     width: 640,
     height: 320,
     slots: [
@@ -627,7 +610,6 @@ export const diagrams: Diagram[] = [
     id: 'controllo-microprogrammato',
     title: 'Unità di controllo microprogrammata',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     width: 520,
     height: 340,
     slots: [
@@ -657,7 +639,6 @@ export const diagrams: Diagram[] = [
     id: 'superscalare',
     title: 'Processore superscalare con due unità di esecuzione',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
     width: 640,
     height: 300,
     slots: [
@@ -700,7 +681,6 @@ export const diagrams: Diagram[] = [
     id: 'bus-singolo',
     title: 'Struttura a bus singolo',
     topic: 'io',
-    ref: 'Hamacher cap. 7',
     width: 620,
     height: 280,
     slots: [
@@ -728,7 +708,6 @@ export const diagrams: Diagram[] = [
     id: 'interfaccia-ingresso',
     title: 'Interfaccia di I/O per un dispositivo di ingresso',
     topic: 'io',
-    ref: 'Hamacher cap. 7',
     width: 620,
     height: 330,
     slots: [
@@ -760,7 +739,6 @@ export const diagrams: Diagram[] = [
     id: 'usb-albero',
     title: 'Struttura ad albero dell’USB',
     topic: 'io',
-    ref: 'Hamacher cap. 7',
     width: 620,
     height: 340,
     slots: [
@@ -794,7 +772,6 @@ export const diagrams: Diagram[] = [
     id: 'pci-sistema',
     title: 'Uso di un bus PCI in un sistema',
     topic: 'io',
-    ref: 'Hamacher cap. 7',
     width: 640,
     height: 380,
     slots: [
@@ -833,7 +810,6 @@ export const diagrams: Diagram[] = [
     id: 'chip-memoria',
     title: 'Organizzazione delle celle in un chip di memoria',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     width: 620,
     height: 360,
     slots: [
@@ -874,7 +850,6 @@ export const diagrams: Diagram[] = [
     id: 'dram-sincrona',
     title: 'DRAM sincrona',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     width: 640,
     height: 380,
     slots: [
@@ -914,7 +889,6 @@ export const diagrams: Diagram[] = [
     id: 'dma-sistema',
     title: 'Uso dei controllori DMA in un sistema',
     topic: 'io',
-    ref: 'Hamacher cap. 8',
     width: 620,
     height: 360,
     slots: [
@@ -953,7 +927,6 @@ export const diagrams: Diagram[] = [
     id: 'cache-diretta',
     title: 'Cache a mappatura diretta',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     width: 620,
     height: 400,
     slots: [
@@ -995,7 +968,6 @@ export const diagrams: Diagram[] = [
     id: 'cache-associativa',
     title: 'Cache completamente associativa',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
     width: 620,
     height: 380,
     slots: [
@@ -1035,7 +1007,6 @@ export const diagrams: Diagram[] = [
     id: 'memoria-virtuale-org',
     title: 'Organizzazione della memoria virtuale',
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
     width: 520,
     height: 420,
     slots: [
@@ -1069,7 +1040,6 @@ export const diagrams: Diagram[] = [
     id: 'sommatore-sottrattore',
     title: 'Circuito di addizione e sottrazione',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
     width: 620,
     height: 300,
     slots: [
@@ -1108,7 +1078,6 @@ export const diagrams: Diagram[] = [
     id: 'carry-lookahead',
     title: 'Sommatore con riporto anticipato',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
     width: 640,
     height: 320,
     slots: [
@@ -1153,7 +1122,6 @@ export const diagrams: Diagram[] = [
     id: 'moltiplicatore-sequenziale',
     title: 'Moltiplicatore binario sequenziale',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
     width: 620,
     height: 340,
     slots: [
@@ -1189,7 +1157,6 @@ export const diagrams: Diagram[] = [
     id: 'divisione-binaria',
     title: 'Circuito per la divisione binaria',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
     width: 620,
     height: 320,
     slots: [
@@ -1222,7 +1189,6 @@ export const diagrams: Diagram[] = [
     id: 'ieee-formati',
     title: 'Formati IEEE in virgola mobile',
     topic: 'ieee',
-    ref: 'Hamacher cap. 9',
     width: 640,
     height: 300,
     slots: [
@@ -1251,7 +1217,6 @@ export const diagrams: Diagram[] = [
     id: 'fp-somma',
     title: 'Unità di addizione in virgola mobile',
     topic: 'ieee',
-    ref: 'Hamacher cap. 9',
     width: 620,
     height: 420,
     slots: [
@@ -1290,7 +1255,6 @@ export const diagrams: Diagram[] = [
     id: 'soc-sveglia',
     title: 'Schema a blocchi della sveglia su chip',
     topic: 'io',
-    ref: 'Hamacher cap. 11',
     width: 640,
     height: 340,
     slots: [
@@ -1334,7 +1298,6 @@ export const diagrams: Diagram[] = [
     id: 'multiprocessore-uma',
     title: 'Multiprocessore a memoria condivisa (UMA)',
     topic: 'perf',
-    ref: 'Hamacher cap. 12',
     width: 620,
     height: 300,
     slots: [
@@ -1366,7 +1329,6 @@ export const diagrams: Diagram[] = [
     id: 'cmos-struttura',
     title: 'Struttura di un circuito CMOS',
     topic: 'tech',
-    ref: 'Hamacher App. A',
     width: 520,
     height: 340,
     slots: [
@@ -1398,7 +1360,6 @@ export const diagrams: Diagram[] = [
     id: 'master-slave',
     title: 'Flip-flop D master-slave',
     topic: 'ff',
-    ref: 'Hamacher App. A',
     width: 620,
     height: 280,
     slots: [
@@ -1433,7 +1394,6 @@ export const diagrams: Diagram[] = [
     id: 'registro-scorrimento',
     title: 'Registro a scorrimento',
     topic: 'ff',
-    ref: 'Hamacher App. A',
     width: 640,
     height: 240,
     slots: [
@@ -1469,7 +1429,6 @@ export const diagrams: Diagram[] = [
     id: 'contatore-3bit',
     title: 'Contatore binario a 3 bit',
     topic: 'ff',
-    ref: 'Hamacher App. A',
     width: 620,
     height: 250,
     slots: [
@@ -1503,7 +1462,6 @@ export const diagrams: Diagram[] = [
     id: 'decoder-2-4',
     title: 'Decodificatore a due ingressi e quattro uscite',
     topic: 'comb',
-    ref: 'Hamacher App. A',
     width: 560,
     height: 330,
     slots: [
@@ -1541,7 +1499,6 @@ export const diagrams: Diagram[] = [
     id: 'mux-4-1',
     title: 'Multiplexer a quattro ingressi',
     topic: 'comb',
-    ref: 'Hamacher App. A',
     width: 560,
     height: 320,
     slots: [
@@ -1572,7 +1529,6 @@ export const diagrams: Diagram[] = [
     id: 'pld-blocchi',
     title: 'Schema a blocchi di un PLD',
     topic: 'tech',
-    ref: 'Hamacher App. A',
     width: 640,
     height: 280,
     slots: [
@@ -1601,7 +1557,6 @@ export const diagrams: Diagram[] = [
     id: 'fpga',
     title: 'Schema concettuale di una FPGA',
     topic: 'tech',
-    ref: 'Hamacher App. A',
     width: 520,
     height: 420,
     slots: [
@@ -1637,7 +1592,6 @@ export const diagrams: Diagram[] = [
     id: 'macchina-stati',
     title: 'Modello formale di una macchina a stati finiti',
     topic: 'ff',
-    ref: 'Hamacher App. A',
     width: 620,
     height: 320,
     slots: [

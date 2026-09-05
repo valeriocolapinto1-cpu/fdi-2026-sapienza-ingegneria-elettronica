@@ -27,7 +27,6 @@ export function genDiagramLabel(ctx: GenCtx): DiagramQuestion {
       `Completa lo schema «${diagram.title}» collocando le etichette al posto giusto. ` +
       '<b>Attenzione:</b> l’elenco contiene più etichette delle posizioni disponibili.',
     topic: diagram.topic,
-    ref: diagram.ref,
     diagramId: diagram.id,
     // Insieme, non elenco: nella traduzione degli indirizzi l'etichetta
     // «Offset» va in due posizioni diverse — è proprio il punto della figura —

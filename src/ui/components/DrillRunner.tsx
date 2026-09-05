@@ -3,6 +3,7 @@ import { useState } from 'preact/hooks';
 import { checkStep, type Drill, type DrillStep } from '~/engine/drills';
 import { AsmBlock } from '~/ui/components/AsmBlock';
 import { Rich } from '~/ui/components/Rich';
+import { TopicRef } from '~/ui/components/TopicRef';
 
 const PLACEHOLDER: Record<DrillStep['kind'], string> = {
   bin: '0 e 1',
@@ -101,7 +102,7 @@ export function DrillRunner({ drill }: { drill: Drill }): JSX.Element {
           {done} / {drill.steps.length} passaggi corretti
           {done === drill.steps.length ? ' · esercizio completo' : ''}
         </span>
-        <span class="th-ref">{drill.ref}</span>
+        <TopicRef class="th-ref" topic={drill.topic} />
       </div>
     </div>
   );

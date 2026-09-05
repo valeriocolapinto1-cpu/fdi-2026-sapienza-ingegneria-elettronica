@@ -53,10 +53,21 @@ describe('content layer', () => {
     }
   });
 
-  it('cita Hamacher su ogni quesito e ogni scheda', () => {
-    for (const item of [...mcq, ...open, ...asmWrite, ...topics]) {
-      expect(item.ref, `manca il riferimento su ${item.id}`).toMatch(/Hamacher/);
+  it('rimanda a un modulo che esiste, da ogni quesito e da ogni schema', () => {
+    // Il rimando non è più un capitolo di un libro che il sito non può
+    // aprire: è una destinazione interna, quindi un id sbagliato qui è un
+    // collegamento rotto in faccia a chi studia.
+    const known = new Set<string>(topics.map((topic) => topic.id));
+    for (const item of [...mcq, ...open, ...asmWrite, ...definitions, ...diagrams]) {
+      expect(known.has(item.topic), `${item.id}: modulo "${item.topic}" inesistente`).toBe(true);
     }
+  });
+
+  it('non lascia in giro riferimenti al libro di testo', () => {
+    // I contenuti sono originali e non devono appoggiarsi alla struttura di
+    // un'opera altrui: la bibliografia sta nelle Note, non dentro i quesiti.
+    const testo = JSON.stringify([mcq, open, asmWrite, definitions, diagrams, topics, traps]);
+    expect(testo).not.toMatch(/Hamacher/i);
   });
 
   it('marca le trappole come percezioni da verificare', () => {
@@ -155,12 +166,11 @@ describe('content layer', () => {
     }
   });
 
-  it('le definizioni stanno in una frase e citano il testo', () => {
+  it('le definizioni stanno in una frase e puntano al modulo giusto', () => {
     expect(definitions.length).toBeGreaterThanOrEqual(50);
     expect(new Set(definitions.map((item) => item.id)).size).toBe(definitions.length);
     const titles = new Set(topics.map((topic) => topic.id));
     for (const item of definitions) {
-      expect(item.ref, `manca il riferimento su ${item.id}`).toMatch(/Hamacher/);
       expect(titles.has(item.topic), `argomento sconosciuto in ${item.id}`).toBe(true);
       // Se non sta in una frase non è una definizione: è un modulo di studio.
       expect(item.short.trim().length, item.id).toBeGreaterThan(20);
@@ -195,7 +205,6 @@ describe('content layer', () => {
         );
       }
       expect(diagram.distractors.length, `${diagram.id}: senza distrattori`).toBeGreaterThanOrEqual(2);
-      expect(diagram.ref).toMatch(/Hamacher/);
     }
   });
 

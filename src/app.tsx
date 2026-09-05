@@ -64,7 +64,7 @@ function useHead(route: Route): void {
       !route.known || missingTopic
         ? "L'indirizzo non corrisponde a nessuna pagina del sito."
         : topic
-          ? `${topic.blurb} · ${topic.ref}`
+          ? topic.blurb
           : VIEW_DESCRIPTIONS[route.view];
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
   }, [route.view, route.param, route.known]);

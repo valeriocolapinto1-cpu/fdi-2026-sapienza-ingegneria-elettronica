@@ -4,7 +4,6 @@ export const tech: Topic = {
   id: 'tech',
   title: 'Tempi, tecnologia & dispositivi programmabili',
   blurb: 'Ritardo di propagazione, cammino critico, fan-in/fan-out, CMOS, PLA e FPGA.',
-  ref: 'Hamacher — Appendice A',
   trapIds: [],
     prereq: ['bool'],
     summary: [

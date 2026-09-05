@@ -4,6 +4,7 @@ import { TOPIC_TITLES } from '~/content';
 import { definitions } from '~/content/definitions';
 import type { Definition } from '~/content/definitions';
 import type { TopicId } from '~/content/types';
+import { TopicRef } from '~/ui/components/TopicRef';
 import { Rich } from '~/ui/components/Rich';
 
 /** Ordine alfabetico italiano: «è» accanto a «e», non in fondo. */
@@ -43,8 +44,7 @@ function DefinitionCard({ definition }: { definition: Definition }): JSX.Element
       <Rich class="def-s" html={definition.short} />
       {definition.detail && <Rich class="def-d" html={definition.detail} />}
       <div class="def-f">
-        <span class="def-topic">{TOPIC_TITLES[definition.topic]}</span>
-        <span class="def-ref">{definition.ref}</span>
+        <TopicRef class="def-topic" topic={definition.topic} />
       </div>
     </article>
   );

@@ -18,7 +18,6 @@ export const mcq: McqItem[] = [
     q: "Quali operatori rendono l'algebra di Boole funzionalmente completa da soli?",
     options: ['AND e OR', 'NAND e NOR', 'NOT e AND', 'XOR e OR'],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-bool-02',
@@ -26,7 +25,6 @@ export const mcq: McqItem[] = [
     q: 'Con soli AND e OR, perché non si sintetizza ogni funzione?',
     options: ['Manca la negazione', 'Sono troppo lenti', 'Non sono associativi', 'Consumano troppo'],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-bool-03',
@@ -34,7 +32,6 @@ export const mcq: McqItem[] = [
     q: 'Quale porta logica si ottiene combinando due NAND?',
     options: ['OR', 'AND', 'NOR', 'XNOR'],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
 
   {
@@ -43,7 +40,6 @@ export const mcq: McqItem[] = [
     q: 'Per il teorema di assorbimento, <code>A ∨ (A ∧ B)</code> equivale a:',
     options: ['A', 'B', 'A ∧ B', 'A ⊕ B'],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-bool-05',
@@ -56,7 +52,6 @@ export const mcq: McqItem[] = [
       'Sempre quattro',
     ],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-bool-06',
@@ -64,7 +59,6 @@ export const mcq: McqItem[] = [
     q: 'Quanto vale <code>A ⊕ A</code>?',
     options: ['0', '1', 'A', 'NOT A'],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
 
   // ══════════════════ Sintesi & mappe di Karnaugh ══════════════════
@@ -74,7 +68,6 @@ export const mcq: McqItem[] = [
     q: 'In quale ordine si dispongono le colonne di una mappa di Karnaugh?',
     options: ['00, 01, 10, 11', '00, 01, 11, 10', '11, 10, 01, 00', "L'ordine è indifferente"],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-karnaugh-02',
@@ -82,7 +75,6 @@ export const mcq: McqItem[] = [
     q: 'Quale dimensione NON può avere un gruppo in una mappa di Karnaugh?',
     options: ['2', '4', '6', '8'],
     correct: 2,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-karnaugh-03',
@@ -95,7 +87,6 @@ export const mcq: McqItem[] = [
       'Ha un solo letterale',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-karnaugh-04',
@@ -108,7 +99,6 @@ export const mcq: McqItem[] = [
       'Si escludono dalla mappa',
     ],
     correct: 2,
-    ref: 'Hamacher App. A',
   },
 
   // ══════════════════ Numeri binari & complemento a 2 ══════════════════
@@ -118,7 +108,6 @@ export const mcq: McqItem[] = [
     q: 'La base del sistema numerico Maya è:',
     options: ['10 (decimale)', '20 (vigesimale)', '16 (esadecimale)', '8 (ottale)'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-02',
@@ -126,7 +115,6 @@ export const mcq: McqItem[] = [
     q: 'Uno shift a sinistra di un intero equivale a:',
     options: ['Divisione per 2', 'Moltiplicazione per 2', 'Negazione', 'Complemento a 1'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-03',
@@ -134,7 +122,6 @@ export const mcq: McqItem[] = [
     q: 'Quali rappresentazioni hanno due codifiche dello zero?',
     options: ['CP2', 'Senza segno', 'Complemento a 1 e modulo-e-segno', 'Esadecimale'],
     correct: 2,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-04',
@@ -142,7 +129,6 @@ export const mcq: McqItem[] = [
     q: 'Eliminare il bit meno significativo di un intero senza segno equivale a:',
     options: ['Moltiplicare per 2', 'Dividere (intero) per 2', 'Negare', 'Nulla'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-05',
@@ -155,7 +141,6 @@ export const mcq: McqItem[] = [
       'In un registro a parte',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-bin-06',
@@ -163,7 +148,6 @@ export const mcq: McqItem[] = [
     q: 'Quante cifre esadecimali servono per rappresentare 33?',
     options: ['1', '2', '3', '4'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-07',
@@ -171,7 +155,6 @@ export const mcq: McqItem[] = [
     q: "Quale porta rileva l'overflow sommando due numeri con n bit?",
     options: ['AND', 'OR', 'XOR', 'NAND'],
     correct: 2,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-08',
@@ -184,7 +167,6 @@ export const mcq: McqItem[] = [
       'Nessun segnale',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-09',
@@ -197,7 +179,6 @@ export const mcq: McqItem[] = [
       'Divisione',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
 
   {
@@ -211,7 +192,6 @@ export const mcq: McqItem[] = [
       'Invertire i bit e sommare 1',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-11',
@@ -224,7 +204,6 @@ export const mcq: McqItem[] = [
       'A sinistra',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-bin-12',
@@ -232,7 +211,6 @@ export const mcq: McqItem[] = [
     q: 'In CP2 su N bit, quale peso ha il bit più significativo?',
     options: ['+2ᴺ⁻¹', '−2ᴺ⁻¹', '+1', 'Nessuno: indica solo il segno'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
 
   // ══════════════════ Circuiti sequenziali ══════════════════
@@ -247,7 +225,6 @@ export const mcq: McqItem[] = [
       'Un tipo di bus',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-ff-02',
@@ -255,7 +232,6 @@ export const mcq: McqItem[] = [
     q: 'Un flip-flop master-slave è di tipo:',
     options: ['Asincrono', 'Sincrono (edge-triggered)', 'Combinatorio', 'Analogico'],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
 
   {
@@ -264,7 +240,6 @@ export const mcq: McqItem[] = [
     q: 'In un latch SR realizzato con NOR, quale combinazione è proibita?',
     options: ['S=0, R=0', 'S=1, R=0', 'S=0, R=1', 'S=1, R=1'],
     correct: 3,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-ff-04',
@@ -272,7 +247,6 @@ export const mcq: McqItem[] = [
     q: 'Un flip-flop JK con <code>J=K=1</code> sul fronte di clock:',
     options: ['Mantiene lo stato', 'Va a 1', 'Va a 0', 'Commuta (toggle)'],
     correct: 3,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-ff-05',
@@ -280,7 +254,6 @@ export const mcq: McqItem[] = [
     q: 'Quale flip-flop è il mattone naturale di un contatore?',
     options: ['Tipo T', 'Tipo D', 'Latch SR', 'Nessuno: servono solo porte AND'],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-ff-06',
@@ -293,7 +266,6 @@ export const mcq: McqItem[] = [
       'Necessita di un clock più lento del sincrono per definizione',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
 
   // ══════════════════ Processore: datapath & controllo ══════════════════
@@ -303,7 +275,6 @@ export const mcq: McqItem[] = [
     q: 'Quale registro presenta alla memoria l’indirizzo a cui accedere?',
     options: ['MDR', 'MAR', 'IR', 'PC'],
     correct: 1,
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'mcq-cpu-02',
@@ -311,7 +282,6 @@ export const mcq: McqItem[] = [
     q: 'Quale registro trattiene l’istruzione durante la decodifica?',
     options: ['PC', 'MAR', 'IR', 'MDR'],
     correct: 2,
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'mcq-cpu-03',
@@ -324,7 +294,6 @@ export const mcq: McqItem[] = [
       'Per liberare il bus dati',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'mcq-cpu-04',
@@ -337,7 +306,6 @@ export const mcq: McqItem[] = [
       'Non richiede segnali di clock',
     ],
     correct: 2,
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'mcq-cpu-05',
@@ -350,7 +318,6 @@ export const mcq: McqItem[] = [
       'Eseguire istruzioni di lunghezza variabile',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 5',
   },
 
   // ══════════════════ RISC/CISC & assembly ══════════════════
@@ -365,7 +332,6 @@ export const mcq: McqItem[] = [
       'Reduced Internal Storage Cache',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-02',
@@ -378,7 +344,6 @@ export const mcq: McqItem[] = [
       'Nessuna pipeline',
     ],
     correct: 2,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-03',
@@ -386,7 +351,6 @@ export const mcq: McqItem[] = [
     q: 'In <code>Add R1,R2,R3</code>, dove finisce il risultato?',
     options: ['In R2', 'In R3', 'In R1', 'In memoria LOC'],
     correct: 2,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-04',
@@ -399,7 +363,6 @@ export const mcq: McqItem[] = [
       'Sostituire i blocchi cache',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-05',
@@ -412,7 +375,6 @@ export const mcq: McqItem[] = [
       'Cancellare la EPROM',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-06',
@@ -420,7 +382,6 @@ export const mcq: McqItem[] = [
     q: 'Chi traduce il codice sorgente in linguaggio macchina?',
     options: ['Il sistema operativo', 'Il compilatore', 'Il loader', 'La ALU'],
     correct: 1,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-07',
@@ -428,7 +389,6 @@ export const mcq: McqItem[] = [
     q: 'Quale istruzione ARM trasferisce un valore da un registro a un altro?',
     options: ['CMP', 'ADD', 'SUB', 'MOV'],
     correct: 3,
-    ref: 'Hamacher cap. 3',
   },
   {
     id: 'mcq-isa-08',
@@ -436,7 +396,6 @@ export const mcq: McqItem[] = [
     q: 'Quale istruzione realizza un salto condizionato «se maggiore»?',
     options: ['BGT', 'MOV', 'MUL', 'CLR'],
     correct: 0,
-    ref: 'Hamacher cap. 2',
   },
 
   {
@@ -445,7 +404,6 @@ export const mcq: McqItem[] = [
     q: 'In <code>Load R1, 8(R2)</code>, quale modo di indirizzamento è usato?',
     options: ['Immediato', 'Assoluto', 'Indicizzato (base + spiazzamento)', 'Relativo al PC'],
     correct: 2,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-10',
@@ -458,7 +416,6 @@ export const mcq: McqItem[] = [
       'Perché va azzerato a ogni salto',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'mcq-isa-11',
@@ -471,7 +428,6 @@ export const mcq: McqItem[] = [
       'Confronta e scambia due registri',
     ],
     correct: 2,
-    ref: 'Hamacher cap. 3',
   },
   {
     id: 'mcq-isa-12',
@@ -484,7 +440,6 @@ export const mcq: McqItem[] = [
       'Dipende dal valore del PC',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 2',
   },
 
   // ══════════════════ Interruzioni, eccezioni, I/O ══════════════════
@@ -494,7 +449,6 @@ export const mcq: McqItem[] = [
     q: 'Le interruzioni hardware sono eventi:',
     options: ['Sincroni', 'Asincroni', 'Deterministici sul clock', 'Generati dalla ALU'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-02',
@@ -507,7 +461,6 @@ export const mcq: McqItem[] = [
       'Dal bus dati',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-03',
@@ -515,7 +468,6 @@ export const mcq: McqItem[] = [
     q: 'Le richieste di interruzione viaggiano su quali linee del bus?',
     options: ['Linee dati', 'Linee indirizzi', 'Linee di controllo', 'Linee di alimentazione'],
     correct: 2,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-04',
@@ -523,7 +475,6 @@ export const mcq: McqItem[] = [
     q: "La <b>trace mode</b> del debugger genera un'interruzione:",
     options: ['A ogni breakpoint', 'Dopo ogni istruzione', 'A fine programma', 'Mai'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-05',
@@ -531,7 +482,6 @@ export const mcq: McqItem[] = [
     q: 'Chi gestisce la scrittura sulla memoria di massa?',
     options: ['La cache', 'Il sistema operativo', 'Il compilatore', 'Il registro PC'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-06',
@@ -539,7 +489,6 @@ export const mcq: McqItem[] = [
     q: 'Quale meccanismo compensa la differenza di velocità tra due dispositivi?',
     options: ['Il buffer', 'La ALU', 'Il PC', 'Il flip-flop'],
     correct: 0,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-07',
@@ -552,7 +501,6 @@ export const mcq: McqItem[] = [
       'Tutte le precedenti',
     ],
     correct: 3,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-08',
@@ -560,7 +508,6 @@ export const mcq: McqItem[] = [
     q: 'Gli interrupt sono particolarmente importanti nei sistemi:',
     options: ['Batch', 'Real-time', 'A singolo task', 'Analogici'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-09',
@@ -568,7 +515,6 @@ export const mcq: McqItem[] = [
     q: 'Le interruzioni sono fondamentali per i sistemi:',
     options: ['Monotasking', 'Multitasking', 'Combinatori', 'Puramente sincroni'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-10',
@@ -581,7 +527,6 @@ export const mcq: McqItem[] = [
       'Solo controlli',
     ],
     correct: 2,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-11',
@@ -589,7 +534,6 @@ export const mcq: McqItem[] = [
     q: 'Come vengono trasmessi i dati su USB?',
     options: ['In parallelo', 'In modo seriale', 'Solo in analogico', 'Sul bus indirizzi'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
 
   {
@@ -603,7 +547,6 @@ export const mcq: McqItem[] = [
       "Lo decide l'utente a runtime",
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-13',
@@ -616,7 +559,6 @@ export const mcq: McqItem[] = [
       'Aumenta la frequenza di clock',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-irq-14',
@@ -629,7 +571,6 @@ export const mcq: McqItem[] = [
       'Ignora la richiesta se sta eseguendo un salto',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
 
   // ══════════════════ Pipeline & prestazioni ══════════════════
@@ -644,7 +585,6 @@ export const mcq: McqItem[] = [
       'Cache più grande',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'mcq-pipe-02',
@@ -657,7 +597,6 @@ export const mcq: McqItem[] = [
       'Disattivare la cache',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'mcq-pipe-05',
@@ -665,7 +604,6 @@ export const mcq: McqItem[] = [
     q: 'Quale hazard nasce dal fatto che dopo un salto non si sa quale istruzione prelevare?',
     options: ['Strutturale', 'Sui dati', 'Di controllo', 'Di parità'],
     correct: 2,
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'mcq-pipe-06',
@@ -678,7 +616,6 @@ export const mcq: McqItem[] = [
       'La dimensione della cache',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'mcq-pipe-07',
@@ -686,7 +623,6 @@ export const mcq: McqItem[] = [
     q: 'Con una pipeline a k stadi, lo speedup ideale rispetto al caso non pipelined è:',
     options: ['2', 'k', 'k²', 'Indipendente da k'],
     correct: 1,
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'mcq-pipe-08',
@@ -699,7 +635,6 @@ export const mcq: McqItem[] = [
       'Il consumo energetico',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 6',
   },
 
   // ══════════════════ Processore: prestazioni e ALU ══════════════════
@@ -714,7 +649,6 @@ export const mcq: McqItem[] = [
       'Solo scrittura',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'mcq-pipe-04',
@@ -722,7 +656,6 @@ export const mcq: McqItem[] = [
     q: 'Dove salva la ALU i risultati intermedi di un calcolo?',
     options: ['In cache', 'Nei registri', 'In memoria secondaria', 'Nel PC'],
     correct: 1,
-    ref: 'Hamacher cap. 5',
   },
 
   // ══════════════════ Memoria & cache ══════════════════
@@ -737,7 +670,6 @@ export const mcq: McqItem[] = [
       'Un errore di parità',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-02',
@@ -745,7 +677,6 @@ export const mcq: McqItem[] = [
     q: 'Il ritardo introdotto dopo un cache miss si chiama:',
     options: ['hit ratio', 'miss penalty', 'write-back', 'latch delay'],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-03',
@@ -758,7 +689,6 @@ export const mcq: McqItem[] = [
       'Nessuna delle due',
     ],
     correct: 2,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-04',
@@ -766,7 +696,6 @@ export const mcq: McqItem[] = [
     q: 'Algoritmo di sostituzione più comune in cache:',
     options: ['FIFO', 'LRU', 'Random', 'MRU'],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-05',
@@ -779,7 +708,6 @@ export const mcq: McqItem[] = [
       'Non si cancella',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-06',
@@ -787,7 +715,6 @@ export const mcq: McqItem[] = [
     q: 'La EEPROM si cancella:',
     options: ['Con raggi UV', 'Elettricamente', 'Termicamente', 'Con luce visibile'],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-07',
@@ -795,7 +722,6 @@ export const mcq: McqItem[] = [
     q: 'La memoria cache è tipicamente realizzata con:',
     options: ['DRAM', 'SRAM', 'EEPROM', 'Disco'],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-08',
@@ -803,7 +729,6 @@ export const mcq: McqItem[] = [
     q: 'Quale memoria è la più lenta della gerarchia?',
     options: ['Cache L1', 'Registri', 'Memoria secondaria', 'SRAM'],
     correct: 2,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-09',
@@ -816,7 +741,6 @@ export const mcq: McqItem[] = [
       'Non serve refresh',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-10',
@@ -829,7 +753,6 @@ export const mcq: McqItem[] = [
       'La cache la sovrascrive',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-11',
@@ -842,7 +765,6 @@ export const mcq: McqItem[] = [
       'È più densa',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
 
   {
@@ -856,7 +778,6 @@ export const mcq: McqItem[] = [
       'A ogni cache miss',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-13',
@@ -869,7 +790,6 @@ export const mcq: McqItem[] = [
       'A marcare la linea come non sostituibile',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-14',
@@ -882,7 +802,6 @@ export const mcq: McqItem[] = [
       'Opcode, operando, modo',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-15',
@@ -890,7 +809,6 @@ export const mcq: McqItem[] = [
     q: 'Il tempo medio di accesso vale <code>t_hit + miss_rate × miss_penalty</code>. Con t_hit = 1 ns, miss rate 5% e penalità 100 ns, quanto vale?',
     options: ['1 ns', '6 ns', '100 ns', '105 ns'],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-mem-16',
@@ -903,7 +821,6 @@ export const mcq: McqItem[] = [
       'Per semplificare il calcolo del dirty bit',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 8',
   },
 
   // ══════════════════ Memoria virtuale ══════════════════
@@ -918,7 +835,6 @@ export const mcq: McqItem[] = [
       'Tutti i campi vengono tradotti',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-vm-02',
@@ -931,7 +847,6 @@ export const mcq: McqItem[] = [
       'I blocchi sfrattati dalla cache',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-vm-03',
@@ -944,7 +859,6 @@ export const mcq: McqItem[] = [
       'Il TLB viene svuotato e basta',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-vm-04',
@@ -957,7 +871,6 @@ export const mcq: McqItem[] = [
       'Dipende dalla dimensione della cache',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-vm-05',
@@ -970,7 +883,6 @@ export const mcq: McqItem[] = [
       'Disabilitando le interruzioni',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
 
   // ══════════════════ Virgola mobile ══════════════════
@@ -980,7 +892,6 @@ export const mcq: McqItem[] = [
     q: 'Lo standard per la rappresentazione in virgola mobile è:',
     options: ['ASCII', 'IEEE 754', 'Unicode', 'ISO 8859'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-ieee-02',
@@ -988,7 +899,6 @@ export const mcq: McqItem[] = [
     q: 'In IEEE 754 singola precisione, quanti bit hanno segno, esponente e mantissa?',
     options: ['1, 8, 23', '1, 11, 52', '1, 7, 24', '2, 8, 22'],
     correct: 0,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-ieee-03',
@@ -996,7 +906,6 @@ export const mcq: McqItem[] = [
     q: 'Quanto vale la polarizzazione (bias) dell’esponente in singola precisione?',
     options: ['64', '127', '128', '1023'],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-ieee-04',
@@ -1009,7 +918,6 @@ export const mcq: McqItem[] = [
       'Perché lo standard lo vieta',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-ieee-05',
@@ -1017,7 +925,6 @@ export const mcq: McqItem[] = [
     q: 'Esponente tutto a 1 e mantissa non nulla rappresentano:',
     options: ['Zero', 'Infinito', 'NaN', 'Un numero denormalizzato'],
     correct: 2,
-    ref: 'Hamacher cap. 1',
   },
 
   // ══════════════════ Aritmetica hardware ══════════════════
@@ -1032,7 +939,6 @@ export const mcq: McqItem[] = [
       's = a ⊕ b, c = a + b',
     ],
     correct: 0,
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'mcq-arith-02',
@@ -1040,7 +946,6 @@ export const mcq: McqItem[] = [
     q: 'Quanti ingressi ha un <b>sommatore completo</b>?',
     options: ['2', '3 (due addendi e il riporto entrante)', '4', 'Dipende dal numero di bit'],
     correct: 1,
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'mcq-arith-03',
@@ -1053,7 +958,6 @@ export const mcq: McqItem[] = [
       'Perché somma un bit per ciclo di clock',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'mcq-arith-04',
@@ -1061,7 +965,6 @@ export const mcq: McqItem[] = [
     q: 'Nel carry-lookahead, la funzione di <b>generazione</b> vale:',
     options: ['Gᵢ = aᵢ · bᵢ', 'Gᵢ = aᵢ ⊕ bᵢ', 'Gᵢ = aᵢ + bᵢ', 'Gᵢ = aᵢ · cᵢ'],
     correct: 0,
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'mcq-arith-05',
@@ -1069,7 +972,6 @@ export const mcq: McqItem[] = [
     q: 'Il prodotto di due numeri da n bit occupa al massimo:',
     options: ['n bit', 'n + 1 bit', '2n bit', '2n + 1 bit'],
     correct: 2,
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'mcq-arith-06',
@@ -1082,7 +984,6 @@ export const mcq: McqItem[] = [
       'Non è possibile: servono due circuiti',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 9',
   },
 
   // ══════════════════ Reti combinatorie notevoli ══════════════════
@@ -1097,7 +998,6 @@ export const mcq: McqItem[] = [
       'una sola uscita',
     ],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-comb-02',
@@ -1110,7 +1010,6 @@ export const mcq: McqItem[] = [
       'A generare il riporto di una somma',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-comb-03',
@@ -1123,7 +1022,6 @@ export const mcq: McqItem[] = [
       'Un ritardo programmabile',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-comb-04',
@@ -1136,7 +1034,6 @@ export const mcq: McqItem[] = [
       'Per generare il segnale di clock',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-comb-05',
@@ -1144,7 +1041,6 @@ export const mcq: McqItem[] = [
     q: 'Quale porta confronta due bit segnalando con 1 che sono <b>uguali</b>?',
     options: ['XOR', 'XNOR', 'NAND', 'OR'],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-comb-06',
@@ -1157,7 +1053,6 @@ export const mcq: McqItem[] = [
       'È sequenziale invece che combinatorio',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
 
   // ══════════════════ Tempi, tecnologia, dispositivi programmabili ══════════════════
@@ -1172,7 +1067,6 @@ export const mcq: McqItem[] = [
       "Dal momento dell'accensione",
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-tech-02',
@@ -1185,7 +1079,6 @@ export const mcq: McqItem[] = [
       'Si annulla se la rete è minimizzata',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-tech-03',
@@ -1198,7 +1091,6 @@ export const mcq: McqItem[] = [
       'Il numero di ingressi del circuito',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-tech-04',
@@ -1211,7 +1103,6 @@ export const mcq: McqItem[] = [
       'Il numero di transistor che la compongono',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-tech-05',
@@ -1224,7 +1115,6 @@ export const mcq: McqItem[] = [
       'Solo quando l’uscita vale 0',
     ],
     correct: 1,
-    ref: 'Hamacher App. A',
   },
   {
     id: 'mcq-tech-06',
@@ -1237,7 +1127,6 @@ export const mcq: McqItem[] = [
       'Un insieme di multiplexer in cascata',
     ],
     correct: 0,
-    ref: 'Hamacher App. A',
   },
 
   // ══════════════════ Input/Output, DMA, bus ══════════════════
@@ -1252,7 +1141,6 @@ export const mcq: McqItem[] = [
       "Un'interruzione software",
     ],
     correct: 1,
-    ref: 'Hamacher cap. 3',
   },
   {
     id: 'mcq-io-02',
@@ -1260,7 +1148,6 @@ export const mcq: McqItem[] = [
     q: 'Quante interruzioni genera tipicamente un trasferimento DMA di un blocco?',
     options: ['Una per parola trasferita', 'Una sola, a trasferimento concluso', 'Nessuna', 'Due per parola'],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-io-03',
@@ -1273,7 +1160,6 @@ export const mcq: McqItem[] = [
       'Richiede sempre il DMA',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-io-04',
@@ -1286,7 +1172,6 @@ export const mcq: McqItem[] = [
       'Fissata dal bus, indipendente dai dispositivi',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-io-05',
@@ -1299,7 +1184,6 @@ export const mcq: McqItem[] = [
       'Richiede di disabilitare la memoria virtuale',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'mcq-io-06',
@@ -1312,7 +1196,6 @@ export const mcq: McqItem[] = [
       'Perché il seriale trasferisce più bit per volta',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   // ── dal sorgente all'esecuzione ──
   {
@@ -1326,7 +1209,6 @@ export const mcq: McqItem[] = [
       'Per ottimizzare il codice generato',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-sw-02',
@@ -1339,7 +1221,6 @@ export const mcq: McqItem[] = [
       'Una riserva di 42 byte non inizializzati',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-sw-03',
@@ -1352,7 +1233,6 @@ export const mcq: McqItem[] = [
       'Di allocare la memoria ai processi durante l\u2019esecuzione',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'mcq-sw-04',
@@ -1365,7 +1245,6 @@ export const mcq: McqItem[] = [
       'Solo quando il programma termina',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 4',
   },
 
   // ── prestazioni e parallelismo ──
@@ -1380,7 +1259,6 @@ export const mcq: McqItem[] = [
       'La frequenza di clock in GHz',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-perf-02',
@@ -1388,7 +1266,6 @@ export const mcq: McqItem[] = [
     q: 'Il 50 % del tempo di esecuzione viene reso <b>4 volte</b> più veloce. Qual è il guadagno complessivo?',
     options: ['4\u00d7', '1,6\u00d7', '2\u00d7', '2,5\u00d7'],
     correct: 1,
-    ref: 'Hamacher cap. 12',
   },
   {
     id: 'mcq-perf-03',
@@ -1401,7 +1278,6 @@ export const mcq: McqItem[] = [
       'Perché sono definiti solo per le macchine RISC',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'mcq-perf-04',
@@ -1414,6 +1290,5 @@ export const mcq: McqItem[] = [
       'La memoria non riesce a seguire una sola pipeline',
     ],
     correct: 1,
-    ref: 'Hamacher cap. 12',
   },
 ];

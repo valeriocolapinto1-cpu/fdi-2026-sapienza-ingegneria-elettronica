@@ -1,5 +1,6 @@
 import type { JSX } from 'preact';
 import type { Diagram } from '~/content/diagrams';
+import { TopicRef } from './TopicRef';
 
 /** Freccia condivisa: definita una volta qui, richiamata dagli SVG dei dati. */
 export function ArrowDefs(): JSX.Element {
@@ -75,7 +76,7 @@ export function DiagramFigure({ diagram }: { diagram: Diagram }): JSX.Element {
         ))}
       </div>
       <figcaption class="dg-caption">
-        {diagram.title} · {diagram.ref}
+        {diagram.title} · <TopicRef topic={diagram.topic} />
       </figcaption>
     </figure>
   );

@@ -21,7 +21,6 @@ export function genMC(ctx: GenCtx): McQuestion {
     points: ctx.points,
     q: item.q,
     topic: item.topic,
-    ref: item.ref,
     bankId: item.id,
     options: order.map((index) => item.options[index] as string),
     correct: order.indexOf(item.correct),
@@ -80,7 +79,6 @@ export function genRtn(ctx: GenCtx): McQuestion {
     points: ctx.points,
     q: `Come si scrive in RTN <code>${item.instr}</code>?`,
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
     options,
     correct,
     hint: `Le parentesi quadre significano «contenuto di». ${item.note}`,
@@ -97,7 +95,6 @@ export function genOpen(ctx: GenCtx): SelfQuestion {
     points: ctx.points,
     q: item.q,
     topic: item.topic,
-    ref: item.ref,
     bankId: item.id,
     model: item.model,
   };
@@ -113,7 +110,6 @@ export function genAsmWrite(ctx: GenCtx): SelfQuestion {
     points: ctx.points,
     q: item.q,
     topic: 'isa',
-    ref: item.ref,
     bankId: item.id,
     model: item.model,
   };

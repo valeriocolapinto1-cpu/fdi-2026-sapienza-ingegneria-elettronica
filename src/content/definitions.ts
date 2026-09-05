@@ -1,4 +1,4 @@
-import type { HamacherRef, TopicId } from './types';
+import type { TopicId } from './types';
 
 /**
  * Le definizioni che l'esame chiede di saper enunciare.
@@ -14,7 +14,6 @@ export interface Definition {
   short: string;
   detail?: string;
   topic: TopicId;
-  ref: HamacherRef;
 }
 
 export const definitions: Definition[] = [
@@ -27,7 +26,6 @@ export const definitions: Definition[] = [
     detail:
       'Il bit più significativo ha peso <b>negativo</b> (−2ᴺ⁻¹). Ha una sola codifica dello zero e intervallo asimmetrico: da −2ᴺ⁻¹ a +2ᴺ⁻¹−1.',
     topic: 'bin',
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'def-overflow',
@@ -36,14 +34,12 @@ export const definitions: Definition[] = [
     detail:
       'In CP2 si verifica sommando due operandi <b>concordi</b> e ottenendo segno opposto; in hardware è lo <b>XOR fra riporto entrante e uscente</b> dal bit di segno. Il solo riporto uscente non è overflow.',
     topic: 'bin',
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'def-estensione-segno',
     term: 'Estensione del segno',
     short: 'Portare un numero in CP2 su più bit replicando a sinistra il bit di segno.',
     topic: 'bin',
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'def-posizionale',
@@ -51,7 +47,6 @@ export const definitions: Definition[] = [
     short: 'Notazione in cui il valore di una cifra dipende dalla posizione, che pesa una potenza della base.',
     detail: 'Richiede b simboli e, indispensabile, uno <b>zero</b> per indicare la posizione vuota.',
     topic: 'bin',
-    ref: 'Hamacher cap. 1',
   },
 
   // ── logica ──
@@ -62,7 +57,6 @@ export const definitions: Definition[] = [
     detail:
       '{AND, OR} <b>non</b> lo è: manca la negazione. NAND da solo e NOR da solo lo sono.',
     topic: 'bool',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-demorgan',
@@ -71,7 +65,6 @@ export const definitions: Definition[] = [
       'La negazione di un prodotto è la somma delle negazioni, e la negazione di una somma è il prodotto delle negazioni.',
     detail: 'Valgono anche per più di due fattori.',
     topic: 'bool',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-mintermine',
@@ -80,14 +73,12 @@ export const definitions: Definition[] = [
       'Prodotto in cui compaiono tutte le variabili, dirette o negate, corrispondente a una riga della tabella di verità.',
     detail: 'La somma dei mintermini delle righe a 1 è la forma canonica SOP.',
     topic: 'bool',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-sop',
     term: 'SOP (somma di prodotti)',
     short: 'Espressione formata da termini prodotto messi in OR.',
     topic: 'bool',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-implicante',
@@ -96,7 +87,6 @@ export const definitions: Definition[] = [
     detail:
       'È <b>essenziale</b> se copre almeno un 1 che nessun altro implicante primo copre: quelli vanno presi per forza.',
     topic: 'karnaugh',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-indifferenza',
@@ -105,7 +95,6 @@ export const definitions: Definition[] = [
     detail:
       'Si prende a 1 solo quando allarga un gruppo, e si valuta <b>una per una</b>: mai coprirne una da sola.',
     topic: 'karnaugh',
-    ref: 'Hamacher App. A',
   },
 
   // ── reti combinatorie e tempi ──
@@ -114,7 +103,6 @@ export const definitions: Definition[] = [
     term: 'Decodificatore',
     short: 'Rete con n ingressi e 2ⁿ uscite che attiva la sola uscita corrispondente al numero in ingresso.',
     topic: 'comb',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-mux',
@@ -122,7 +110,6 @@ export const definitions: Definition[] = [
     short: 'Rete che porta in uscita uno fra 2ⁿ ingressi dati, scelto da n linee di selezione.',
     detail: 'Con n selezioni realizza qualunque funzione di n variabili: gli ingressi dati sono la colonna delle uscite.',
     topic: 'comb',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-tristate',
@@ -131,7 +118,6 @@ export const definitions: Definition[] = [
       'Buffer la cui uscita, oltre a 0 e 1, può assumere lo stato di alta impedenza, scollegandosi dal filo.',
     detail: 'È ciò che permette a più dispositivi di condividere un bus senza cortocircuitarsi.',
     topic: 'comb',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-ritardo',
@@ -141,14 +127,12 @@ export const definitions: Definition[] = [
     detail:
       'In una cascata di porte i ritardi si <b>sommano</b>: il ritardo della rete è quello del <b>cammino critico</b>, il percorso più lento, ed è lui a fissare il periodo minimo di clock.',
     topic: 'tech',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-fanout',
     term: 'Fan-out',
     short: 'Numero di ingressi di altre porte che una singola uscita può pilotare.',
     topic: 'tech',
-    ref: 'Hamacher App. A',
   },
 
   // ── aritmetica ──
@@ -159,7 +143,6 @@ export const definitions: Definition[] = [
       'Rete a tre ingressi (due addendi e il riporto entrante) che produce somma e riporto uscente.',
     detail: 's = a ⊕ b ⊕ c<sub>in</sub>; c<sub>out</sub> = a·b + c<sub>in</sub>·(a ⊕ b).',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'def-ripple',
@@ -167,7 +150,6 @@ export const definitions: Definition[] = [
     short: 'Sommatori completi in cascata, con il riporto che si propaga da uno stadio al successivo.',
     detail: 'Semplice, ma il ritardo cresce linearmente col numero di bit.',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
   },
   {
     id: 'def-lookahead',
@@ -176,7 +158,6 @@ export const definitions: Definition[] = [
       'Tecnica che calcola tutti i riporti in parallelo dalle funzioni di generazione e propagazione, invece di aspettarli.',
     detail: 'G = a·b (genera), P = a ⊕ b (propaga), c<sub>i+1</sub> = G<sub>i</sub> + P<sub>i</sub>·c<sub>i</sub>.',
     topic: 'arith',
-    ref: 'Hamacher cap. 9',
   },
 
   // ── sequenziali ──
@@ -186,7 +167,6 @@ export const definitions: Definition[] = [
     short: 'Elemento bistabile che memorizza un bit e commuta solo sul fronte del clock.',
     detail: 'Il <b>latch</b> è invece sensibile al livello: mentre l’abilitazione è alta resta trasparente.',
     topic: 'ff',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-masterslave',
@@ -195,14 +175,12 @@ export const definitions: Definition[] = [
       'Due latch in serie con clock opposti, mai trasparenti insieme, così l’uscita cambia in un solo istante.',
     detail: 'Evita le corse e le inconsistenze di lettura-scrittura sui registri.',
     topic: 'ff',
-    ref: 'Hamacher App. A',
   },
   {
     id: 'def-setup',
     term: 'Tempo di setup',
     short: 'Intervallo in cui il dato deve essere già stabile prima del fronte di clock.',
     topic: 'ff',
-    ref: 'Hamacher App. A',
   },
 
   // ── processore ──
@@ -212,14 +190,12 @@ export const definitions: Definition[] = [
     short: 'Registro che contiene l’indirizzo della prossima istruzione da prelevare.',
     detail: 'Si incrementa subito dopo il prelievo; i salti lo sovrascrivono.',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'def-ir',
     term: 'Instruction Register (IR)',
     short: 'Registro che trattiene l’istruzione prelevata durante la decodifica.',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'def-marmdr',
@@ -227,7 +203,6 @@ export const definitions: Definition[] = [
     short:
       'Registri d’interfaccia verso la memoria: MAR contiene l’indirizzo, MDR il dato in transito.',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'def-rtn',
@@ -236,7 +211,6 @@ export const definitions: Definition[] = [
       'Notazione dei trasferimenti fra registri, in cui le parentesi quadre significano «contenuto di».',
     detail: '<code>Add R1,R2,R3</code> → <code>R1 ← [R2]+[R3]</code>: la destinazione non ha parentesi.',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
   },
   {
     id: 'def-controllo',
@@ -244,7 +218,6 @@ export const definitions: Definition[] = [
     short:
       'Cablata: rete sequenziale su misura, veloce ma rigida. Microprogrammata: segnali letti da una memoria di controllo, flessibile ma più lenta.',
     topic: 'cpu',
-    ref: 'Hamacher cap. 5',
   },
 
   // ── ISA ──
@@ -254,7 +227,6 @@ export const definitions: Definition[] = [
     short:
       'Architettura con istruzioni semplici di lunghezza fissa e modello load/store: solo Load e Store toccano la memoria.',
     topic: 'isa',
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'def-cisc',
@@ -262,14 +234,12 @@ export const definitions: Definition[] = [
     short:
       'Architettura con istruzioni complesse di lunghezza variabile, che possono operare direttamente su operandi in memoria.',
     topic: 'isa',
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'def-indicizzato',
     term: 'Indirizzamento indicizzato',
     short: 'L’indirizzo dell’operando è la somma di un registro base e di uno spiazzamento costante.',
     topic: 'isa',
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'def-pila',
@@ -278,7 +248,6 @@ export const definitions: Definition[] = [
       'Struttura LIFO in memoria, gestita dallo stack pointer, su cui viaggiano indirizzo di ritorno, parametri e variabili locali.',
     detail: 'È ciò che rende possibili annidamento e ricorsione, che il solo link register non regge.',
     topic: 'isa',
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'def-linker',
@@ -286,7 +255,6 @@ export const definitions: Definition[] = [
     short:
       'Il compilatore traduce in linguaggio macchina, il linker combina i file oggetto risolvendo i riferimenti esterni, il loader porta il programma in memoria.',
     topic: 'isa',
-    ref: 'Hamacher cap. 2',
   },
 
   // ── interruzioni e I/O ──
@@ -297,7 +265,6 @@ export const definitions: Definition[] = [
       'Segnale hardware asincrono, generato da un dispositivo esterno sulle linee di controllo del bus.',
     detail: 'Il processore termina l’istruzione in corso, salva lo stato ed esegue la ISR.',
     topic: 'irq',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-eccezione',
@@ -306,14 +273,12 @@ export const definitions: Definition[] = [
       'Evento sincrono generato dal processore durante l’esecuzione: divisione per zero, overflow, codice illegale, chiamata di sistema.',
     detail: 'Sincrona significa riproducibile: rieseguendo lo stesso programma si ripresenta nello stesso punto.',
     topic: 'irq',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-isr',
     term: 'ISR',
     short: 'Routine di servizio eseguita in risposta a un’interruzione.',
     topic: 'irq',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-vettorializzata',
@@ -321,7 +286,6 @@ export const definitions: Definition[] = [
     short:
       'Il dispositivo fornisce un identificatore con cui si indicizza la tabella dei vettori e si salta direttamente alla routine giusta.',
     topic: 'irq',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-dma',
@@ -330,7 +294,6 @@ export const definitions: Definition[] = [
       'Trasferimento di un blocco fra periferica e memoria eseguito da un controllore dedicato, senza impegnare il processore.',
     detail: 'Genera una sola interruzione a fine blocco, ma può rendere obsoleta la copia in cache.',
     topic: 'io',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-memorymapped',
@@ -338,7 +301,6 @@ export const definitions: Definition[] = [
     short:
       'I registri delle interfacce occupano indirizzi dello spazio di memoria e si usano con Load e Store.',
     topic: 'io',
-    ref: 'Hamacher cap. 3',
   },
   {
     id: 'def-handshake',
@@ -347,14 +309,12 @@ export const definitions: Definition[] = [
       'Scambio di segnali «dato valido» / «preso» che sincronizza due dispositivi senza clock comune.',
     detail: 'Il trasferimento procede al passo del più lento dei due.',
     topic: 'io',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-buffer',
     term: 'Buffer',
     short: 'Memoria intermedia che compensa la differenza di velocità fra due dispositivi.',
     topic: 'io',
-    ref: 'Hamacher cap. 4',
   },
 
   // ── pipeline ──
@@ -365,7 +325,6 @@ export const definitions: Definition[] = [
       'Sovrapposizione delle fasi di istruzioni diverse su stadi hardware distinti, come in una catena di montaggio.',
     detail: 'Non migliora la latenza della singola istruzione: migliora il <b>throughput</b>.',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'def-hazard',
@@ -373,7 +332,6 @@ export const definitions: Definition[] = [
     short:
       'Situazione che impedisce alla pipeline di procedere di un’istruzione per ciclo: strutturale, sui dati o di controllo.',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'def-forwarding',
@@ -381,14 +339,12 @@ export const definitions: Definition[] = [
     short:
       'Inoltro del risultato direttamente dall’uscita della ALU allo stadio che lo richiede, senza attendere la scrittura in registro.',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
   },
   {
     id: 'def-cpi',
     term: 'CPI',
     short: 'Numero medio di cicli di clock per istruzione; compare nell’equazione T = (N × S)/R.',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
   },
 
   // ── memoria ──
@@ -400,7 +356,6 @@ export const definitions: Definition[] = [
     detail:
       'Da non tradurre «ad accesso casuale»: la definizione richiesta è quella sul tempo di accesso, contrapposta a nastri e dischi.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-localita',
@@ -409,14 +364,12 @@ export const definitions: Definition[] = [
       'Temporale: un dato usato di recente sarà riusato a breve. Spaziale: si accederà presto a indirizzi vicini.',
     detail: 'La località spaziale è il motivo per cui la cache trasferisce blocchi e non singole parole.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-hitmiss',
     term: 'Cache hit / miss',
     short: 'Hit: il dato cercato è in cache. Miss: non c’è e va recuperato dal livello inferiore.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-misspenalty',
@@ -424,7 +377,6 @@ export const definitions: Definition[] = [
     short: 'Ritardo aggiuntivo pagato quando un accesso fallisce in cache.',
     detail: 'Tempo medio di accesso = t<sub>hit</sub> + miss rate × miss penalty.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-mappature',
@@ -432,14 +384,12 @@ export const definitions: Definition[] = [
     short:
       'Diretta: una sola linea possibile. Associativa: qualunque linea. Set-associativa: insieme fisso, linea libera al suo interno.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-lru',
     term: 'LRU',
     short: 'Politica di sostituzione che scarta il blocco non usato da più tempo.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-writeback',
@@ -447,7 +397,6 @@ export const definitions: Definition[] = [
     short:
       'Write-through scrive subito anche in memoria; write-back solo allo sfratto della linea, marcata da un dirty bit.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-sramdram',
@@ -455,7 +404,6 @@ export const definitions: Definition[] = [
     short:
       'SRAM: cella a latch, veloce, senza refresh, usata per le cache. DRAM: cella a condensatore, densa ed economica, da rinfrescare.',
     topic: 'mem',
-    ref: 'Hamacher cap. 8',
   },
 
   // ── memoria virtuale ──
@@ -465,7 +413,6 @@ export const definitions: Definition[] = [
     short:
       'Meccanismo che dà a ogni processo uno spazio di indirizzi logico proprio, mappato sulla memoria fisica e sul disco.',
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-tlb',
@@ -473,7 +420,6 @@ export const definitions: Definition[] = [
     short: 'Piccola cache delle traduzioni pagina→frame usate di recente.',
     detail: 'Senza, ogni accesso ne costerebbe due: uno per la tabella delle pagine e uno per il dato.',
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
   },
   {
     id: 'def-pagefault',
@@ -481,7 +427,6 @@ export const definitions: Definition[] = [
     short:
       'Eccezione sollevata quando la pagina richiesta non è in memoria: il sistema la carica da disco e riesegue l’istruzione.',
     topic: 'vm',
-    ref: 'Hamacher cap. 8',
   },
 
   // ── virgola mobile ──
@@ -492,7 +437,6 @@ export const definitions: Definition[] = [
       'Standard della virgola mobile: segno, esponente polarizzato e mantissa con bit implicito.',
     detail: 'Singola precisione: 1 + 8 + 23 bit, bias 127. Doppia: 1 + 11 + 52, bias 1023.',
     topic: 'ieee',
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'def-bias',
@@ -500,7 +444,6 @@ export const definitions: Definition[] = [
     short:
       'Esponente memorizzato come valore reale + bias, così da rappresentare esponenti negativi senza un secondo segno.',
     topic: 'ieee',
-    ref: 'Hamacher cap. 1',
   },
   // ── software e prestazioni ──
   {
@@ -511,7 +454,6 @@ export const definitions: Definition[] = [
     detail:
       '\u00c8 la ragione per cui servono <b>due passate</b>: senza, un salto in avanti non potrebbe essere tradotto, perch\u00e9 cita un\u2019etichetta non ancora incontrata.',
     topic: 'sw',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-riferimento-esterno',
@@ -519,7 +461,6 @@ export const definitions: Definition[] = [
     short:
       'Nome che un modulo usa ma non definisce: resta un \u00abbuco\u00bb nel codice oggetto finch\u00e9 il collegatore non lo risolve.',
     topic: 'sw',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-rilocazione',
@@ -529,7 +470,6 @@ export const definitions: Definition[] = [
     detail:
       'Con la <b>memoria virtuale</b> il problema quasi sparisce: ogni processo vede sempre lo stesso spazio virtuale, indipendentemente da dove si trovi in memoria fisica.',
     topic: 'sw',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-chiamata-sistema',
@@ -539,7 +479,6 @@ export const definitions: Definition[] = [
     detail:
       '\u00c8 uno dei <b>tre</b> soli modi in cui il sistema operativo riprende il controllo, insieme a interruzione ed eccezione.',
     topic: 'sw',
-    ref: 'Hamacher cap. 4',
   },
   {
     id: 'def-equazione-prestazioni',
@@ -549,7 +488,6 @@ export const definitions: Definition[] = [
     detail:
       'I tre fattori non sono indipendenti: ridurre N con istruzioni pi\u00f9 complesse alza S, e alzare R obbliga a pipeline pi\u00f9 profonde. La sola frequenza <b>non</b> misura le prestazioni.',
     topic: 'perf',
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'def-amdahl',
@@ -559,7 +497,6 @@ export const definitions: Definition[] = [
     detail:
       'La parte non migliorata mette un <b>tetto</b> invalicabile: con f = 0,6 non si supera 2,5\u00d7 nemmeno con k infinito.',
     topic: 'perf',
-    ref: 'Hamacher cap. 12',
   },
   {
     id: 'def-benchmark',
@@ -569,7 +506,6 @@ export const definitions: Definition[] = [
     detail:
       'Le suite SPEC riassumono i punteggi con la <b>media geometrica</b>, che a differenza di quella aritmetica non cambia ordinamento al cambiare della macchina di riferimento.',
     topic: 'perf',
-    ref: 'Hamacher cap. 1',
   },
   {
     id: 'def-coerenza-cache',
@@ -579,6 +515,5 @@ export const definitions: Definition[] = [
     detail:
       'I protocolli di <i>snooping</i> fanno sorvegliare il bus a ogni cache: quando un core scrive un blocco, le altre copie vengono invalidate. Lo stesso problema lo crea il <b>DMA</b>, che scrive in memoria alle spalle del processore.',
     topic: 'perf',
-    ref: 'Hamacher cap. 12',
   },
 ];

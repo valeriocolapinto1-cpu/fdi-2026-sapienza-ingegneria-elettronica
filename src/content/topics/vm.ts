@@ -4,7 +4,6 @@ export const vm: Topic = {
     id: 'vm',
     title: 'Memoria virtuale & TLB',
     blurb: 'Spazio logico e fisico, paginazione, page fault, traduzione degli indirizzi.',
-    ref: 'Hamacher cap. 8',
     trapIds: ['trap-ram'],
     prereq: ['mem'],
     diagramIds: ['memoria-virtuale-tlb'],

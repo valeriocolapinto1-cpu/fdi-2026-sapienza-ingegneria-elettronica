@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { topics } from '~/content';
 import { simLoop, simMulCmp, simShift } from './asmSim';
 import { coverCost, minimalCover, type Implicant } from './boolean';
 import {
@@ -21,6 +22,13 @@ import type {
   Question,
 } from './types';
 
+/**
+ * I moduli esistenti. Ogni quesito generato deve rimandare a uno di questi:
+ * il rimando è un collegamento interno, non più il capitolo di un libro, e un
+ * argomento inventato produrrebbe un link rotto sotto al quesito.
+ */
+const TOPIC_IDS = new Set<string>(topics.map((topic) => topic.id));
+
 /** Genera N quesiti con un generatore, su semi diversi. */
 function sample(gen: GeneratorId, count: number): Question[] {
   return Array.from({ length: count }, (_, i) => {
@@ -35,7 +43,7 @@ describe('invarianti comuni a tutti i generatori', () => {
   it.each(ALL_GENERATORS)('«%s» produce quesiti ben formati', (gen) => {
     for (const question of sample(gen, 120)) {
       expect(question.q.trim()).not.toBe('');
-      expect(question.ref).toMatch(/Hamacher/);
+      expect(TOPIC_IDS.has(question.topic), `${gen}: modulo "${question.topic}"`).toBe(true);
       expect(question.points).toBeGreaterThan(0);
 
       if (question.kind === 'mc') {

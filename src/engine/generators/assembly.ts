@@ -95,7 +95,6 @@ export function genAsmSnippet(ctx: GenCtx): McQuestion {
     points: ctx.points,
     q: snippet.question,
     topic: 'isa',
-    ref: 'Hamacher cap. 2',
     payload: { type: 'asm', lines: snippet.lines },
     options,
     correct,

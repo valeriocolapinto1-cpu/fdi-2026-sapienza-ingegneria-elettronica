@@ -73,9 +73,17 @@ export function validateContent(): string[] {
     if (dupes.length) problems.push(`banca "${name}": id duplicati → ${dupes.join(', ')}`);
   }
 
-  // — ogni voce d'esame cita Hamacher —
-  for (const item of [...mcq, ...open, ...asmWrite, ...topics]) {
-    if (!item.ref.trim()) problems.push(`"${item.id}": riferimento Hamacher mancante`);
+  // — ogni voce rimanda a un modulo che esiste davvero —
+  //
+  // Ha sostituito il vecchio «ogni voce cita Hamacher», ed è un controllo più
+  // severo: prima bastava che una stringa contenesse una parola, adesso il
+  // rimando è una destinazione dentro il sito e un id sbagliato è un
+  // collegamento rotto che il test intercetta.
+  const knownTopics = new Set<string>(topics.map((topic) => topic.id));
+  for (const item of [...mcq, ...open, ...asmWrite, ...diagrams]) {
+    if (!knownTopics.has(item.topic)) {
+      problems.push(`"${item.id}": rimanda al modulo "${item.topic}", che non esiste`);
+    }
   }
 
   // — crocette ben formate —

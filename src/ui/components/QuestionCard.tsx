@@ -4,6 +4,7 @@ import type { Answer, Question, QuestionResult, SelfGrade } from '~/engine/types
 import { diagramById } from '~/content/diagrams';
 import { countMatchingSlots } from '~/engine/grade';
 import { judgeSop } from '~/engine/parseSop';
+import { TopicRef } from '~/ui/components/TopicRef';
 import { AsmBlock } from './AsmBlock';
 import { DiagramQuiz, type DiagramPicks } from './DiagramQuiz';
 import { Rich } from './Rich';
@@ -68,7 +69,7 @@ export function QuestionCard({
       <div class="q-top">
         <span class="q-num">{String(index + 1).padStart(2, '0')}</span>
         <span class="q-cat">{question.cat}</span>
-        <span class="cite">{question.ref}</span>
+        <TopicRef class="cite" topic={question.topic} />
         <span class="q-pts">{fmtPoints(question.points)} pt</span>
       </div>
 

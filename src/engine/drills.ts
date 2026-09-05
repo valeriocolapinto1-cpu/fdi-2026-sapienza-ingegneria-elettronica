@@ -10,7 +10,7 @@ import {
   type MulCmpProgram,
   type ShiftProgram,
 } from './asmSim';
-import type { AsmLine } from './types';
+import type { AsmLine, TopicId } from './types';
 
 /**
  * Esercizi guidati della pagina Allenamento.
@@ -43,7 +43,8 @@ export interface Drill {
   title: string;
   /** Riga di contesto sotto al titolo. */
   recap: string;
-  ref: string;
+  /** Modulo di studio che spiega il procedimento: la UI ci rimanda. */
+  topic: TopicId;
   steps: DrillStep[];
   /** Codice da eseguire a mente, quando l'esercizio ne ha uno. */
   listing?: AsmLine[];
@@ -111,7 +112,7 @@ export function cp2Drill(value: number, bits: number): Drill {
     return {
       title: `Rappresenta ${value} in complemento a 2 su ${bits} bit`,
       recap: 'Modulo → inverti → somma 1. Tre passaggi, sempre gli stessi.',
-      ref: 'Hamacher cap. 1, §1.4',
+      topic: 'bin',
       steps: [
         {
           id: 'mag',
@@ -152,7 +153,7 @@ export function cp2Drill(value: number, bits: number): Drill {
   return {
     title: `Rappresenta ${value} in complemento a 2 su ${bits} bit`,
     recap: 'Sui positivi il CP2 è il binario puro: il lavoro vero è il negativo.',
-    ref: 'Hamacher cap. 1, §1.4',
+    topic: 'bin',
     steps: [
       {
         id: 'mag',
@@ -199,7 +200,7 @@ export function sumDrill(a: number, b: number, bits: number): Drill {
   return {
     title: `Somma ${a} + ${b} in complemento a 2 su ${bits} bit`,
     recap: 'Riporto uscente e overflow sono due flag diversi: qui vanno dichiarati separatamente.',
-    ref: 'Hamacher cap. 1, §1.4 e cap. 9',
+    topic: 'arith',
     steps: [
       {
         id: 'a',
@@ -261,7 +262,7 @@ export function loopDrill(program: LoopProgram): Drill {
   return {
     title: 'Ciclo con contatore',
     recap: 'Il salto è in coda: il corpo viene eseguito almeno una volta.',
-    ref: 'Hamacher cap. 2 — Istruzioni e sequenze',
+    topic: 'isa',
     listing: loopListing(program),
     steps: [
       {
@@ -294,7 +295,7 @@ export function mulCmpDrill(program: MulCmpProgram): Drill {
   return {
     title: 'Prodotto, confronto e salto condizionato',
     recap: 'La ADD finale viene eseguita solo se il salto NON viene preso.',
-    ref: 'Hamacher cap. 2 — Salti condizionati',
+    topic: 'isa',
     listing: mulCmpListing(program),
     steps: [
       {
@@ -329,7 +330,7 @@ export function shiftDrill(program: ShiftProgram): Drill {
   return {
     title: 'Shift logici',
     recap: 'LSL moltiplica per 2ⁿ, LSR è una divisione intera per 2ⁿ: il resto si perde.',
-    ref: 'Hamacher cap. 2 — Operazioni logiche e di shift',
+    topic: 'isa',
     listing: shiftListing(program),
     steps: [
       {

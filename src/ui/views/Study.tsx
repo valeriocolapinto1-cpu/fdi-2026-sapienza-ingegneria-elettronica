@@ -24,9 +24,7 @@ export function TopicCard({ topic, index }: { topic: Topic; index: number }): JS
       </div>
       <h3>{topic.title}</h3>
       <p>{topic.blurb}</p>
-      <div class="ref">
-        {topic.ref} · {readingMinutes(topic.body)} min
-      </div>
+      <div class="ref">{readingMinutes(topic.body)} min</div>
     </a>
   );
 }
@@ -116,7 +114,7 @@ function TopicDetail({ topic }: { topic: Topic }): JSX.Element {
       <div class="detail-head" style="margin-top:6px">
         <div>
           <p class="eyebrow">
-            Modulo {position + 1} di {topics.length} · {topic.ref}
+            Modulo {position + 1} di {topics.length}
           </p>
           <h1 class="h" style="font-size:clamp(26px,3.4vw,34px)">{topic.title}</h1>
         </div>

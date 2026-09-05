@@ -46,7 +46,6 @@ export function genGate(ctx: GenCtx): McQuestion {
     points: ctx.points,
     q: 'Quale porta logica realizza questa tabella di verità?',
     topic: 'bool',
-    ref: 'Hamacher App. A',
     payload: {
       type: 'truthTable',
       vars: ['A', 'B'],
@@ -138,7 +137,6 @@ export function genKarnaugh(ctx: GenCtx): SelfQuestion {
     points: ctx.points,
     q: `Minimizza con Karnaugh la funzione <code>Y(${names.join(',')})</code> e disegna il circuito.${dontCareNote}`,
     topic: 'karnaugh',
-    ref: 'Hamacher App. A',
     payload: { type: 'kmap', vars: names, rows, minterms, dontCares: cares },
     model:
       `Una SOP minima è: <b>Y = ${sopToString(cover, vars)}</b> ` +
@@ -207,7 +205,6 @@ export function genTruthToExpr(ctx: GenCtx): ExprQuestion {
       `Ricava l’espressione logica <b>minima</b> in somma di prodotti della funzione ` +
       `<code>Y(${names.join(',')})</code> descritta dalla tabella.`,
     topic: 'bool',
-    ref: 'Hamacher App. A',
     payload: { type: 'truthTable', vars: names, rows },
     vars,
     minterms,

@@ -7,6 +7,7 @@ import type { AsmWriteItem } from './types';
 export const asmWrite: AsmWriteItem[] = [
   {
     id: 'asmw-mul',
+    topic: 'isa',
     q: 'Scrivi un programma in stile RISC che calcoli la moltiplicazione di due numeri in LOC1 e LOC2 tramite somme successive, salvando il risultato in LOC3.',
     model: `<pre>      Load  LOC1, NUM1
       Load  LOC2, NUM2
@@ -15,10 +16,10 @@ export const asmWrite: AsmWriteItem[] = [
       Add   LOC3, LOC3, LOC1
       Branch_if_[LOC2]&gt;0  CICLO
       Store LOC3, RES</pre>`,
-    ref: 'Hamacher cap. 2',
   },
   {
     id: 'asmw-sum-list',
+    topic: 'isa',
     q: "Scrivi un programma che sommi N valori contigui a partire dall'indirizzo LIST e salvi il totale in SUM.",
     model: `<pre>      Load  N, R1
       Move  R2, #LIST
@@ -29,6 +30,5 @@ export const asmWrite: AsmWriteItem[] = [
       Sub   R1, R1, #1
       Branch_if_[R1]&gt;0  L
       Store R3, SUM</pre>`,
-    ref: 'Hamacher cap. 2',
   },
 ];

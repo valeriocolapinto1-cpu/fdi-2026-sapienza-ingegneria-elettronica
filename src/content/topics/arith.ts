@@ -5,7 +5,6 @@ export const arith: Topic = {
   id: 'arith',
   title: 'Aritmetica hardware: sommatori & moltiplicazione',
   blurb: 'Semisommatore, sommatore completo, ripple-carry, carry-lookahead, moltiplicazione.',
-  ref: 'Hamacher cap. 9',
   trapIds: ['trap-and-assoc'],
     prereq: ['bin', 'comb'],
     diagramIds: ['sommatore-ripple'],

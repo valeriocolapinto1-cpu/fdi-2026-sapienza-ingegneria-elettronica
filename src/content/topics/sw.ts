@@ -4,7 +4,6 @@ export const sw: Topic = {
   id: 'sw',
   title: 'Dal sorgente all’esecuzione',
   blurb: 'Assemblatore, collegatore, caricatore e il ruolo del sistema operativo.',
-  ref: 'Hamacher cap. 4',
   trapIds: ['trap-simboli'],
   prereq: ['isa'],
   summary: [

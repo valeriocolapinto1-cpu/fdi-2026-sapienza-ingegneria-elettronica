@@ -5,7 +5,6 @@ export const comb: Topic = {
   id: 'comb',
   title: 'Reti combinatorie notevoli',
   blurb: 'Decoder, encoder, multiplexer, comparatori, buffer tri-state.',
-  ref: 'Hamacher — Appendice A',
   trapIds: ['trap-and-assoc'],
     prereq: ['bool'],
     summary: [

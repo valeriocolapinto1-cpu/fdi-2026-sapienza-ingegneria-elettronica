@@ -23,7 +23,6 @@ function cyclesVariant(ctx: GenCtx): FillQuestion {
       `Una pipeline a <b>${stages} stadi</b> esegue <b>${instructions} istruzioni</b> ` +
       'senza stalli né salti. Quanti cicli di clock servono in tutto?',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
     answer: String(cycles),
     normalize: 'dec',
     placeholder: 'numero di cicli',
@@ -49,7 +48,6 @@ function savedVariant(ctx: GenCtx): FillQuestion {
       `Un processore a <b>${stages} stadi</b> esegue <b>${instructions} istruzioni</b>. ` +
       'Quanti cicli si risparmiano con la pipeline rispetto all’esecuzione una-alla-volta?',
     topic: 'pipe',
-    ref: 'Hamacher cap. 6',
     answer: String(sequential - pipelined),
     normalize: 'dec',
     placeholder: 'cicli risparmiati',

@@ -4,7 +4,6 @@ export const perf: Topic = {
   id: 'perf',
   title: 'Prestazioni & parallelismo',
   blurb: 'Equazione del tempo di CPU, legge di Amdahl, multicore e coerenza.',
-  ref: 'Hamacher cap. 1 e 12',
   trapIds: ['trap-ram'],
   prereq: ['pipe', 'mem'],
   summary: [

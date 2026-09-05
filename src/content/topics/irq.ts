@@ -4,7 +4,6 @@ export const irq: Topic = {
     id: 'irq',
     title: 'Interruzioni, eccezioni & I/O',
     blurb: 'ISR, priorità e annidamento, vettorializzazione, polling vs interrupt, DMA.',
-    ref: 'Hamacher cap. 4',
     trapIds: [],
     prereq: ['isa'],
     summary: [

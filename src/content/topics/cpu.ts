@@ -4,7 +4,6 @@ export const cpu: Topic = {
     id: 'cpu',
     title: 'Processore: datapath & unità di controllo',
     blurb: 'Registri, ciclo fetch-decode-execute, bus interni, controllo cablato vs microprogrammato.',
-    ref: 'Hamacher cap. 5',
     trapIds: ['trap-rtn'],
     prereq: ['ff', 'comb'],
     diagramIds: ['unita-funzionali', 'processore-3bus'],

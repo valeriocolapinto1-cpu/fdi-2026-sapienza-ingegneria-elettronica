@@ -4,7 +4,6 @@ export const pipe: Topic = {
     id: 'pipe',
     title: 'Pipeline & prestazioni',
     blurb: 'Stadi, hazard sui dati e sul controllo, forwarding, equazione delle prestazioni.',
-    ref: 'Hamacher cap. 6',
     trapIds: [],
     prereq: ['cpu', 'isa'],
     diagramIds: ['pipeline-5-stadi'],

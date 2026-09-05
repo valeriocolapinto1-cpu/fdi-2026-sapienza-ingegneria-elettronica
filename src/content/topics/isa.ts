@@ -4,7 +4,6 @@ export const isa: Topic = {
     id: 'isa',
     title: 'RISC vs CISC, indirizzamento & assembly',
     blurb: 'ISA, modi di indirizzamento, RTN, sottoprogrammi e pile.',
-    ref: 'Hamacher cap. 2–3',
     trapIds: ['trap-rtn'],
     prereq: ['cpu'],
     summary: [

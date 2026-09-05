@@ -1,6 +1,6 @@
-import type { HamacherRef, TopicId } from '~/content/types';
+import type { TopicId } from '~/content/types';
 
-export type { HamacherRef, TopicId };
+export type { TopicId };
 
 /**
  * Tipi del motore d'esame.
@@ -62,8 +62,11 @@ interface QuestionBase {
   points: number;
   /** Testo del quesito; può contenere markup inline. */
   q: string;
+  /**
+   * Modulo di studio dell'argomento. È anche il rimando mostrato sotto al
+   * quesito: da un errore si arriva in un clic alla teoria che lo spiega.
+   */
   topic: TopicId;
-  ref: HamacherRef;
   payload?: QuestionPayload;
   /**
    * Id della voce di banca da cui nasce il quesito, quando ne esiste una.

@@ -4,7 +4,6 @@ export const io: Topic = {
   id: 'io',
   title: 'Input/Output, DMA & bus',
   blurb: 'I/O programmato, memory-mapped, handshake, DMA, bus e standard seriali.',
-  ref: 'Hamacher cap. 3–4',
   trapIds: [],
     prereq: ['irq'],
     diagramIds: ['interfaccia-io'],

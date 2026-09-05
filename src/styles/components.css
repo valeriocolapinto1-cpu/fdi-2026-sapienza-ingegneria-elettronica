@@ -1479,6 +1479,40 @@
     text-align: center;
   }
 
+  /*
+   * Il rimando al modulo, sotto a un quesito, a un esercizio o a uno schema.
+   *
+   * Prima era il capitolo di un libro, cioè testo morto; adesso è una
+   * destinazione. La regola aggiunge solo il *comportamento* da collegamento e
+   * si tiene fuori dall'aspetto: `.cite` è una targhetta color rame con il suo
+   * bordo, `.def-topic` è ciano, e questo blocco viene dopo nel foglio —
+   * toccare colore o bordo qui li cancellerebbe entrambi.
+   */
+  .topic-ref {
+    text-decoration: none;
+  }
+  .topic-ref:hover,
+  .topic-ref:focus-visible {
+    text-decoration: underline;
+  }
+
+  /*
+   * Nelle didascalie il rimando prende il colore della didascalia invece del
+   * ciano dei collegamenti: sotto uno schema o in fondo a un esercizio è una
+   * nota a margine, non l'azione principale. Due classi di specificità, quindi
+   * vince sulla regola generale degli `a` senza bisogno di `!important`.
+   */
+  .dg-caption .topic-ref,
+  .drill-foot .topic-ref {
+    color: inherit;
+  }
+  .dg-caption .topic-ref:hover,
+  .drill-foot .topic-ref:hover,
+  .dg-caption .topic-ref:focus-visible,
+  .drill-foot .topic-ref:focus-visible {
+    color: var(--color-cyan);
+  }
+
   @media (max-width: 640px) {
     .dg-slot {
       font-size: 9.5px;

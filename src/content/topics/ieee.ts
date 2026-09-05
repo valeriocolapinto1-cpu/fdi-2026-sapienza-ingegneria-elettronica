@@ -4,7 +4,6 @@ export const ieee: Topic = {
     id: 'ieee',
     title: 'Virgola mobile IEEE 754',
     blurb: 'Segno, esponente polarizzato, mantissa, codifica e valori speciali.',
-    ref: 'Hamacher cap. 1',
     trapIds: [],
     prereq: ['bin'],
     summary: [

@@ -1,6 +1,7 @@
 import type { JSX } from 'preact';
 import type { Diagram } from '~/content/diagrams';
 import { ArrowDefs, slotStyle } from './DiagramFigure';
+import { TopicRef } from './TopicRef';
 
 /** Etichetta scelta per ogni slot, indicizzata per id di slot. */
 export type DiagramPicks = Record<string, string>;
@@ -86,7 +87,7 @@ export function DiagramQuiz({
       </div>
 
       <div class="dg-caption">
-        {diagram.title} · {diagram.ref}
+        {diagram.title} · <TopicRef topic={diagram.topic} />
       </div>
     </div>
   );
