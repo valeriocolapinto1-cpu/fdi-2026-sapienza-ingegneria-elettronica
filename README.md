@@ -1,29 +1,32 @@
-# AE·FIN — Palestra d'esame
+# AE·FIN — Palestra di Architettura degli Elaboratori
 
-Sito di studio e **generatore di prove d'esame** per il modulo *Architettura degli Elaboratori*
-(6 CFU) del corso di Fondamenti di Informatica — Ingegneria Elettronica, Sapienza.
+Sito di studio e **generatore di prove di autovalutazione** per Architettura degli Elaboratori:
+complemento a 2, algebra di Boole e Karnaugh, reti combinatorie e sequenziali, percorso dati,
+assembly, interruzioni e I/O, pipeline, cache, memoria virtuale, IEEE 754.
 
-Si allena su un formato **ricostruito dagli appunti degli studenti** — 12 quesiti, un'ora, voto
-su 30 — non su una fonte del corso. Ogni quesito e ogni scheda di studio riportano il riferimento
-al testo di Hamacher.
+Diciassette moduli scritti per **partire da zero**, ottantacinque esercizi svolti passo per
+passo, quarantacinque schemi da completare e un motore che genera prove sempre diverse e le
+corregge da sé.
 
 ### → **[Apri il sito](https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/)**
 
 Funziona anche da telefono e, dopo la prima visita, **offline**: si installa come app dal menu
 del browser.
 
-> ⚠︎ **Strumento di studio non ufficiale**, scritto da uno studente e **non affiliato alla
-> Sapienza**, al corso o a chi lo tiene: nessuno di loro l'ha rivisto o approvato. È costruito su
-> appunti fra studenti, quindi può contenere errori e parti sorpassate — programma, regole,
-> punteggi e date valgono solo se li leggi sulle pagine ufficiali del corso.
+> ⚠︎ **Strumento di studio indipendente**, scritto da uno studente: **non è il sito di nessun
+> corso e di nessuna università**, e nessuno l'ha rivisto o approvato. Programma, regole della
+> prova, punteggi e date valgono solo quelli del **tuo** corso: verificali sulle sue pagine
+> ufficiali, e in caso di differenza ha ragione lui.
 >
-> Le domande sono **inventate qui**, nello *stile* della prova: non sono, e non riproducono,
-> prove d'esame reali. Le «accortezze» sono impressioni raccolte fra studenti, scritte
-> all'impersonale e marcate *da verificare*: non sono regole di nessuno. I contenuti sono
-> riscritti in forma originale e gli schemi ridisegnati da zero; i riferimenti a Hamacher sono
-> rimandi a capitoli e figure, non citazioni.
+> La prova generata — 12 quesiti, un'ora, punteggio su 30 — è una **struttura scelta da questo
+> sito** perché è una misura utile, non il formato dell'esame di qualcuno. Domande, spiegazioni
+> ed esercizi sono scritti qui e gli schemi disegnati da zero: non riproducono prove d'esame
+> reali né il materiale di nessun testo. I libri consigliati stanno in bibliografia, come
+> letture.
 >
 > Nessun account e nessun server: quello che fai resta nel tuo browser.
+> Vedi [`COMPLIANCE.md`](COMPLIANCE.md) per la provenienza dei contenuti e come segnalare un
+> problema.
 
 ## Cosa c'è dentro
 
@@ -40,17 +43,17 @@ del browser.
   interno, la teoria distesa con un **esempio svolto con i numeri**, gli errori tipici, gli schemi
   collegati, tre domande di **autoverifica** e **cinque esercizi** con suggerimento e svolgimento
   passo per passo — 85 in tutto.
-- **Definizioni** — i termini che l'esame chiede di saper enunciare, una frase ciascuno, con
-  filtro per testo e per argomento.
+- **Definizioni** — i termini da saper enunciare, una frase ciascuno, con filtro per testo e per
+  argomento.
 - **Simulatore** — quattro formati di prova, generati al volo: numeri, tabelle di verità,
   schemi, snippet e mix di quesiti cambiano a ogni generazione.
 - **Allenamento** — quattro palestre che fanno fare il procedimento e correggono ogni passaggio:
   binario a mano, schemi da completare, verità e Karnaugh, assembly da eseguire a mente. In
   fondo restano i convertitori, come banco di verifica.
-- **Riferimenti** — il **catalogo completo delle figure del testo**, 156 tavole capitolo per
-  capitolo, con filtro per capitolo e per «solo schemi da completare». 45 sono **ridisegnate in
-  SVG originale** e si possono completare come all'esame; le altre restano in elenco, per sapere
-  cosa saper disegnare e dove ritrovarle sul libro. Più le trappole, i testi e i link.
+- **Schemi** — i **45 schemi** disegnati per il sito, raggruppati per area del programma: si
+  guardano per capire come sono collegate le parti, oppure si **completano** come esercizio, con
+  qualche etichetta in più che non va da nessuna parte. Più le convenzioni di notazione e la
+  bibliografia.
 
 - **Note & privacy** — che cos'è il sito e che cosa non è, che cosa salva nel browser, a chi
   appartengono i contenuti e come segnalare un errore. Raggiungibile dal piè di pagina di ogni
@@ -75,9 +78,8 @@ sulla home.
 | `topics/` | Moduli di studio, uno per file; `index.ts` fissa l'ordine e i gruppi |
 | `definitions.ts` | I termini da saper enunciare |
 | `diagrams.ts` | I 45 schemi ridisegnati, con gli slot da completare |
-| `traps.ts` | Accortezze raccolte dagli studenti — da scrivere **all'impersonale**, vedi la nota nel file |
-| `figures.ts` | Catalogo delle figure del testo, con capitolo e argomento |
-| `links.ts` | Testi e risorse |
+| `traps.ts` | Convenzioni di notazione — devono essere fatti sulla materia, mai su una persona o un corso: vedi la regola nel file |
+| `links.ts` | Bibliografia |
 
 Un modulo di studio porta con sé, oltre al corpo della teoria: `summary` (il ripasso «in due
 minuti»), `checks` (le domande di autoverifica), `exercises` (gli esercizi svolti, con `hint` e
@@ -100,7 +102,6 @@ Aggiungi una voce nella sezione dell'argomento giusto in `src/content/mcq.ts`:
     'Un algoritmo di sostituzione',
   ],
   correct: 1,                  // indice (0-based) della risposta esatta
-  ref: 'Hamacher cap. 8',      // obbligatorio
 }
 ```
 
@@ -108,7 +109,7 @@ L'ordine in cui scrivi le alternative non conta: il motore le rimescola a ogni g
 
 ### Una domanda aperta
 
-In `src/content/open.ts`, con `model` che elenca i punti che l'esame vuole sentire:
+In `src/content/open.ts`, con `model` che elenca i punti che una buona risposta deve toccare:
 
 ```ts
 {
@@ -116,9 +117,12 @@ In `src/content/open.ts`, con `model` che elenca i punti che l'esame vuole senti
   topic: 'pipe',
   q: 'Che cos’è un hazard di controllo e come si mitiga?',
   model: 'Un salto rende incerta l’istruzione da prelevare…',
-  ref: 'Hamacher cap. 6',
 }
 ```
+
+`topic` non è solo una classificazione: è il **rimando** mostrato sotto al quesito, quindi da una
+risposta sbagliata si arriva al modulo che spiega l'argomento. Un id inesistente è un
+collegamento rotto, e il test lo intercetta.
 
 ### Verificare quello che hai scritto
 
@@ -126,8 +130,8 @@ In `src/content/open.ts`, con `model` che elenca i punti che l'esame vuole senti
 npm test
 ```
 
-`validateContent()` controlla id univoci, presenza del riferimento Hamacher, 4 alternative
-distinte per crocetta e trappole collegate esistenti. Se sbagli qualcosa, il test dice
+`validateContent()` controlla id univoci, che ogni voce rimandi a un modulo esistente, 4
+alternative distinte per crocetta e convenzioni collegate esistenti. Se sbagli qualcosa, il test dice
 esattamente quale voce e perché. In sviluppo gli stessi controlli girano al caricamento e
 stampano un avviso in console.
 

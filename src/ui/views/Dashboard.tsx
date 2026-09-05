@@ -69,7 +69,7 @@ export function Dashboard(): JSX.Element {
           <div class="hero-body">
             <span class="chip">
               <span class="dot" aria-hidden="true" />
-              modulo AE · 6 CFU · prova scritta 1h
+              architettura degli elaboratori · prova da 1 ora
             </span>
             <h1 class="h" style="margin-top:14px">
               Allena l'esame,
@@ -77,9 +77,10 @@ export function Dashboard(): JSX.Element {
               non solo la teoria.
             </h1>
             <p class="lead">
-              Genera prove nel formato della scritta — 12 quesiti, voto su 30 — con complemento
-              a 2, sintesi di reti combinatorie via Karnaugh e assembly, ogni item ancorato a un
-              capitolo di Hamacher.
+              Genera una prova di autovalutazione — 12 quesiti, punteggio su 30 — con
+              complemento a 2, sintesi di reti combinatorie con Karnaugh, schemi da completare e
+              assembly. Ogni quesito rimanda al modulo che spiega l'argomento, così da uno
+              sbaglio si arriva alla teoria invece che a un punto in meno.
             </p>
             <div class="btn-row">
               <a class="btn primary" href={hrefFor('exam', 'full')}>
@@ -92,7 +93,7 @@ export function Dashboard(): JSX.Element {
           </div>
 
           <aside class="hero-card">
-            <p class="hero-card-t">Il formato che alleni</p>
+            <p class="hero-card-t">Com'è fatta la prova</p>
             <ul class="qbreak">
               {EXAM_BREAKDOWN.map((row) => (
                 <li key={row.label}>
@@ -102,11 +103,10 @@ export function Dashboard(): JSX.Element {
               ))}
             </ul>
             <p class="qb-foot">
-              <b>12</b> quesiti · <b>1</b> ora · si passa da <b>18/30</b>
-              {/* La scomposizione è la cosa più «ufficiale» che il sito mostra,
-                  ed è la meno verificata: il chiarimento sta qui, addosso al
-                  numero, non tre schermate più in basso. */}
-              <span class="qb-warn">ricostruzione da appunti, non una fonte del corso</span>
+              <b>12</b> quesiti · <b>1</b> ora · sufficienza a <b>18/30</b>
+              {/* Il chiarimento sta addosso al numero, non tre schermate più in
+                  basso: è la parte che si legge come se fosse ufficiale. */}
+              <span class="qb-warn">struttura scelta da questo sito, non di un corso reale</span>
             </p>
           </aside>
         </div>
@@ -142,27 +142,26 @@ export function Dashboard(): JSX.Element {
         </div>
       )}
 
-      <h2 class="sec">Come dovrebbe essere fatta la prova</h2>
+      <h2 class="sec">Perché la prova è fatta così</h2>
       <div class="panel narrow">
         <p class="lead">
-          <b>Attenzione a come leggi questa pagina.</b> Quella qui sopra è una{' '}
-          <b>ricostruzione</b> messa insieme da appunti di studenti: non viene da una fonte del
-          corso e nessuno l'ha confermata. Serve ad allenarsi su un formato plausibile, non a
-          sapere che cosa troverai davvero sul foglio.
+          <b>Questa struttura è una scelta di questo sito</b>, non il formato dell'esame di
+          qualcuno. Dodici quesiti in un'ora perché è la densità a cui si smette di rispondere
+          con calma e si comincia a decidere in fretta — che è la differenza vera fra sapere una
+          cosa e saperla usare. Punteggio su 30 perché è la scala con cui sei abituato a
+          misurarti, e <b>2,5 punti</b> a quesito perché trenta diviso dodici fa quello.
         </p>
         <p class="lead" style="margin-top:10px">
-          Secondo quegli appunti la prova è scritta, dura <b>un'ora</b> e non ammette materiale
-          di consultazione. I <b>2,5 punti</b> per quesito sono invece una scelta{' '}
-          <em>di questo sito</em>: i pesi reali non li conosciamo, e dividere trenta per dodici
-          era l'ipotesi più onesta.{' '}
-          <a href={hrefFor('ref')}>Le regole vere stanno sulla pagina del corso</a>: prima
-          dell'appello controlla lì, e se dice altro vale quello che dice lei.
+          Se ti stai preparando a un esame vero, <b>il tuo corso vince su questa pagina</b>:
+          numero di quesiti, durata, punteggi e argomenti li stabilisce lui, e li trovi sulle sue
+          pagine ufficiali. Qui alleni il procedimento — convertire, minimizzare, tradurre un
+          indirizzo, leggere un listato — che è la parte che non cambia da un corso all'altro.
         </p>
         <p class="lead" style="margin-top:10px">
-          Gli schemi da completare sono figure del tipo di quelle di Hamacher: è la parte che si
-          prepara disegnando, non rileggendo. Qui li trovi{' '}
-          <a href={hrefFor('ref')}>ridisegnati da zero</a> e da{' '}
-          <a href={hrefFor('train')}>completare a vuoto</a>.
+          Il mix cambia a ogni generazione, quindi due prove di fila non si somigliano: non si
+          impara a memoria l'ordine dei quesiti. Gli <a href={hrefFor('ref')}>schemi</a> sono la
+          parte che si prepara disegnando invece che rileggendo, e si possono{' '}
+          <a href={hrefFor('train')}>completare a vuoto</a> quante volte serve.
         </p>
       </div>
 
@@ -174,16 +173,16 @@ export function Dashboard(): JSX.Element {
       </div>
 
       <div class="disclaim">
-        ⚠︎ <b>Strumento di studio non ufficiale</b>, scritto da uno studente e{' '}
-        <b>non affiliato alla Sapienza</b>, al corso o a chi lo tiene: nessuno di loro l'ha
-        rivisto o approvato. È costruito su appunti fra studenti, quindi può contenere errori e
-        parti sorpassate — programma, regole e date valgono solo se le leggi{' '}
-        <a href={hrefFor('ref')}>sulle pagine ufficiali del corso</a>.
+        ⚠︎ <b>Strumento di studio indipendente</b>, scritto da uno studente:{' '}
+        <b>non è il sito di nessun corso e di nessuna università</b>, nessuno l'ha rivisto o
+        approvato. Programma, regole della prova, punteggi e date valgono solo quelli del{' '}
+        <b>tuo</b> corso: verificali sulle sue pagine ufficiali, e in caso di differenza ha
+        ragione lui.
         <br />
-        Le domande sono <b>inventate qui</b>, nello <em>stile</em> della prova: non sono, e non
-        riproducono, prove d'esame reali. I riferimenti «Hamacher» sono rimandi a capitoli e
-        figure del testo, non citazioni: gli schemi del sito sono ridisegnati da zero. Per i
-        contenuti, il libro.
+        Domande, spiegazioni ed esercizi sono <b>scritti qui</b> e gli schemi disegnati da zero:
+        non riproducono prove d'esame reali né il materiale di nessun testo. Essendo scritti da
+        una persona sola, possono contenere errori:{' '}
+        <a href={hrefFor('note')}>segnalali</a> e vengono corretti.
         <br />
         Nessun account e nessun server: quello che fai resta nel tuo browser e non viene inviato
         a nessuno.

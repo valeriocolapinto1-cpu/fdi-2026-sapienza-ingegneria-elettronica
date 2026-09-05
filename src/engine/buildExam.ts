@@ -74,14 +74,20 @@ function expandSlots(slots: readonly Slot[], rng: Rng): { gen: GeneratorId; poin
 /**
  * Struttura delle prove.
  *
- * `full` segue il formato **ricostruito dagli appunti degli studenti**, non
- * una fonte del corso: 4 crocette, 2 «completare l'immagine», 2 «da tabella di
- * verità a espressione», 1 sintesi di rete combinatoria, 2 domande aperte, 1
- * programma assembly.
+ * `full` è la prova di autovalutazione **di questo sito** — non il formato
+ * dell'esame di qualcuno: 4 crocette, 2 «completare l'immagine», 2 «da tabella
+ * di verità a espressione», 1 sintesi di rete combinatoria, 2 domande aperte,
+ * 1 programma assembly.
  *
- * Punti uniformi: 12 × 2,5 = **30**. I pesi reali non ci sono noti, quindi
- * dividere trenta per dodici è l'ipotesi più onesta; se salta fuori che sono
- * diversi si cambia qui e basta, perché la somma è verificata da un test.
+ * Il mix è scelto perché copre le quattro cose che si sanno fare o non si sanno
+ * fare — convertire, minimizzare, leggere uno schema, eseguire un listato — e
+ * perché mescola quesiti auto-correggibili e quesiti da autovalutare, che
+ * allenano due cose diverse.
+ *
+ * Punti uniformi: 12 × 2,5 = **30**. Trenta è la scala su cui uno studente sa
+ * leggersi; dodici quesiti è la densità a cui si smette di rispondere con
+ * calma. La somma è verificata da un test, quindi cambiare i pesi qui non può
+ * rompere il totale di nascosto.
  */
 const BLUEPRINTS: Record<ExamMode, Slot[]> = {
   full: [
@@ -125,8 +131,8 @@ export const MODE_LABELS: Record<ExamMode, string> = {
 
 export const MODE_DESCRIPTIONS: Record<ExamMode, string> = {
   full:
-    'Formato integrale su 30, nell’ordine della prova vera: crocette, due schemi da completare, ' +
-    'due tabelle di verità da tradurre in espressione, sintesi combinatoria, aperte e assembly.',
+    'Prova intera su 30: crocette, due schemi da completare, due tabelle di verità da tradurre ' +
+    'in espressione, sintesi combinatoria, domande aperte e un programma assembly.',
   quick: 'Solo domande auto-correggibili. Voto rapido, per ripasso mirato.',
   binary: 'Esercizi generati sul binario con segno. La parte che «non deve avere dubbi».',
   logic: 'Riconoscimento porte + sintesi con Karnaugh dalla tabella di verità.',

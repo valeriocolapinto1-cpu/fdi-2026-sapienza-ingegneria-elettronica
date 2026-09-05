@@ -29,10 +29,10 @@ export default defineConfig(() => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: "AE·FIN — Palestra d'esame",
+        name: 'AE·FIN — Palestra di Architettura degli Elaboratori',
         short_name: 'AE·FIN',
         description:
-          "Simulatore d'esame per Architettura degli Elaboratori (Fondamenti di Informatica, Sapienza).",
+          'Teoria, esercizi svolti e prove di autovalutazione di Architettura degli Elaboratori.',
         lang: 'it',
         start_url: `/${REPO}/`,
         scope: `/${REPO}/`,

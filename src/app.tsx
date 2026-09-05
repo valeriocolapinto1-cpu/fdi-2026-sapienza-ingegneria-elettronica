@@ -24,15 +24,15 @@ const TAB_LABELS: Record<ViewId, string> = {
   note: 'Note & privacy',
 };
 
-const SITE = "AE·FIN — Palestra d'esame";
+const SITE = 'AE·FIN — Palestra di Architettura degli Elaboratori';
 
 /** Descrizione per vista: è quella che finisce nell'anteprima di un link. */
 const VIEW_DESCRIPTIONS: Record<ViewId, string> = {
-  dash: "Studio e simulatore d'esame non ufficiale per Architettura degli Elaboratori. Domande inventate nello stile della prova, con rimandi ai capitoli di Hamacher.",
+  dash: 'Palestra di Architettura degli Elaboratori: diciassette moduli di teoria, ottantacinque esercizi svolti e un generatore di prove di autovalutazione che si correggono da sole.',
   study:
     'Diciassette moduli in ordine di studio, pensati per partire da zero: rampa d’ingresso, teoria distesa, esempio svolto, autoverifica e cinque esercizi con svolgimento.',
   def: "I termini che l'esame chiede di saper enunciare, una frase ciascuno, con filtro per testo e per argomento.",
-  exam: 'Genera prove nel formato della scritta: numeri, tabelle di verità, schemi e assembly cambiano a ogni generazione, e la correzione è automatica dove può esserlo.',
+  exam: 'Genera una prova di autovalutazione: numeri, tabelle di verità, schemi e assembly cambiano a ogni generazione, e la correzione è automatica dove può esserlo.',
   train:
     'Quattro palestre che fanno fare il procedimento e correggono ogni passaggio: binario a mano, schemi da completare, verità e Karnaugh, assembly a mente.',
   ref: 'Quarantacinque schemi di architettura disegnati per questo sito, raggruppati per area del programma: si guardano per capire come sono collegate le parti, o si completano come esercizio.',
@@ -80,8 +80,8 @@ function Header({ active }: { active: ViewId | null }): JSX.Element {
             AE
           </span>
           <span class="brand-name">
-            Palestra d'esame
-            <small>Architettura degli Elaboratori</small>
+            Architettura degli Elaboratori
+            <small>teoria, esercizi svolti e prove</small>
           </span>
         </div>
         <nav class="tabs" aria-label={t('Sezioni del sito')}>
@@ -115,9 +115,9 @@ function Footer(): JSX.Element {
           scritto che le domande non sono prove vere.
         */}
         <p class="foot-note" style="margin:0">
-          AE·FIN — palestra d'esame · strumento <b>non ufficiale</b> scritto da uno studente,
-          non affiliato alla Sapienza né al corso · le domande sono inventate, non sono prove
-          d'esame reali · nessun dato esce dal tuo browser
+          AE·FIN — palestra di architettura degli elaboratori · strumento{' '}
+          <b>indipendente</b> scritto da uno studente, non è il sito di nessun corso · le domande
+          sono scritte qui, non sono prove d'esame reali · nessun dato esce dal tuo browser
         </p>
         <nav class="foot-nav" aria-label={t('Mappa del sito')}>
           {VIEWS.map((view) => (

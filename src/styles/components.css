@@ -752,15 +752,12 @@
     gap: 8px;
     flex-wrap: wrap;
   }
-  .trap .status {
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    border: 1px solid var(--color-copper-dim);
-    border-radius: 999px;
-    padding: 1px 7px;
-    color: var(--color-muted);
-    text-transform: none;
-  }
+  /*
+   * `.trap .status` disegnava il badge «da verificare» accanto al titolo.
+   * Serviva finché queste note riportavano che cosa una persona reale si
+   * aspetta a un esame; adesso sono fatti sulla notazione e il badge non ha
+   * più niente da segnalare.
+   */
 
   /* ═══════════ esame ═══════════ */
   .exam-config {

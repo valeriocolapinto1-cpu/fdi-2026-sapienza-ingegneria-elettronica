@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Palestra d'esame per Architettura degli Elaboratori — Fondamenti di Informatica, Sapienza",
+  "description": "Palestra di Architettura degli Elaboratori: teoria, esercizi svolti e prove di autovalutazione",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

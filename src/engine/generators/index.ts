@@ -35,7 +35,7 @@ export const GENERATORS = {
   asmWrite: genAsmWrite,
   open: genOpen,
 
-  // Le due famiglie che nella prova vera ci sono sempre: «completare
+  // Le due famiglie che questa prova ha sempre: «completare
   // l'immagine» e «dalla tabella di verità all'espressione logica».
   diagramLabel: genDiagramLabel,
   truthToExpr: genTruthToExpr,

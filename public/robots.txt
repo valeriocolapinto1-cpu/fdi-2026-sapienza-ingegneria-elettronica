@@ -1,5 +1,5 @@
-# AE·FIN — palestra d'esame
-# Strumento di studio non ufficiale. Tutto il contenuto è pubblico e
+# AE·FIN — palestra di Architettura degli Elaboratori
+# Strumento di studio indipendente. Tutto il contenuto è pubblico e
 # indicizzabile: non c'è niente di riservato da nascondere.
 
 User-agent: *

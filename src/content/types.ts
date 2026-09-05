@@ -125,23 +125,32 @@ export interface Topic {
 }
 
 /**
- * Accortezza raccolta dagli appunti degli studenti. Non è la regola di
- * nessuno: `status` tiene esplicito che va verificata, e il testo va scritto
- * all'impersonale — vedi la nota in testa a `traps.ts`.
+ * Convenzione di notazione: un fatto sulla materia o sul modo di scriverla.
+ *
+ * Il campo `status` («verificata» / «da verificare») è caduto insieme a ciò
+ * che lo rendeva necessario: quando queste voci riportavano che cosa una
+ * persona reale si aspetta all'esame, dichiarare che nessuno l'aveva
+ * confermato era il minimo. Adesso sono affermazioni che stanno in piedi da
+ * sole, e un badge «da verificare» su un fatto suonerebbe soltanto insicuro.
+ * Vedi la regola in testa a `traps.ts`.
  */
 export interface Trap {
   id: string;
   title: string;
   body: string;
-  status: 'verificata' | 'da-verificare';
 }
 
-/** Voce dell'elenco testi e risorse. */
+/**
+ * Voce della bibliografia.
+ *
+ * Non ha un `url` e non è una svista: l'elenco conteneva anche pagine di
+ * persone e archivi di terzi, ed è stato ridotto ai libri. Un titolo in
+ * bibliografia si cita sempre; un collegamento, da un sito con la pubblicità
+ * sopra, tira dentro qualcuno che non ha chiesto di esserci.
+ */
 export interface LinkItem {
   id: string;
   label: string;
-  /** Assente per i testi cartacei. */
-  url?: string;
+  /** A che cosa serve quel libro, in una riga. */
   note: string;
-  kind: 'testo' | 'regolamento' | 'risorsa';
 }

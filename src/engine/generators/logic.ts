@@ -162,7 +162,7 @@ export function genKarnaugh(ctx: GenCtx): SelfQuestion {
  * forma canonica, raccoglimento, forma minima.
  */
 export function genTruthToExpr(ctx: GenCtx): ExprQuestion {
-  // Due variabili come nella prova vera, tre ogni tanto per non abituarsi a
+  // Due variabili di solito, tre ogni tanto per non abituarsi a
   // una tabella di quattro righe.
   const vars = randInt(ctx.rng, 0, 4) < 3 ? 2 : 3;
   const cells = 1 << vars;

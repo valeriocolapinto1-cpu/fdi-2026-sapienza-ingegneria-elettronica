@@ -1,45 +1,48 @@
 import type { Trap } from './types';
 
 /**
- * Accortezze raccolte dagli appunti degli studenti.
+ * Convenzioni di notazione: come conviene scrivere le risposte perché si
+ * capiscano.
  *
- * **Sono percezioni di chi ha dato l'esame, non regole di nessuno.** Per
- * questo sono scritte all'impersonale e marcate `da-verificare`: attribuirle
- * a una persona significherebbe metterle in bocca a qualcuno che non le ha
- * dette qui, e nessuna di queste è confermata da una fonte del corso.
+ * Erano «le accortezze raccolte dagli appunti degli studenti», e prima ancora
+ * «le trappole del docente»: affermazioni di terza mano su che cosa una
+ * persona reale si aspetta, gradisce o considera sbagliato. Il badge «da
+ * verificare» serviva ad ammettere che nessuno le aveva confermate — ma un
+ * badge non rende innocua un'affermazione su qualcuno, e su un sito con la
+ * pubblicità sopra la faccenda peggiora invece di migliorare.
  *
- * Regola per chi ne aggiunge: descrivi **come conviene rispondere**, mai cosa
- * qualcuno pensa, chiede, sbaglia o preferisce.
+ * Quello che restava di utile, tolta la provenienza, era vero da sé: sono
+ * fatti sulla notazione, che stanno in piedi senza appoggiarsi a nessuno.
+ *
+ * REGOLA PER CHI NE AGGIUNGE UNA: deve essere un'affermazione **verificabile
+ * sulla notazione o sulla materia**, non su una persona, un corso o un esame.
+ * Se per scriverla ti serve dire che qualcuno preferisce, pretende o penalizza
+ * qualcosa, non va qui — e probabilmente non va da nessuna parte.
  */
 export const traps: Trap[] = [
   {
     id: 'trap-and-assoc',
-    title: 'AND a più di due ingressi',
-    body: 'Nei disegni conviene scomporre le porte AND a 3+ ingressi in porte a 2 ingressi: è la forma che gli appunti riportano come attesa.',
-    status: 'da-verificare',
+    title: 'Porte AND a più di due ingressi',
+    body: "Una porta a tre o più ingressi è una comodità del disegno: in hardware si costruisce con porte a due ingressi. Scomporla nello schema mostra che conosci la struttura reale, ed è l'unico modo di far vedere quanti livelli di ritardo attraversa il segnale.",
   },
   {
     id: 'trap-ram',
-    title: 'RAM ≠ «accesso casuale»',
-    body: 'Non tradurre la sigla: spiega che <b>il tempo di accesso al dato non dipende dalla sua posizione</b> in memoria.',
-    status: 'da-verificare',
+    title: 'RAM non vuol dire «accesso casuale»',
+    body: 'La sigla è un falso amico: <b>random access</b> non significa che l’accesso avvenga a caso, ma che il <b>tempo di accesso non dipende dalla posizione</b> del dato in memoria. Il contrario è l’accesso sequenziale di un nastro, dove per leggere la fine bisogna scorrere tutto.',
   },
   {
     id: 'trap-simboli',
-    title: 'Simboli logici',
-    body: 'Conviene usare {∧, ∨} invece di «AND»/«OR» per esteso: è la notazione usata a lezione secondo gli appunti.',
-    status: 'da-verificare',
+    title: 'Simboli dell’algebra di Boole',
+    body: 'In algebra di Boole la notazione corrente è <code>∧</code> e <code>∨</code> (oppure <code>·</code> e <code>+</code>); «AND» e «OR» per esteso appartengono alla descrizione dei circuiti. Le due si equivalgono: quello che conta è <b>non mescolarle nella stessa espressione</b>, perché una riga scritta metà in un modo e metà nell’altro si legge male.',
   },
   {
     id: 'trap-demorgan',
-    title: 'De Morgan esteso',
-    body: 'Ricorda che vale anche per più di due fattori.',
-    status: 'da-verificare',
+    title: 'De Morgan vale anche a più fattori',
+    body: 'Le due leggi si ricordano su due variabili, ma valgono su quante ne vuoi: la negazione di un prodotto di <i>n</i> fattori è la somma delle <i>n</i> negazioni, e viceversa. Applicarle solo alle coppie è un errore che compare quando l’espressione si allunga.',
   },
   {
     id: 'trap-rtn',
-    title: 'RTN, forma corretta',
-    body: 'Nelle risposte scrivi la notazione per esteso e con le parentesi solo sulle sorgenti: <code>Add R1,R2,R3</code> → <code>R1 ← [R2]+[R3]</code>.',
-    status: 'da-verificare',
+    title: 'La forma della notazione RTN',
+    body: 'Nel trasferimento fra registri le parentesi quadre indicano il <b>contenuto</b>, e stanno solo sulle sorgenti: <code>Add R1,R2,R3</code> diventa <code>R1 ← [R2]+[R3]</code>. Scrivere <code>[R1] ←</code> a sinistra significherebbe assegnare a un valore invece che a un registro.',
   },
 ];

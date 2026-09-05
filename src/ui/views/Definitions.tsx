@@ -122,8 +122,8 @@ export function Definitions(): JSX.Element {
       </div>
 
       <div class="disclaim">
-        Definizioni riscritte in forma originale a partire dal programma del corso; per gli
-        enunciati integrali fai riferimento a Hamacher.
+        Definizioni scritte per questo sito. Sono la formulazione più breve che regga: se una
+        non ti torna, il rimando accanto apre il modulo che la spiega per esteso.
       </div>
     </section>
   );

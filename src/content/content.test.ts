@@ -68,9 +68,15 @@ describe('content layer', () => {
     expect(testo).not.toMatch(/Hamacher/i);
   });
 
-  it('marca le trappole come percezioni da verificare', () => {
-    // La specifica chiede che non passino per regole confermate.
-    expect(traps.every((trap) => trap.status === 'da-verificare')).toBe(true);
+  it('le convenzioni parlano di notazione, non di persone o di esami', () => {
+    // È il presidio che ha sostituito il badge «da verificare»: una voce che
+    // dice cosa qualcuno pretende, gradisce o penalizza è un'affermazione su
+    // una persona reale, e qui non ci va — con o senza badge.
+    const vietate =
+      /docent|profess|\besame\b|\bappell|corso di|gradisc|pretend|penalizz|secondo gli appunti/i;
+    for (const trap of traps) {
+      expect(vietate.test(`${trap.title} ${trap.body}`), `"${trap.id}"`).toBe(false);
+    }
   });
 
   it('ogni modulo ha il ripasso «in due minuti» e le domande di autoverifica', () => {

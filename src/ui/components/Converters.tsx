@@ -38,7 +38,7 @@ function Converter(): JSX.Element {
   return (
     <div class="tool" style="margin-top:20px">
       <h3>Convertitore &amp; complemento a 2</h3>
-      <div class="th-ref">Hamacher · cap. 1, §1.4 — Rappresentazione dei numeri</div>
+      <div class="th-ref">Rappresentazione dei numeri con segno</div>
       <div class="field">
         <label for="cv-dec">Decimale</label>
         <input
@@ -93,7 +93,7 @@ function Adder(): JSX.Element {
     <div class="tool">
       <h3>Sommatore binario con flag di overflow</h3>
       <div class="th-ref">
-        Hamacher · cap. 1 — Aritmetica in complemento a 2 · overflow ⇔ XOR dei riporti sul bit di
+        Aritmetica in complemento a 2 · overflow ⇔ XOR dei riporti sul bit di
         segno
       </div>
       <div class="field">
@@ -147,7 +147,7 @@ function RangeTool(): JSX.Element {
   return (
     <div class="tool">
       <h3>Range rappresentabile</h3>
-      <div class="th-ref">Hamacher · cap. 1 — Interi con e senza segno</div>
+      <div class="th-ref">Interi con e senza segno</div>
       <div class="field">
         <label for="rg-bits">Bit (1–32)</label>
         <input
