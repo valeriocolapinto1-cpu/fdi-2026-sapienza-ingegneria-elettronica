@@ -1197,28 +1197,14 @@
   }
 
   /* ═══════════ riferimenti ═══════════ */
-  .figlist {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 10px;
-  }
-  .fig {
-    background: var(--color-panel);
-    border: 1px solid var(--color-line);
-    border-radius: 10px;
-    padding: 12px 14px;
-  }
-  .fig .fn {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--color-copper);
-    font-weight: 600;
-  }
-  .fig .fd {
-    font-size: 13px;
-    color: var(--color-muted);
-    margin-top: 3px;
-  }
+  /*
+   * `.figlist`, `.fig`, `.fig .fn` e `.fig .fd` disegnavano le voci del
+   * catalogo delle tavole del libro: riquadri con il numero della figura e la
+   * descrizione, senza disegno. Il catalogo non c'è più — era la mappa di
+   * un'opera altrui — e con lui se ne vanno quelle regole. Restano `.figdraw`
+   * per gli schemi disegnati qui e `.fn`, che nel frattempo era diventata una
+   * riga di didascalia usata in mezza applicazione.
+   */
   .linklist {
     list-style: none;
     padding: 0;
@@ -1539,8 +1525,10 @@
   /* ═══════════ note e didascalie ═══════════ */
 
   /**
-   * `.fn` esisteva solo dentro `.fig`; serve anche da sola come riga di
-   * servizio (conteggi, didascalie, note sotto a un campo).
+   * Riga di servizio: conteggi, didascalie, note sotto a un campo. Nasceva
+   * come numero di figura dentro il vecchio catalogo delle tavole; quel
+   * catalogo è stato rimosso, questa è rimasta perché nel frattempo era
+   * diventata la didascalia di tutta l'applicazione.
    */
   .fn {
     font-family: var(--font-mono);

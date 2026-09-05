@@ -19,7 +19,7 @@ const TAB_LABELS: Record<ViewId, string> = {
   def: 'Definizioni',
   exam: 'Simulatore',
   train: 'Allenamento',
-  ref: 'Riferimenti',
+  ref: 'Schemi',
   carriera: 'Carriera',
   note: 'Note & privacy',
 };
@@ -35,7 +35,7 @@ const VIEW_DESCRIPTIONS: Record<ViewId, string> = {
   exam: 'Genera prove nel formato della scritta: numeri, tabelle di verità, schemi e assembly cambiano a ogni generazione, e la correzione è automatica dove può esserlo.',
   train:
     'Quattro palestre che fanno fare il procedimento e correggono ogni passaggio: binario a mano, schemi da completare, verità e Karnaugh, assembly a mente.',
-  ref: 'Il catalogo completo delle figure del testo, capitolo per capitolo, con 45 schemi ridisegnati in SVG originale su cui esercitarsi.',
+  ref: 'Quarantacinque schemi di architettura disegnati per questo sito, raggruppati per area del programma: si guardano per capire come sono collegate le parti, o si completano come esercizio.',
   carriera:
     'A che punto sei sul programma: una spunta per modulo, che metti tu quando lo hai capito davvero.',
   note: 'Che cos’è questo sito e che cosa non è, che cosa salva nel browser (niente cookie, niente tracciamento, nessun server) e a chi appartengono i contenuti.',

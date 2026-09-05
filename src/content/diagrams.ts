@@ -3,11 +3,31 @@ import type { TopicId } from './types';
 /**
  * Schemi da completare.
  *
- * All'esame c'è sempre un «completare l'immagine»: si riceve un disegno con
- * alcune etichette mancanti e l'elenco di quelle da collocare. Qui ogni schema
- * è **ridisegnato in forma originale** — stessa struttura logica dello schema
- * di riferimento, tratto nostro — e le etichette sono dati, così lo stesso
- * disegno serve sia da figura sia da esercizio.
+ * Sono disegni **di questo sito**: rappresentano strutture standard
+ * dell'architettura dei calcolatori — un multiplexer, una cache a mappatura
+ * diretta, una pipeline a cinque stadi — cioè informazione tecnica che
+ * qualunque testo descrive allo stesso modo perché nessuno l'ha inventata.
+ * Nessuna illustrazione altrui è ricalcata: la struttura di un decodificatore
+ * è un fatto, il modo particolare in cui un editore l'ha impaginata no.
+ *
+ * REGOLA PER CHI NE AGGIUNGE UNO — tre domande, e se una risposta è «sì» lo
+ * schema va rifatto:
+ *
+ *  1. usa etichette o sigle prese da un testo dove esisterebbe un nome comune?
+ *  2. ricalca l'impaginazione di una tavola precisa, invece della struttura
+ *     logica che qualsiasi testo userebbe per quel concetto?
+ *  3. contiene i valori di un esempio svolto altrui — numeri, indirizzi, il
+ *     dispositivo scelto da qualcun altro per illustrare il concetto?
+ *
+ * È la terza che è meno ovvia. Uno schema chiamato «la sveglia su chip», con
+ * il timer dei minuti e il timer del tono, non descrive un sistema su singolo
+ * chip: descrive **l'esempio con cui un autore ha scelto di spiegarlo**. Al
+ * suo posto c'è ora `soc-blocchi`, che mostra la stessa struttura — processore,
+ * memoria, timer e interfacce su una rete di interconnessione — senza vestirla
+ * dell'esempio di nessuno.
+ *
+ * Le etichette sono dati, così lo stesso disegno serve sia da figura sia da
+ * esercizio: se ne nascondono alcune e si chiede di ricollocarle.
  *
  * Le coordinate sono nel sistema del `viewBox`: la UI le converte in
  * percentuali, quindi lo schema resta leggibile a qualunque larghezza.
@@ -84,7 +104,7 @@ export const diagrams: Diagram[] = [
 
   {
     id: 'processore-3bus',
-    title: 'Processore CISC a tre bus',
+    title: 'Percorso dati a tre bus',
     topic: 'cpu',
     width: 620,
     height: 400,
@@ -1252,20 +1272,20 @@ export const diagrams: Diagram[] = [
   },
 
   {
-    id: 'soc-sveglia',
-    title: 'Schema a blocchi della sveglia su chip',
+    id: 'soc-blocchi',
+    title: 'Sistema su singolo chip (SoC)',
     topic: 'io',
     width: 640,
     height: 340,
     slots: [
       { id: 'proc', x: 90, y: 45, label: 'Processore' },
       { id: 'mem', x: 250, y: 45, label: 'Memoria su chip' },
-      { id: 'timer1', x: 410, y: 45, label: 'Timer dei minuti' },
-      { id: 'timer2', x: 560, y: 45, label: 'Timer del tono' },
+      { id: 'timer', x: 410, y: 45, label: 'Timer' },
+      { id: 'irqc', x: 560, y: 45, label: 'Controllore delle interruzioni' },
       { id: 'net', x: 320, y: 140, label: 'Rete di interconnessione' },
-      { id: 'pio', x: 110, y: 215, label: 'Interfaccia parallela PIO' },
-      { id: 'disp', x: 400, y: 285, label: 'Display a sette segmenti' },
-      { id: 'spk', x: 570, y: 285, label: 'Altoparlante' },
+      { id: 'pio', x: 110, y: 215, label: 'Interfaccia parallela' },
+      { id: 'adc', x: 400, y: 215, label: 'Convertitore A/D' },
+      { id: 'sensore', x: 400, y: 285, label: 'Sensore' },
     ],
     distractors: ['Controllore DMA', 'Cache', 'TLB', 'Ponte PCI'],
     svg: `
@@ -1291,7 +1311,10 @@ export const diagrams: Diagram[] = [
       <line ${A} x1="555" y1="235" x2="555" y2="265"/>
       <rect ${B} x="330" y="265" width="140" height="38" rx="4"/>
       <rect ${B} x="500" y="265" width="130" height="38" rx="4"/>
-      <text ${T} x="255" y="222" font-size="10">pulsanti</text>`,
+      <text ${T} x="255" y="222" font-size="10">seriale</text>
+      <text ${T} x="555" y="222" font-size="10">D/A</text>
+      <text ${T} x="565" y="289" font-size="10">attuatore</text>
+      <text ${TS} x="30" y="15" font-size="10">un solo chip</text>`,
   },
 
   {

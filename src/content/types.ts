@@ -124,28 +124,6 @@ export interface Topic {
   diagramIds?: string[];
 }
 
-/** Figura di Hamacher che l'esame può chiedere di completare. */
-export interface Figure {
-  id: string;
-  /** Numero della figura, es. "fig. 8.16". */
-  code: string;
-  /** Che cosa rappresenta. */
-  desc: string;
-  /**
-   * Capitolo di provenienza, usato per raggruppare l'elenco.
-   * Il catalogo è lungo: senza raggruppamento è illeggibile.
-   */
-  area: string;
-  /** Argomento del programma a cui la figura appartiene. */
-  topic: TopicId;
-  /**
-   * Schema ridisegnato corrispondente, se esiste (`content/diagrams.ts`).
-   * Quando c'è, i Riferimenti mostrano il disegno invece del solo codice e
-   * offrono di esercitarsi a completarlo.
-   */
-  diagramId?: string;
-}
-
 /**
  * Accortezza raccolta dagli appunti degli studenti. Non è la regola di
  * nessuno: `status` tiene esplicito che va verificata, e il testo va scritto

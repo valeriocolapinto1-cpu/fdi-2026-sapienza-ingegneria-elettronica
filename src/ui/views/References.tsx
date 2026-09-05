@@ -1,30 +1,29 @@
 import type { JSX } from 'preact';
 import { useMemo, useState } from 'preact/hooks';
-import { figures, links, traps } from '~/content';
-import { FIGURE_AREAS } from '~/content/figures';
-import { diagramById } from '~/content/diagrams';
-import type { Figure } from '~/content/types';
+import { links, traps, TOPIC_GROUPS, TOPIC_TITLES } from '~/content';
+import { diagrams, type Diagram } from '~/content/diagrams';
+import type { TopicId } from '~/content/types';
 import { hrefFor } from '~/lib/router';
 import { DiagramFigure } from '~/ui/components/DiagramFigure';
 import { TrapNote } from '~/ui/components/TrapNote';
 
-/** Una figura del catalogo: schema ridisegnato se c'è, altrimenti solo la voce. */
-function FigureEntry({ figure }: { figure: Figure }): JSX.Element {
-  const diagram = figure.diagramId ? diagramById(figure.diagramId) : undefined;
-
-  if (!diagram) {
-    return (
-      <div class="fig">
-        <div class="fn">{figure.code}</div>
-        <div class="fd">{figure.desc}</div>
-      </div>
-    );
-  }
-
+/**
+ * Uno schema, con l'invito a esercitarsi a completarlo.
+ *
+ * Prima questa pagina era il **catalogo delle tavole del libro di testo**: 156
+ * voci con numero di figura e descrizione, cioè la trascrizione di un indice
+ * altrui, di cui solo 45 avevano un disegno vero. Le altre 111 erano righe che
+ * dicevano «questa figura esiste, va' a cercarla sul libro»: non contenuto,
+ * ma una mappa di un'opera che non è nostra.
+ *
+ * Adesso la pagina contiene solo ciò che il sito ha davvero: i 45 schemi
+ * disegnati qui, raggruppati per area del programma invece che per capitolo.
+ */
+function DiagramEntry({ diagram }: { diagram: Diagram }): JSX.Element {
   return (
     <div class="figdraw">
       <div class="fn" style="margin-bottom:2px">
-        {figure.code} · {figure.desc}
+        {diagram.title}
       </div>
       <DiagramFigure diagram={diagram} />
       <a class="btn ghost mini" href={hrefFor('train', diagram.id)}>
@@ -35,100 +34,93 @@ function FigureEntry({ figure }: { figure: Figure }): JSX.Element {
 }
 
 export function References(): JSX.Element {
-  const [area, setArea] = useState<string | 'tutte'>('tutte');
-  const [soloSchemi, setSoloSchemi] = useState(false);
+  const [group, setGroup] = useState<string | 'tutti'>('tutti');
+
+  /** Gli argomenti di ciascun blocco, per risolvere uno schema al suo gruppo. */
+  const groupOfTopic = useMemo(() => {
+    const map = new Map<TopicId, string>();
+    for (const item of TOPIC_GROUPS) {
+      for (const id of item.topicIds) map.set(id, item.id);
+    }
+    return map;
+  }, []);
 
   const shown = useMemo(
     () =>
-      figures
-        .filter((figure) => (area === 'tutte' ? true : figure.area === area))
-        .filter((figure) => (soloSchemi ? Boolean(figure.diagramId) : true)),
-    [area, soloSchemi],
+      group === 'tutti'
+        ? diagrams
+        : diagrams.filter((diagram) => groupOfTopic.get(diagram.topic) === group),
+    [group, groupOfTopic],
   );
 
-  const drawn = figures.filter((figure) => figure.diagramId).length;
-  const areas = useMemo(
-    () => FIGURE_AREAS.filter((name) => shown.some((figure) => figure.area === name)),
-    [shown],
+  const groups = useMemo(
+    () =>
+      TOPIC_GROUPS.filter((item) =>
+        shown.some((diagram) => groupOfTopic.get(diagram.topic) === item.id),
+      ),
+    [shown, groupOfTopic],
   );
 
   return (
     <section class="view">
       <p class="eyebrow">Cassetta degli attrezzi</p>
-      <h1 class="h">Riferimenti &amp; accortezze</h1>
+      <h1 class="h">Schemi &amp; convenzioni</h1>
       <p class="lead">
-        Il catalogo completo delle figure del testo — <b>{figures.length} tavole</b>, capitolo per
-        capitolo — con <b>{drawn} schemi ridisegnati</b> su cui esercitarsi. Secondo gli appunti
-        degli studenti un «completare l'immagine» c'è a ogni appello: si riceve il disegno con
-        alcune etichette mancanti e l'elenco di quelle da collocare, con qualche etichetta in più
-        che non va da nessuna parte.
+        <b>{diagrams.length} schemi</b> disegnati per questo sito, uno per ciascuno dei blocchi
+        che un'architettura ti chiede di saper riconoscere e ridisegnare a mano. Ognuno si può
+        usare in due modi: guardarlo per capire come sono collegate le parti, oppure{' '}
+        <b>completarlo</b> — il disegno arriva con alcune etichette mancanti e un elenco da cui
+        pescarle, che contiene qualche etichetta in più che non va da nessuna parte.
       </p>
 
       <div class="panel" style="margin-top:14px">
-        <div class="def-filters" role="group" aria-label="Filtra per capitolo">
+        <div class="def-filters" role="group" aria-label="Filtra per area del programma">
           <button
             type="button"
-            class={`def-chip${area === 'tutte' ? ' on' : ''}`}
-            aria-pressed={area === 'tutte'}
-            onClick={() => setArea('tutte')}
+            class={`def-chip${group === 'tutti' ? ' on' : ''}`}
+            aria-pressed={group === 'tutti'}
+            onClick={() => setGroup('tutti')}
           >
-            Tutti i capitoli
+            Tutte le aree
           </button>
-          {FIGURE_AREAS.map((name) => (
+          {TOPIC_GROUPS.map((item) => (
             <button
-              key={name}
+              key={item.id}
               type="button"
-              class={`def-chip${area === name ? ' on' : ''}`}
-              aria-pressed={area === name}
-              onClick={() => setArea(name)}
+              class={`def-chip${group === item.id ? ' on' : ''}`}
+              aria-pressed={group === item.id}
+              onClick={() => setGroup(item.id)}
             >
-              {name}
+              {item.title}
             </button>
           ))}
-        </div>
-        <div class="def-filters" style="margin-top:10px">
-          <button
-            type="button"
-            class={`def-chip${soloSchemi ? ' on' : ''}`}
-            aria-pressed={soloSchemi}
-            onClick={() => setSoloSchemi((on) => !on)}
-          >
-            {soloSchemi ? '✓ Solo schemi da completare' : 'Solo schemi da completare'}
-          </button>
         </div>
       </div>
 
       <p class="fn" style="margin-top:14px" aria-live="polite">
-        {shown.length} {shown.length === 1 ? 'figura' : 'figure'} ·{' '}
-        {shown.filter((figure) => figure.diagramId).length} ridisegnate
+        {shown.length} {shown.length === 1 ? 'schema' : 'schemi'}
       </p>
 
-      {areas.map((name) => {
-        const inArea = shown.filter((figure) => figure.area === name);
-        const disegnate = inArea.filter((figure) => figure.diagramId);
-        const elencate = inArea.filter((figure) => !figure.diagramId);
+      {groups.map((item) => {
+        const inGroup = shown.filter((diagram) => groupOfTopic.get(diagram.topic) === item.id);
         return (
-          <div key={name}>
-            <h2 class="sec">{name}</h2>
-            {disegnate.map((figure) => (
-              <FigureEntry key={figure.id} figure={figure} />
+          <div key={item.id}>
+            <h2 class="sec">{item.title}</h2>
+            <p class="fn" style="margin:-4px 0 12px">
+              {[...new Set(inGroup.map((diagram) => TOPIC_TITLES[diagram.topic]))].join(' · ')}
+            </p>
+            {inGroup.map((diagram) => (
+              <DiagramEntry key={diagram.id} diagram={diagram} />
             ))}
-            {elencate.length > 0 && (
-              <div class="figlist" style="margin-top:12px">
-                {elencate.map((figure) => (
-                  <FigureEntry key={figure.id} figure={figure} />
-                ))}
-              </div>
-            )}
           </div>
         );
       })}
 
-      <h2 class="sec">Accortezze raccolte dagli studenti</h2>
+      <h2 class="sec">Convenzioni di notazione</h2>
       <p class="lead">
-        Impressioni di chi ha dato l'esame prima di te: <b>non sono regole di nessuno</b> e
-        nessuno le ha confermate. Trattale come consigli fra colleghi, verificali a lezione, e
-        se contraddicono la pagina del corso segui quella.
+        Come conviene scrivere le risposte perché si capiscano: sono <b>buone pratiche</b> di
+        notazione, non le regole di nessun corso. Se il tuo corso usa convenzioni diverse, valgono
+        le sue.
       </p>
       <div>
         {traps.map((trap) => (
@@ -136,20 +128,14 @@ export function References(): JSX.Element {
         ))}
       </div>
 
-      <h2 class="sec">Testi &amp; risorse</h2>
+      <h2 class="sec">Per approfondire</h2>
       <div class="panel">
         <ul class="linklist">
           {links.map((link) => (
             <li key={link.id}>
-              {link.url ? (
-                <a href={link.url} target="_blank" rel="noopener noreferrer">
-                  {link.label}
-                </a>
-              ) : (
-                <span>
-                  <b>{link.label}</b>
-                </span>
-              )}
+              <span>
+                <b>{link.label}</b>
+              </span>
               <span class="d">{link.note}</span>
             </li>
           ))}
@@ -157,9 +143,10 @@ export function References(): JSX.Element {
       </div>
 
       <div class="disclaim">
-        Le tavole del testo non sono riprodotte: gli schemi di questa pagina sono <b>ridisegnati in
-        forma originale</b>, con la stessa struttura logica. Per le figure integrali, e per quelle
-        qui solo elencate, consulta Hamacher.
+        Gli schemi di questa pagina sono <b>disegnati da zero</b> per questo sito. Rappresentano
+        strutture standard dell'architettura dei calcolatori — un multiplexer, una cache, una
+        pipeline — che qualunque testo descrive allo stesso modo perché sono informazione
+        tecnica, non l'invenzione di qualcuno: nessuna illustrazione altrui è riprodotta qui.
       </div>
     </section>
   );

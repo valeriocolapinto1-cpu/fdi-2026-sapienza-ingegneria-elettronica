@@ -3,12 +3,11 @@ import { open } from './open';
 import { asmWrite } from './asmWrite';
 import { diagrams } from './diagrams';
 import { topics, TOPIC_GROUPS } from './topics';
-import { figures } from './figures';
 import { traps } from './traps';
 import { links } from './links';
 import type { Topic, TopicId, Trap } from './types';
 
-export { mcq, open, asmWrite, topics, TOPIC_GROUPS, figures, traps, links };
+export { mcq, open, asmWrite, topics, TOPIC_GROUPS, traps, links };
 export type { TopicGroup } from './topics';
 export type * from './types';
 
@@ -36,7 +35,6 @@ const MINIMUMS = {
   open: 12,
   asmWrite: 2,
   topics: 17,
-  figures: 150,
   traps: 5,
   links: 6,
 } as const;
@@ -61,7 +59,7 @@ export function validateContent(): string[] {
   const problems: string[] = [];
 
   // — conteggi minimi —
-  const banks = { mcq, open, asmWrite, topics, figures, traps, links };
+  const banks = { mcq, open, asmWrite, topics, traps, links };
   for (const [name, min] of Object.entries(MINIMUMS)) {
     const size = banks[name as keyof typeof banks].length;
     if (size < min) problems.push(`banca "${name}": ${size} voci, ne servono almeno ${min}`);
