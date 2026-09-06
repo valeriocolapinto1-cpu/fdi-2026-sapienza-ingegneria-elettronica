@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AE·FIN si è spostato</title>
+
+    <!--
+      Questa pagina è tutto ciò che resta al vecchio indirizzo dopo il trasloco.
+
+      `canonical` dice ai motori di ricerca che l'originale è altrove, così i
+      due indirizzi non si fanno concorrenza; `noindex` toglie questa pagina
+      dai risultati senza toccare il nuovo sito. Le due cose insieme spostano
+      il posizionamento invece di dividerlo in due.
+    -->
+    <link rel="canonical" href="https://aefin.pages.dev/" />
+    <meta name="robots" content="noindex, follow" />
+
+    <!--
+      Il refresh via meta è la rete di sicurezza per chi ha JavaScript
+      disattivato: due secondi, il tempo di leggere che il sito si è spostato.
+      Il rinvio vero lo fa lo script in fondo, che è immediato e — cosa che il
+      meta non sa fare — porta con sé la rotta su cui ti trovavi.
+    -->
+    <meta http-equiv="refresh" content="2; url=https://aefin.pages.dev/" />
+
+    <style>
+      body {
+        min-height: 100dvh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #0e1116;
+        color: #e7edf4;
+        font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        text-align: center;
+      }
+      .box {
+        max-width: 30rem;
+      }
+      .g {
+        width: 44px;
+        height: 44px;
+        margin: 0 auto 20px;
+        border: 1.5px solid #c88a4e;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #c88a4e;
+        font: 600 15px/1 ui-monospace, monospace;
+      }
+      h1 {
+        font-size: 21px;
+        margin: 0 0 12px;
+      }
+      p {
+        color: #9aa7b4;
+        line-height: 1.6;
+        margin: 0 0 20px;
+      }
+      a.btn {
+        display: inline-block;
+        padding: 11px 20px;
+        border-radius: 9px;
+        background: #c88a4e;
+        color: #0e1116;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .fn {
+        margin-top: 22px;
+        font-size: 12px;
+        color: #5e6b7a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div class="g" aria-hidden="true">AE</div>
+      <h1>Il sito si è spostato</h1>
+      <p>
+        AE·FIN adesso vive su <b>aefin.pages.dev</b>. Ti ci porto fra un istante — i tuoi
+        progressi restano su questo dispositivo e non si perdono.
+      </p>
+      <a class="btn" href="https://aefin.pages.dev/">Vai al sito ▶</a>
+      <p class="fn">
+        Se avevi installato l'app, disinstallala e reinstallala dal nuovo indirizzo: quella
+        vecchia non riceverà più aggiornamenti.
+      </p>
+    </div>
+
+    <script>
+      /*
+       * Porta con sé la rotta: chi arriva da un link a `#/study/mem` deve
+       * atterrare su quel modulo, non sulla home. È la differenza fra un
+       * trasloco e una perdita di tutti i link condivisi finora.
+       *
+       * `replace` e non `assign`: così il tasto «indietro» non ributta qui,
+       * intrappolando chi ci prova in un rimbalzo continuo.
+       */
+      location.replace('https://aefin.pages.dev/' + location.hash);
+    </script>
+  </body>
+</html>

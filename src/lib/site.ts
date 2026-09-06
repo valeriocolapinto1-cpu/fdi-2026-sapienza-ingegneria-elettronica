@@ -14,15 +14,46 @@ export const SITE_TITLE = 'AE·FIN — Palestra di Architettura degli Elaborator
 /**
  * Indirizzo pubblico, senza barra finale.
  *
- * Oggi è GitHub Pages sotto il path del repository. Diventerà il dominio
- * proprio quando la richiesta a nic.eu.org sarà accolta: da quel momento
- * questa riga e il record DNS sono le uniche due cose da toccare.
+ * Cloudflare Pages, piano gratuito: è l'unico hosting senza costi che consenta
+ * l'uso commerciale — il piano Hobby di Vercel vieta esplicitamente AdSense, e
+ * i termini di GitHub Pages sulla pubblicità sono una zona grigia.
+ *
+ * `pages.dev` sta nel Public Suffix List, quindi `aefin.pages.dev` vale come
+ * dominio registrabile a sé: `ads.txt` alla sua radice è esattamente dove
+ * Google lo cerca, cosa impossibile sotto un sotto-path di `github.io`.
+ *
+ * Se un giorno serve un dominio proprio, questa riga e un record CNAME sono le
+ * uniche due cose da cambiare.
  */
-export const SITE_URL =
+export const SITE_URL = 'https://aefin.pages.dev';
+
+/**
+ * Dove il sito abitava prima.
+ *
+ * Serve a due cose che non si possono derivare da `SITE_URL`: la pagina di
+ * rinvio che resta pubblicata là, e il `canonical` che le dice di non
+ * competere con il nuovo indirizzo nei risultati di ricerca. Chi ha installato
+ * la PWA o messo un segnalibro passa da lì.
+ */
+export const LEGACY_SITE_URL =
   'https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica';
 
 export const REPO_URL =
   'https://github.com/valeriocolapinto1-cpu/fdi-2026-sapienza-ingegneria-elettronica';
+
+/**
+ * Identificativo publisher di AdSense, quello che comincia per `pub-`.
+ *
+ * **Vuoto finché Google non approva il sito**, e non è un segnaposto da
+ * riempire alla svelta: tutto il codice degli annunci lo legge e, se è vuoto,
+ * non inietta nulla — niente script, niente riquadri, niente `ads.txt`. Così
+ * la parte pubblicitaria può essere scritta e messa in produzione mesi prima
+ * di essere accesa, senza che nessuno veda uno spazio vuoto.
+ */
+export const ADSENSE_CLIENT = '';
+
+/** Vero quando AdSense è stato approvato e la pubblicità può accendersi. */
+export const hasAdsense = (): boolean => ADSENSE_CLIENT.startsWith('pub-');
 
 /**
  * Chi risponde del sito.

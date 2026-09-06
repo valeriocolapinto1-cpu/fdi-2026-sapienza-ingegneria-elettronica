@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Un solo indirizzo, e non è una dimenticanza.
+  Un solo indirizzo, e per ora non è una dimenticanza.
 
   Il router del sito vive nell'hash (`#/study/mem`), e per un motore di
   ricerca tutto ciò che segue il `#` non è un indirizzo diverso: è un punto
   della stessa pagina. Elencare qui ventiquattro righe con l'hash sarebbe un
   sitemap gonfiato e ignorato.
 
-  Per avere una voce per modulo servirebbe passare a percorsi veri
-  (`/study/mem`) con il trucco del 404.html per la riscrittura, oppure
-  generare una pagina statica per modulo in fase di build. Nessuna delle due
-  è gratis, e per un sito di studio personale l'indicizzazione della home
-  basta a farlo trovare.
+  Cambia con il passaggio a percorsi veri (`/study/mem`), che è il lavoro
+  successivo: da lì questo file smette di essere scritto a mano e viene
+  **generato dalla build** a partire dall'elenco dei moduli, con la stessa
+  logica per cui l'indice interno si ricava dai titoli invece di essere un
+  dato a parte. Un file scritto a mano si disallinea al primo modulo nuovo.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/</loc>
+    <loc>https://aefin.pages.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>

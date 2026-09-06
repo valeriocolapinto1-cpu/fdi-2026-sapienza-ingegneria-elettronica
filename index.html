@@ -5,33 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!--
-      Content-Security-Policy come `meta`, non come intestazione HTTP: GitHub
-      Pages serve file statici e non permette di impostare intestazioni.
+      La Content-Security-Policy non sta più qui: è un'intestazione HTTP vera,
+      in `public/_headers`. Stava in un `meta` solo perché GitHub Pages non
+      permette di impostare intestazioni, e quel ripiego aveva due buchi
+      incolmabili — `frame-ancestors` viene ignorato se arriva da un meta, e
+      HSTS come meta non esiste.
 
-      Il sito non ha bisogno di nulla dall'esterno — i caratteri sono ospitati
-      qui, non c'è analytics, non c'è un'API da chiamare — quindi la politica
-      può essere chiusa quasi del tutto. `connect-src 'self'` lascia passare
-      solo il service worker; `frame-ancestors` non funziona via meta, ma senza
-      niente da rubare (nessuna sessione, nessun cookie) il clickjacking qui
-      non ha bersaglio.
-
-      `style-src` deve ammettere 'unsafe-inline': il sito usa attributi
-      `style` per le poche misure calcolate a runtime, per esempio la
-      larghezza della barra della carriera.
+      Non ne resta una copia qui: due politiche attive si **intersecano**, e
+      finirebbe che una regola allargata nell'header resta bloccata da una
+      dimenticanza nel meta, con un errore che si manifesta solo in produzione.
+      Una sola fonte, in `_headers`.
     -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self';
-               script-src 'self';
-               style-src 'self' 'unsafe-inline';
-               img-src 'self' data:;
-               font-src 'self';
-               connect-src 'self';
-               object-src 'none';
-               base-uri 'none';
-               form-action 'none';
-               upgrade-insecure-requests"
-    />
 
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
@@ -66,11 +50,11 @@
          `./` rispetto alla pagina, e l'immagine resterebbe vuota. -->
     <meta
       property="og:url"
-      content="https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/"
+      content="%SITE_URL%/"
     />
     <meta
       property="og:image"
-      content="https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/social.jpg"
+      content="%SITE_URL%/social.jpg"
     />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />

@@ -1,0 +1,44 @@
+name: Test
+
+# Il cancello dei test viveva nel workflow di deploy: se fallivano, il sito non
+# veniva pubblicato. Adesso a costruire il sito è Cloudflare Pages, quindi quel
+# cancello si è spostato in due punti, e nessuno dei due è ridondante:
+#
+#   1. dentro `npm run build`, che è il comando che Cloudflare esegue — è **lì**
+#      che sta la garanzia vera, perché è l'unica cosa che può fermare una
+#      pubblicazione;
+#   2. qui, che non ferma niente ma mette il rosso accanto al commit su GitHub,
+#      dove lo si vede prima di fare una merge.
+#
+# Il primo protegge chi legge il sito, il secondo protegge chi scrive il codice.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Test del motore e dei contenuti
+        run: npm test
+
+      - name: Tipi
+        run: npm run typecheck
+
+      # `build:only` e non `build`: i test sono già girati qui sopra, e
+      # rifarli renderebbe questo passaggio una ripetizione invece di una
+      # verifica che il bundle si costruisce davvero.
+      - name: Build
+        run: npm run build:only

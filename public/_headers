@@ -1,0 +1,53 @@
+# Intestazioni HTTP — sintassi di Cloudflare Pages.
+#
+# Prima la politica di sicurezza viveva in un `<meta>` dentro `index.html`,
+# perché GitHub Pages serve file statici e non permette di impostare
+# intestazioni. Era la sola opzione disponibile, e aveva due buchi che un meta
+# non può chiudere in nessun modo:
+#
+#   - `frame-ancestors` viene **ignorato** se arriva da un meta, quindi il sito
+#     era incorniciabile da chiunque;
+#   - HSTS non esiste come meta, quindi la prima visita restava attaccabile.
+#
+# Cloudflare Pages serve intestazioni vere, e quei due buchi si chiudono.
+
+/*
+  # ─── Politica dei contenuti ───
+  #
+  # Il sito non chiede niente all'esterno: i caratteri sono ospitati qui, non
+  # c'è analytics, non c'è un'API da chiamare. La politica resta quindi chiusa
+  # quasi del tutto, ed è deliberato che sia più stretta del necessario:
+  # quando arriveranno gli script pubblicitari, questa riga sarà l'unica cosa
+  # che sta fra uno script di terze parti e il resto della pagina. Allargarla
+  # sarà un gesto esplicito, voce per voce, non una dimenticanza.
+  #
+  # `style-src` deve ammettere 'unsafe-inline': il sito usa attributi `style`
+  # per le poche misure calcolate a runtime, per esempio la larghezza della
+  # barra della carriera.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+
+  # ─── Il resto ───
+  #
+  # HSTS: dopo la prima visita il browser non prova nemmeno in chiaro. Un anno,
+  # sottodomini compresi. Niente `preload`: è una lista da cui si esce a
+  # fatica, e va chiesta solo quando il dominio è definitivo.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Non spedire il percorso completo ai siti esterni: da un modulo aperto si
+  # capirebbe che cosa sta studiando chi clicca.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Difesa in profondità: `frame-ancestors` sopra fa già il lavoro, questo
+  # copre i browser vecchi che non leggono la CSP.
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+
+  # Il sito non usa nessuna di queste, e dichiararlo impedisce a uno script di
+  # terze parti — cioè, in prospettiva, alla pubblicità — di provarci.
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()
+
+# Gli asset hanno l'impronta del contenuto nel nome: se cambiano, cambia il
+# nome. Si possono quindi tenere in cache per sempre senza rischio di servire
+# una versione vecchia.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

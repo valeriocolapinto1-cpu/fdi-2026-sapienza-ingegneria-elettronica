@@ -5,4 +5,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://valeriocolapinto1-cpu.github.io/fdi-2026-sapienza-ingegneria-elettronica/sitemap.xml
+Sitemap: https://aefin.pages.dev/sitemap.xml

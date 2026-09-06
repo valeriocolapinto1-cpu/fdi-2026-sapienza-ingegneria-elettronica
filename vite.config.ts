@@ -1,22 +1,62 @@
 import { defineConfig } from 'vitest/config';
+import type { Plugin } from 'vite';
 import preact from '@preact/preset-vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
+import { ADSENSE_CLIENT, SITE_URL } from './src/lib/site';
 
 /**
- * Il sito è pubblicato su GitHub Pages sotto il path del repository, quindi
- * `base` deve corrispondere al nome del repo.
+ * Il sito è servito dalla **radice** del suo host, non più da un sotto-path.
  *
- * Lo stesso `base` vale in dev, build e preview: `vite preview` gira con
- * command === 'serve' come il dev server, quindi renderlo condizionale
- * romperebbe il preview della build (gli asset finirebbero in 404).
- * Dev e preview servono quindi su http://localhost:PORT/<REPO>/.
+ * Non è una preferenza estetica: `ads.txt` deve stare alla radice del dominio
+ * perché Google lo trovi, e sotto `github.io/<repo>/` quella radice non è
+ * nostra. Da qui il trasloco su Cloudflare Pages, dove `aefin.pages.dev` è un
+ * dominio a tutti gli effetti (`pages.dev` sta nel Public Suffix List).
+ *
+ * Con `base: '/'` cadono anche i percorsi assoluti con il nome del repo dentro
+ * — sparsi in `404.html`, nel manifest e nella sitemap — che erano l'ultimo
+ * punto in cui il nome dell'ateneo compariva in un indirizzo.
  */
-const REPO = 'fdi-2026-sapienza-ingegneria-elettronica';
+
+/**
+ * I metadati assoluti di `index.html` (`og:url`, `og:image`) non possono
+ * essere relativi: i crawler delle anteprime non risolvono `./` rispetto alla
+ * pagina, e l'immagine resterebbe vuota. Invece di ripetere il dominio in
+ * cinque punti, l'HTML scrive `%SITE_URL%` e lo sostituiamo qui, leggendolo
+ * dalla stessa costante che usa l'applicazione.
+ */
+const siteUrlPlugin: Plugin = {
+  name: 'aefin-site-url',
+  transformIndexHtml: (html: string): string => html.replaceAll('%SITE_URL%', SITE_URL),
+};
+
+/**
+ * `ads.txt`, generato **solo** quando il publisher ID esiste davvero.
+ *
+ * Non sta in `public/` con un segnaposto dentro, e la ragione è precisa: il
+ * crawler di Google legge quel file alla lettera. Un `pub-XXXXXXXX` finto non
+ * è un file «da riempire dopo» — è una dichiarazione sbagliata su chi può
+ * vendere lo spazio pubblicitario di questo sito, e vale peggio del file
+ * assente. Finché `ADSENSE_CLIENT` è vuoto il file non viene proprio scritto.
+ *
+ * `f08c47fec0942fa0` non è un valore inventato: è l'identificativo con cui
+ * Google si presenta nello standard IAB, uguale per tutti i publisher.
+ */
+const adsTxtPlugin: Plugin = {
+  name: 'aefin-ads-txt',
+  generateBundle() {
+    if (!ADSENSE_CLIENT.startsWith('pub-')) return;
+    this.emitFile({
+      type: 'asset',
+      fileName: 'ads.txt',
+      source: `google.com, ${ADSENSE_CLIENT}, DIRECT, f08c47fec0942fa0\n`,
+    });
+  },
+};
 
 export default defineConfig(() => ({
-  base: `/${REPO}/`,
+  base: '/',
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),
@@ -25,6 +65,8 @@ export default defineConfig(() => ({
   plugins: [
     preact(),
     tailwindcss(),
+    siteUrlPlugin,
+    adsTxtPlugin,
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
@@ -34,8 +76,8 @@ export default defineConfig(() => ({
         description:
           'Teoria, esercizi svolti e prove di autovalutazione di Architettura degli Elaboratori.',
         lang: 'it',
-        start_url: `/${REPO}/`,
-        scope: `/${REPO}/`,
+        start_url: '/',
+        scope: '/',
         display: 'standalone',
         background_color: '#0E1116',
         theme_color: '#0E1116',
