@@ -194,12 +194,6 @@ domanda malformata non arriva mai online.
 Il `base` di Vite è il nome del repository (`vite.config.ts`): se rinomini il repo, aggiorna la
 costante `REPO` lì.
 
-## Progetto di riferimento
-
-`docs/prototipo.html` è il prototipo monofile da cui nasce questo lavoro: resta nel repo come
-baseline di design. L'estetica dell'app è portata da lì; l'architettura, i test e le correzioni
-ai generatori no.
-
 ## Stack
 
 Vite 7 · Preact 10 · TypeScript (strict) · Tailwind CSS 4 · Vitest · vite-plugin-pwa.
